@@ -3,7 +3,6 @@
 #import <SpringBoard/SBIcon.h>
 #import <SpringBoard/SBIconController.h>
 #import <SpringBoard/SBApplicationIcon.h>
-#import <SpringBoard/SBIconImageView.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIImageView.h>
 #import <SpringBoard/SBIconLabel.h>
@@ -19,6 +18,7 @@
 #include <sys/sysctl.h>
 #import <notify.h>
 #import <IOKit/hid/IOHIDEvent.h>
+#import <GraphicsServices/GraphicsServices.h>
 
 #define RA_BASE_PATH @"/Library/Multiplexer"
 
@@ -111,6 +111,52 @@ extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 + (id)sharedInstance;
 - (void)_releaseOrientationLock;
 - (void)_lockOrientation;
+@end
+
+@interface SBIconImageView : UIView {
+    UIImageView *_overlayView;
+    //SBIconProgressView *_progressView;
+    _Bool _isPaused;
+    UIImage *_cachedSquareContentsImage;
+    _Bool _showsSquareCorners;
+    SBIcon *_icon;
+    double _brightness;
+    double _overlayAlpha;
+}
+
++ (id)dequeueRecycledIconImageViewOfClass:(Class)arg1;
++ (void)recycleIconImageView:(id)arg1;
++ (double)cornerRadius;
+@property(nonatomic) _Bool showsSquareCorners; // @synthesize showsSquareCorners=_showsSquareCorners;
+@property(nonatomic) double overlayAlpha; // @synthesize overlayAlpha=_overlayAlpha;
+@property(nonatomic) double brightness; // @synthesize brightness=_brightness;
+@property(retain, nonatomic) SBIcon *icon; // @synthesize icon=_icon;
+- (_Bool)_shouldAnimatePropertyWithKey:(id)arg1;
+- (void)iconImageDidUpdate:(id)arg1;
+- (struct CGRect)visibleBounds;
+- (struct CGSize)sizeThatFits:(struct CGSize)arg1;
+- (id)squareDarkeningOverlayImage;
+- (id)darkeningOverlayImage;
+- (id)squareContentsImage;
+- (UIImage*)contentsImage;
+- (void)_clearCachedImages;
+- (id)_generateSquareContentsImage;
+- (void)_updateProgressMask;
+- (void)_updateOverlayImage;
+- (id)_currentOverlayImage;
+- (void)updateImageAnimated:(_Bool)arg1;
+- (id)snapshot;
+- (void)prepareForReuse;
+- (void)layoutSubviews;
+- (void)setPaused:(_Bool)arg1;
+- (void)setProgressAlpha:(double)arg1;
+- (void)_clearProgressView;
+- (void)progressViewCanBeRemoved:(id)arg1;
+- (void)setProgressState:(long long)arg1 paused:(_Bool)arg2 percent:(double)arg3 animated:(_Bool)arg4;
+- (void)_updateOverlayAlpha;
+- (void)setIcon:(id)arg1 animated:(_Bool)arg2;
+- (void)dealloc;
+- (id)initWithFrame:(struct CGRect)arg1;
 @end
 
 @interface SBOrientationLockManager : NSObject
@@ -916,7 +962,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (void)_sendDidLaunchNotification:(_Bool)arg1;
 - (void)notifyResumeActiveForReason:(long long)arg1;
 
-@property(readonly, nonatomic) int pid;
+@property(readwrite, nonatomic) int pid;
 @end
 
 @interface SBApplicationController : NSObject
@@ -1017,7 +1063,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (unsigned int)contextID;
 @end
 
-@interface UIWindow () 
+@interface UIWindow ()
 +(instancetype) keyWindow;
 -(id) firstResponder;
 + (void)setAllWindowsKeepContextInBackground:(BOOL)arg1;
@@ -1389,53 +1435,6 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (id)initWithDefaultSize;
 @end
 
-@interface SBIconImageView ()
-{
-    UIImageView *_overlayView;
-    //SBIconProgressView *_progressView;
-    _Bool _isPaused;
-    UIImage *_cachedSquareContentsImage;
-    _Bool _showsSquareCorners;
-    SBIcon *_icon;
-    double _brightness;
-    double _overlayAlpha;
-}
-
-+ (id)dequeueRecycledIconImageViewOfClass:(Class)arg1;
-+ (void)recycleIconImageView:(id)arg1;
-+ (double)cornerRadius;
-@property(nonatomic) _Bool showsSquareCorners; // @synthesize showsSquareCorners=_showsSquareCorners;
-@property(nonatomic) double overlayAlpha; // @synthesize overlayAlpha=_overlayAlpha;
-@property(nonatomic) double brightness; // @synthesize brightness=_brightness;
-@property(retain, nonatomic) SBIcon *icon; // @synthesize icon=_icon;
-- (_Bool)_shouldAnimatePropertyWithKey:(id)arg1;
-- (void)iconImageDidUpdate:(id)arg1;
-- (struct CGRect)visibleBounds;
-- (struct CGSize)sizeThatFits:(struct CGSize)arg1;
-- (id)squareDarkeningOverlayImage;
-- (id)darkeningOverlayImage;
-- (id)squareContentsImage;
-- (UIImage*)contentsImage;
-- (void)_clearCachedImages;
-- (id)_generateSquareContentsImage;
-- (void)_updateProgressMask;
-- (void)_updateOverlayImage;
-- (id)_currentOverlayImage;
-- (void)updateImageAnimated:(_Bool)arg1;
-- (id)snapshot;
-- (void)prepareForReuse;
-- (void)layoutSubviews;
-- (void)setPaused:(_Bool)arg1;
-- (void)setProgressAlpha:(double)arg1;
-- (void)_clearProgressView;
-- (void)progressViewCanBeRemoved:(id)arg1;
-- (void)setProgressState:(long long)arg1 paused:(_Bool)arg2 percent:(double)arg3 animated:(_Bool)arg4;
-- (void)_updateOverlayAlpha;
-- (void)setIcon:(id)arg1 animated:(_Bool)arg2;
-- (void)dealloc;
-- (id)initWithFrame:(struct CGRect)arg1;
-@end
-
 @interface BBBulletin
 @property(copy, nonatomic) NSString *bulletinID; // @synthesize bulletinID=_bulletinID;
 @property(copy, nonatomic) NSString *sectionID; // @synthesize sectionID=_sectionID;
@@ -1454,4 +1453,3 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (id)noticesBulletinIDsForSectionID:(id)arg1;
 - (id)bulletinIDsForSectionID:(id)arg1 inFeed:(unsigned long long)arg2;
 @end
-

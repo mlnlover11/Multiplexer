@@ -4,7 +4,7 @@ CFLAGS = -I./ -Iwidgets/ -Iwidgets/Core/ -Iwidgets/Reachability/ -ISwipeOver/ -I
 CFLAGS += -fobjc-arc
 LDFLAGS += -Wl,-segalign,4000
 THEOS_PACKAGE_DIR_NAME = debs
-TARGET = :8.0
+TARGET = iphone:clang:9.3:9.3
 
 include $(THEOS)/makefiles/common.mk
 
@@ -23,7 +23,7 @@ ReachApp_FILES = Tweak.xm $(wildcard *.xm) $(wildcard *.mm) $(wildcard *.m) \
 	$(wildcard DRM/*.xm) $(wildcard DRM/*.mm) $(wildcard DRM/*.m) \
 	$(wildcard Theming/*.xm) $(wildcard Theming/*.mm) $(wildcard Theming/*.m) \
 	$(wildcard Debugging/*.xm) $(wildcard Debugging/*.mm) $(wildcard Debugging/*.m)
-	
+
 ReachApp_FRAMEWORKS = UIKit QuartzCore CoreGraphics CoreImage
 ReachApp_PRIVATE_FRAMEWORKS = GraphicsServices BackBoardServices AppSupport IOKit
 ReachApp_LIBRARIES = applist
