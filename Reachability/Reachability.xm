@@ -11,6 +11,7 @@
 #import "RAWidgetSectionManager.h"
 #import "RASettings.h"
 #import "RAAppSliderProviderView.h"
+#import "RABackgrounder.h"
 #import "RADesktopManager.h"
 #import "RADesktopWindow.h"
 #import "RAMessagingServer.h"
@@ -376,7 +377,7 @@ id SBWorkspace$sharedInstance;
     [draggerView addGestureRecognizer:recognizer];
 
     UILongPressGestureRecognizer *recognizer2 = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(RA_handleLongPress:)];
-    recognizer2.delegate = (id<UILongPressGestureRecognizerDelegate>)self;
+    recognizer2.delegate = (id<UIGestureRecognizerDelegate>)self;
     [draggerView addGestureRecognizer:recognizer2];
 
     UITapGestureRecognizer *recognizer3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(RA_detachAppAndClose:)];

@@ -32,7 +32,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 -(BOOL) shouldAutoLaunchApplication:(NSString*)identifier
 {
 	if (!identifier || ![[%c(RASettings) sharedInstance] backgrounderEnabled]) return NO;
-	
+
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"enabled"] ? [dict[@"enabled"] boolValue] : NO;
 	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"autoLaunch"] == nil ? NO : [dict[@"autoLaunch"] boolValue]);
@@ -41,7 +41,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 -(BOOL) shouldAutoRelaunchApplication:(NSString*)identifier
 {
 	if (!identifier || ![[%c(RASettings) sharedInstance] backgrounderEnabled]) return NO;
-	
+
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"enabled"] ? [dict[@"enabled"] boolValue] : NO;
 	return [self killProcessOnExit:identifier] == NO && [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"autoRelaunch"] == nil ? NO : [dict[@"autoRelaunch"] boolValue]);
@@ -71,7 +71,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 	if ([temporaryShouldPop objectForKey:identifier] != nil && [[temporaryShouldPop objectForKey:identifier] boolValue])
 	{
 		[temporaryShouldPop removeObjectForKey:identifier];
-		[temporaryOverrides removeObjectForKey:identifier];	
+		[temporaryOverrides removeObjectForKey:identifier];
 	}
 }
 
@@ -99,7 +99,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 -(BOOL) preventKillingOfIdentifier:(NSString*)identifier
 {
 	if (!identifier || ![[%c(RASettings) sharedInstance] backgrounderEnabled]) return NO;
-	
+
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"enabled"] ? [dict[@"enabled"] boolValue] : NO;
 	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"preventDeath"] == nil ? NO : [dict[@"preventDeath"] boolValue]);
@@ -108,7 +108,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 -(BOOL) shouldRemoveFromSwitcherWhenKilledOnExit:(NSString*)identifier
 {
 	if (!identifier || ![[%c(RASettings) sharedInstance] backgrounderEnabled]) return NO;
-	
+
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"removeFromSwitcher"] ? [dict[@"removeFromSwitcher"] boolValue] : NO;
 	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"removeFromSwitcher"] == nil ? NO : [dict[@"removeFromSwitcher"] boolValue]);
@@ -194,19 +194,25 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 {
 	@autoreleasepool {
 		SBIconView *ret = nil;
-	    if ([[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] respondsToSelector:@selector(applicationIconForBundleIdentifier:)])
-	    {
-	        // iOS 8.0+
+			if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+				if ([[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] respondsToSelector:@selector(applicationIconForBundleIdentifier:)])
+				{
+						// iOS 8.0+
 
-	        SBIcon *icon = [[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] applicationIconForBundleIdentifier:identifier];
-	        ret = [[objc_getClass("SBIconViewMap") homescreenMap] mappedIconViewForIcon:icon];
-	    }
-	    else
-	    {
-	        // iOS 7.X
-	        SBIcon *icon = [[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] applicationIconForDisplayIdentifier:identifier];
-	        ret = [[objc_getClass("SBIconViewMap") homescreenMap] mappedIconViewForIcon:icon];
-	    }
+						SBApplicationIcon *icon = [[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] applicationIconForBundleIdentifier:identifier];
+						ret = [[objc_getClass("SBIconViewMap") homescreenMap] mappedIconViewForIcon:icon];
+				}
+				else
+				{
+						// iOS 7.X
+						SBApplicationIcon *icon = [[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] applicationIconForDisplayIdentifier:identifier];
+						ret = [[objc_getClass("SBIconViewMap") homescreenMap] mappedIconViewForIcon:icon];
+				}
+			} else {
+					SBApplicationIcon *icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:identifier];
+					ret = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] mappedIconViewForIcon:icon];
+			}
+
 
 	    [ret RA_updateIndicatorView:info];
 	}

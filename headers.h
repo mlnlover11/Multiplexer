@@ -378,7 +378,7 @@ return sharedInstance;
 @end
 
 typedef struct {
-    BOOL itemIsEnabled[25];
+    BOOL itemIsEnabled[29];
     char timeString[64];
     int gsmSignalStrengthRaw;
     int gsmSignalStrengthBars;
@@ -405,6 +405,11 @@ typedef struct {
     unsigned locationIconType : 1;
     unsigned quietModeInactive : 1;
     unsigned tetheringConnectionCount;
+    unsigned batterySaverModeActive : 1;
+    unsigned deviceIsRTL : 1;
+    char breadcrumbTitle[256];
+    char breadcrumbSecondaryTitle[256];
+    char personName[100];
 } StatusBarData;
 
 @interface UIStatusBar : UIView
@@ -726,6 +731,7 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 
 @interface SBMainWorkspaceTransitionRequest : NSObject
 - (id)initWithDisplay:(id)arg1;
+- (void)setApplicationContext:(SBWorkspaceApplicationTransitionContext *)arg1 ;
 @end
 
 @interface SBAppToAppWorkspaceTransaction
@@ -1386,9 +1392,9 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 +(Class)iconViewClassForIcon:(SBIcon *)icon location:(int)location;
 -(id)init;
 -(void)dealloc;
--(SBIconView *)mappedIconViewForIcon:(SBIcon *)icon;
--(SBIconView *)_iconViewForIcon:(SBIcon *)icon;
--(SBIconView *)iconViewForIcon:(SBIcon *)icon;
+-(SBIconView *)mappedIconViewForIcon:(SBApplicationIcon *)icon;
+-(SBIconView *)_iconViewForIcon:(SBApplicationIcon *)icon;
+-(SBIconView *)iconViewForIcon:(SBApplicationIcon *)icon;
 -(void)_addIconView:(SBIconView *)iconView forIcon:(SBIcon *)icon;
 -(void)purgeIconFromMap:(SBIcon *)icon;
 -(void)_recycleIconView:(SBIconView *)iconView;
@@ -1406,6 +1412,11 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 
 @interface SBIconViewMap (iOS6)
 @property (nonatomic, readonly) SBIconModel *iconModel;
+@end
+
+@interface SBIconController (iOS90)
+@property (nonatomic,readonly) SBIconViewMap *homescreenIconViewMap;
++ (id)sharedInstance;
 @end
 
 @interface SBApplication (iOS6)
@@ -1464,4 +1475,19 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @interface FBSystemService : NSObject
 - (id)sharedInstance;
 - (void)exitAndRelaunch:(bool)arg1;
+@end
+
+@interface SBSwitcherSnapshotImageView : UIView
+@property (nonatomic,readonly) UIImage * image;
+- (UIImage *)image;
+@end
+
+@interface _SBAppSwitcherSnapshotContext : NSObject {
+	SBSwitcherSnapshotImageView* _snapshotImageView;
+}
+@property (nonatomic,retain) SBSwitcherSnapshotImageView * snapshotImageView;              //@synthesize snapshotImageView=_snapshotImageView - In the implementation block
+- (SBSwitcherSnapshotImageView *)snapshotImageView;
+- (void)setSnapshotImageView:(SBSwitcherSnapshotImageView *)arg1 ;
+- (CGRect)snapshotReferenceFrame;
+- (void)setSnapshotReferenceFrame:(CGRect)arg1 ;
 @end

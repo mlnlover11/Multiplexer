@@ -1,7 +1,7 @@
 #import "headers.h"
 
 @interface RAMissionControlPreviewView : UIImageView {
-	SBIcon *icon;
+	SBApplicationIcon *icon;
 	SBIconView *iconView;
 }
 @property (nonatomic, retain) SBApplication *application;

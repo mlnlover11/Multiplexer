@@ -7,7 +7,7 @@ typedef NS_ENUM(NSInteger, RAMessageType) {
 	RAMessageTypeHideKeyboard,
 	RAMessageTypeUpdateKeyboardContextId,
 	RAMessageTypeRetrieveKeyboardContextId,
-} RAMessageType;
+};
 
 typedef struct {
 	BOOL shouldForceSize;

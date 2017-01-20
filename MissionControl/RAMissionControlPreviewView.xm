@@ -17,10 +17,21 @@
 
     NSOperationQueue* targetQueue = [NSOperationQueue mainQueue];
     [targetQueue addOperationWithBlock:^{
-        if (!icon)
-          icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:self.application.bundleIdentifier];
-        if (icon && !iconView)
-            iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+        if (!icon) {
+          if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+            icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:self.application.bundleIdentifier];
+          } else {
+            icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:self.application.bundleIdentifier];
+          }
+        }
+        if (icon && !iconView) {
+          if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+      			iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+      		} else {
+      			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
+      		}
+        }
+
     }];
     [targetQueue waitUntilAllOperationsAreFinished];
 

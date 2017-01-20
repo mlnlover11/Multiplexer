@@ -33,7 +33,11 @@
 	static NSMutableArray *allApps = nil;
 	if (!allApps)
 	{
-		allApps = [[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] mutableCopy];
+		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+			allApps = [[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] mutableCopy];
+		} else {
+			allApps = [[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] mutableCopy];
+		}
 	    [allApps sortUsingComparator: ^(NSString* a, NSString* b) {
 	    	NSString *a_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:a].displayName;
 	    	NSString *b_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:b].displayName;
@@ -42,13 +46,20 @@
 		//[allApps removeObject:currentBundleIdentifier];
 	}
 	for (NSString *str in allApps)
-	{	
+	{
 		SBApplication *app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:str];
-        SBIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
-        SBIconView *iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+		SBApplicationIcon *icon = nil;
+		SBIconView *iconView = nil;
+		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+			icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
+			iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+		} else {
+			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
+			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
+		}
         if (!iconView || [icon isKindOfClass:[%c(SBApplicationIcon) class]] == NO)
         	continue;
-        
+
         iconView.frame = CGRectMake(contentSize.width, contentSize.height, iconView.frame.size.width, iconView.frame.size.height);
         contentSize.width += iconView.frame.size.width + padding;
 

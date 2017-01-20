@@ -78,6 +78,10 @@ typedef NS_ENUM(NSInteger, RAGrabArea) {
 
 -(BOOL) quickAccessUseGenericTabLabel;
 
+#if DEBUG
+-(BOOL) debug_showIPCMessages;
+#endif
+
 -(BOOL) windowedMultitaskingEnabled;
 -(NSInteger) windowRotationLockMode;
 -(RAGrabArea) windowedMultitaskingGrabArea;
