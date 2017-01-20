@@ -75,7 +75,16 @@ extern BOOL $__IS_SPRINGBOARD;
 #define kBGModeBluetoothPeripheral     @"bluetooth-peripheral"
 // newsstand-content
 
-extern "C" CFNotificationCenterRef CFNotificationCenterGetDistributedCenter(void);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+CFNotificationCenterRef CFNotificationCenterGetDistributedCenter(void);
+void BKSHIDServicesCancelTouchesOnMainDisplay();
+
+#ifdef __cplusplus
+}
+#endif
 
 #define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
 #define DEGREES_TO_RADIANS(radians) ((radians) * (M_PI / 180))
@@ -98,8 +107,6 @@ return sharedInstance;
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
-
-extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1452,4 +1459,9 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (id)allBulletinIDsForSectionID:(id)arg1;
 - (id)noticesBulletinIDsForSectionID:(id)arg1;
 - (id)bulletinIDsForSectionID:(id)arg1 inFeed:(unsigned long long)arg2;
+@end
+
+@interface FBSystemService : NSObject
+- (id)sharedInstance;
+- (void)exitAndRelaunch:(bool)arg1;
 @end

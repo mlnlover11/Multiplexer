@@ -24,7 +24,7 @@
 	@autoreleasepool {
 
 		if ([imageCache objectForKey:identifier] != nil) return [imageCache objectForKey:identifier];
-		
+
 		UIImage *image = nil;
 
 		SBDisplayItem *item = [%c(SBDisplayItem) displayItemWithType:@"App" displayIdentifier:identifier];
@@ -38,15 +38,22 @@
 			}
 			else
 			{
-				//SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
-				//view = [[%c(SBAppSwitcherSnapshotView) alloc] initWithDisplayItem:item application:app orientation:orientation preferringDownscaledSnapshot:NO async:NO withQueue:nil];
+				SBApplication *app = [[%c(SBApplicationController) sharedInstance] ZY_applicationWithBundleIdentifier:identifier];
+				view = [[%c(SBAppSwitcherSnapshotView) alloc] initWithDisplayItem:item application:app orientation:orientation preferringDownscaledSnapshot:NO async:NO withQueue:nil];
 			}
 		});
-		
+
 		if (view)
 		{
-			[view performSelectorOnMainThread:@selector(_loadSnapshotSync) withObject:nil waitUntilDone:YES];
-			image = MSHookIvar<UIImageView*>(view, "_snapshotImageView").image;	
+			if ([view respondsToSelector:@selector(_loadSnapshotSync)]) {
+				[view performSelectorOnMainThread:@selector(_loadSnapshotSync) withObject:nil waitUntilDone:YES];
+				image = MSHookIvar<UIImageView*>(view, "_snapshotImageView").image;
+			} else {
+				_SBAppSwitcherSnapshotContext *snapshotContext = MSHookIvar<_SBAppSwitcherSnapshotContext*>(view, "_snapshotContext");
+				SBSwitcherSnapshotImageView *snapshotImageView = snapshotContext.snapshotImageView;
+				image = snapshotImageView.image;
+			}
+
 		}
 
 		if (!image)
@@ -73,7 +80,7 @@
 				}
 				@catch (NSException *ex)
 				{
-					NSLog(@"[ReachApp] error generating snapshot: %@", ex);
+					HBLogError(@"[ReachApp] error generating snapshot: %@", ex);
 				}
 			}
 
@@ -112,7 +119,7 @@
 		//CGContextRef c = UIGraphicsGetCurrentContext();
 		//CGContextSetAllowsAntialiasing(c, YES);
 		//[window.layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES];
-		
+
 		ON_MAIN_THREAD(^{
 			[window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
 		});
@@ -209,13 +216,13 @@
 		//[[[[%c(SBUIController) sharedInstance] window] layer] performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Icons
 		//ON_MAIN_THREAD(^{
 			//[MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow") drawViewHierarchyInRect:UIScreen.mainScreen.bounds afterScreenUpdates:YES];
-			
+
 			[[[%c(SBUIController) sharedInstance] window] drawViewHierarchyInRect:UIScreen.mainScreen.bounds afterScreenUpdates:YES];
-			
+
 			[desktop drawViewHierarchyInRect:UIScreen.mainScreen.bounds afterScreenUpdates:YES];
 		});
 		//[desktop.layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Desktop windows
-		
+
 		for (UIView *view in desktop.subviews) // Application views
 		{
 			if ([view isKindOfClass:[RAWindowBar class]])

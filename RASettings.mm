@@ -4,7 +4,7 @@
 #import "RAThemeManager.h"
 #import "RANCViewController.h"
 
-#define BOOL(key, default) ([_settings objectForKey:key] != nil ? [_settings[key] boolValue] : default) 
+#define BOOL(key, default) ([_settings objectForKey:key] != nil ? [_settings[key] boolValue] : default)
 
 NSCache *backgrounderSettingsCache = [NSCache new];
 
@@ -35,7 +35,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 }
 
 +(BOOL) isLibStatusBarInstalled
-{	
+{
 	static BOOL installed = NO;
 	static dispatch_once_t onceToken = 0;
 	dispatch_once(&onceToken, ^{
@@ -81,19 +81,19 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 		BOOL failed = NO;
 
-		if (keyList) 
+		if (keyList)
 		{
 			//_settings = (__bridge NSDictionary *)CFPreferencesCopyMultiple(keyList, appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 			_settings = (NSDictionary*)CFBridgingRelease(CFPreferencesCopyMultiple(keyList, appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
 			CFRelease(keyList);
 
-			if (!_settings) 
+			if (!_settings)
 			{
 				//NSLog(@"[ReachApp] failure loading from CFPreferences");
 				failed = YES;
 			}
 		}
-		else 
+		else
 		{
 			//NSLog(@"[ReachApp] failure loading keyList");
 			failed = YES;
@@ -131,14 +131,14 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 	CFStringRef appID = CFSTR("com.efrederickson.reachapp.settings");
 	CFArrayRef keyList = CFPreferencesCopyKeyList(appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 
-	if (keyList) 
+	if (keyList)
 	{
 		CFPreferencesSetMultiple(NULL, keyList, appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 		CFRelease(keyList);
 	}
 	else
 	{
-		NSLog(@"[ReachApp] unable to get keyList to reset settings");
+		HBLogError(@"[ReachApp] unable to get keyList to reset settings");
 	}
 	CFPreferencesAppSynchronize(appID);
 	CFRelease(appID);
@@ -349,7 +349,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 -(BOOL) isFirstRun
 {
 	NSLog(@"[ReachApp] %d", BOOL(@"isFirstRun", YES));
-	return BOOL(@"isFirstRun", YES);  
+	return BOOL(@"isFirstRun", YES);
 }
 
 -(void) setFirstRun:(BOOL)value

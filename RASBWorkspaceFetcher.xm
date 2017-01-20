@@ -20,7 +20,7 @@ Class SBWorkspace_class_implementation_class = nil;
 {
 	if ([SBWorkspace_class_implementation_class respondsToSelector:@selector(sharedInstance)])
 		return [SBWorkspace_class_implementation_class sharedInstance];
-	NSLog(@"[ReachApp] \"SBWorkspace\" class '%s' does not have '+sharedInstance' method", class_getName(SBWorkspace_class_implementation_class));
+	HBLogDebug(@"[ReachApp] \"SBWorkspace\" class '%s' does not have '+sharedInstance' method", class_getName(SBWorkspace_class_implementation_class));
 	return nil;
 }
 @end

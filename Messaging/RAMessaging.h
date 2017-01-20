@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-enum {
+typedef NS_ENUM(NSInteger, RAMessageType) {
 	RAMessageTypeUpdateAppData = 0,
 
 	RAMessageTypeShowKeyboard,
@@ -9,7 +9,7 @@ enum {
 	RAMessageTypeRetrieveKeyboardContextId,
 } RAMessageType;
 
-struct RAMessageAppData {
+typedef struct {
 	BOOL shouldForceSize;
 	// Can't use CGSize because it uses CGFloats which aren't able to be transferred between 32/64bit processes (because its float in one and something else (double? i can't remember) in the other).
 	// Also why we can't use CGFloat here
@@ -21,15 +21,15 @@ struct RAMessageAppData {
 	BOOL statusBarVisibility;
 	BOOL shouldForceStatusBar;
 	BOOL canHideStatusBarIfWanted;
-	
+
 	UIInterfaceOrientation forcedOrientation;
 	BOOL shouldForceOrientation;
-	
+
 	BOOL shouldUseExternalKeyboard;
 	BOOL isBeingHosted;
 	// Only applies after the app has been restarted.
 	BOOL forcePhoneMode;
-};
+} RAMessageAppData;
 
 static NSString *RAMessagingUpdateAppInfoMessageName = @"updateAppInfo";
 static NSString *RAMessagingShowKeyboardMessageName = @"showKeyboard";

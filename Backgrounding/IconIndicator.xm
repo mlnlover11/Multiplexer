@@ -21,7 +21,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 
 	if ([[%c(RASettings) sharedInstance] showNativeStateIconIndicators] && (info & RAIconIndicatorViewInfoNative))
 		ret = [ret stringByAppendingString:@"N"];
-	
+
 	if (info & RAIconIndicatorViewInfoForced)
 		ret = [ret stringByAppendingString:@"F"];
 
@@ -30,7 +30,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 
 	if (info & RAIconIndicatorViewInfoSuspendImmediately)
 		ret = [ret stringByAppendingString:@"ll"];
-		
+
 	if (info & RAIconIndicatorViewInfoUnkillable)
 		ret = [ret stringByAppendingString:@"U"];
 
@@ -49,7 +49,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 			[[self viewWithTag:9962] removeFromSuperview];
 			[self RA_setIsIconIndicatorInhibited:YES];
 			if (info == RAIconIndicatorViewInfoTemporarilyInhibit)
-				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ 
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 					[self RA_setIsIconIndicatorInhibited:NO showAgainImmediately:NO];
 				});
 			return;
@@ -62,7 +62,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 		NSString *text = stringFromIndicatorInfo(info);
 
 		if (
-			[self RA_isIconIndicatorInhibited] || 
+			[self RA_isIconIndicatorInhibited] ||
 			(text == nil || text.length == 0) || // OR info == RAIconIndicatorViewInfoNone
 			(self.icon == nil || self.icon.application == nil || self.icon.application.isRunning == NO || ![RABackgrounder.sharedInstance shouldShowIndicatorForIdentifier:self.icon.application.bundleIdentifier]) ||
 			[[%c(RASettings) sharedInstance] backgrounderEnabled] == NO)
@@ -143,7 +143,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 			if (!textImageView)
 			{
 				CGFloat padding = [objc_getClass("SBIconBadgeView") _textPadding];
-				
+
 				textImageView = [[UIImageView alloc] initWithFrame:CGRectMake(padding, padding, badge.frame.size.width - (padding * 2.0), badge.frame.size.height - (padding * 2.0))];
 				textImageView.center = CGPointMake((badge.frame.size.width / 2.0) + [%c(SBIconBadgeView) _textOffset].x, (badge.frame.size.height / 2.0) + [%c(SBIconBadgeView) _textOffset].y);
 				textImageView.tag = 42;
@@ -274,29 +274,34 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 */
 %new -(void) RA_addStatusBarIconForSelfIfOneDoesNotExist
 {
-#if DEBUG
-	if ([lsbitems respondsToSelector:@selector(objectForKey:)] == NO)
-	{
-		NSLog(@"[ReachApp] ERROR: lsbitems is not NSDictionary it is %s", class_getName(lsbitems.class));
-		//@throw [NSException exceptionWithName:@"OH POOP" reason:@"Expected NSDictionary" userInfo:nil];
-	}
-#endif
-
-	if (objc_getClass("LSStatusBarItem") && [lsbitems objectForKey:self.bundleIdentifier] == nil && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier])
-	{
-		if ([[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier])
-		{
-			RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
-			BOOL native = (info & RAIconIndicatorViewInfoNative);
-			if ((info & RAIconIndicatorViewInfoNone) == 0 && (native == NO || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons]))
-			{
+	if (objc_getClass("LSStatusBarItem") && [lsbitems objectForKey:self.bundleIdentifier] == nil && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {
+		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+			if ([[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier]) {
+				RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
+				BOOL native = (info & RAIconIndicatorViewInfoNative);
+				if ((info & RAIconIndicatorViewInfoNone) == 0 && (native == NO || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
 		    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-		    	if ([item customViewClass] == nil)
-		    		item.customViewClass = @"RAAppIconStatusBarIconView";
-	        	item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
+		    	if ([item customViewClass] == nil) {
+						item.customViewClass = @"RAAppIconStatusBarIconView";
+					}
+	        item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
 	    		lsbitems[self.bundleIdentifier] = item;
 	    	}
-    	}
+			}
+		} else {
+			if ([[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier]) {
+				RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
+				BOOL native = (info & RAIconIndicatorViewInfoNative);
+				if ((info & RAIconIndicatorViewInfoNone) == 0 && (native == NO || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
+			    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
+			    	if ([item customViewClass] == nil) {
+							item.customViewClass = @"RAAppIconStatusBarIconView";
+						}
+		        item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
+		    		lsbitems[self.bundleIdentifier] = item;
+		    }
+	    }
+		}
 	}
 }
 
@@ -310,7 +315,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
     	//SET_INFO_(self.bundleIdentifier, RAIconIndicatorViewInfoNone);
     	[lsbitems removeObjectForKey:self.bundleIdentifier];
     }
-    else 
+    else
     {
     	if ([self respondsToSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)])
 	    	[self performSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)];

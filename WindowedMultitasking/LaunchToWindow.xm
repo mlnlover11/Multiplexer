@@ -3,18 +3,12 @@
 #import "RADesktopManager.h"
 #import "RADesktopWindow.h"
 
-#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
-#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
-
 BOOL launchNextOpenIntoWindow = NO;
 BOOL override = NO;
 BOOL allowOpenApp = NO;
 
 %hook SBIconController
--(void)iconWasTapped:(__unsafe_unretained SBApplicationIcon*)arg1 
+-(void)iconWasTapped:(__unsafe_unretained SBApplicationIcon*)arg1
 {
 	if ([RASettings.sharedInstance windowedMultitaskingEnabled] && [RASettings.sharedInstance launchIntoWindows] && arg1.application)
 	{
@@ -26,9 +20,9 @@ BOOL allowOpenApp = NO;
 
 -(void)_launchIcon:(unsafe_id)icon
 {
-	if (!override) 
+	if (!override)
 		%orig;
-	else 
+	else
 		override = NO;
 }
 %end

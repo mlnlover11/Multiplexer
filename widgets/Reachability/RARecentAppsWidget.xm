@@ -53,11 +53,18 @@
 	for (NSString *str in recents)
 	{
 		app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:str];
-        SBIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
-        SBIconView *iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+		SBApplicationIcon *icon = nil;
+		SBIconView *iconView = nil;
+		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+			icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
+			iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+		} else {
+			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
+			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
+		}
         if (!iconView)
         	continue;
-        
+
         if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
 		{
 			if (isTop)
@@ -98,7 +105,7 @@
 {
 	@autoreleasepool {
 		//[[%c(SBWorkspace) sharedInstance] appViewItemTap:gesture];
-		
+
 		RAAppSliderProvider *provider = [[RAAppSliderProvider alloc] init];
 		provider.availableIdentifiers = [[RAAppSwitcherModelWrapper appSwitcherAppIdentiferList] mutableCopy];
 		[((NSMutableArray*)provider.availableIdentifiers) removeObject:[[UIApplication sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier];

@@ -12,7 +12,7 @@ int main(int argc, char **argv, char **envp) {
 	NSString *filePath = @"/var/mobile/Library/.reachapp.uiappexitsonsuspend.wantstochangerootapp";
     if ([NSFileManager.defaultManager fileExistsAtPath:filePath] == NO)
     {
-        NSLog(@"[ReachApp] FS Daemon: plist does not exist");
+        HBLogError(@"[ReachApp] FS Daemon: plist does not exist");
         return 0;
     }
 

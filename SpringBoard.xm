@@ -112,28 +112,28 @@ extern BOOL overrideDisableForStatusBar;
     %orig;
 }
 
-// On iOS 8.3 and above, on the iPad, if a FBWindowContextWhatever creates a hosting context / enabled hosting, all the other hosted windows stop. 
-// This fixes that. 
+// On iOS 8.3 and above, on the iPad, if a FBWindowContextWhatever creates a hosting context / enabled hosting, all the other hosted windows stop.
+// This fixes that.
 -(void)_didComplete
 {
     %orig;
 
-    //if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    // can't hurt to check all devices - especially if it changes/has changed to include phones. 
+    // can't hurt to check all devices - especially if it changes/has changed to include phones.
     // however this was presumably done in preparation for the iOS 9 multitasking
-    [RAHostedAppView iPad_iOS83_fixHosting];
+		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+			[RAHostedAppView iPad_iOS83_fixHosting];
 }
 %end
 
 /*
 %hook SBRootFolderView
-- (_Bool)_hasMinusPages 
+- (_Bool)_hasMinusPages
 {
-    return RADesktopManager.sharedInstance.currentDesktop.hostedWindows.count > 0 ? YES : %orig; 
+    return RADesktopManager.sharedInstance.currentDesktop.hostedWindows.count > 0 ? YES : %orig;
 }
-- (unsigned long long)_minusPageCount 
+- (unsigned long long)_minusPageCount
 {
-    return RADesktopManager.sharedInstance.currentDesktop.hostedWindows.count > 0 ? 1 : %orig; 
+    return RADesktopManager.sharedInstance.currentDesktop.hostedWindows.count > 0 ? 1 : %orig;
 }
 %end
 */
@@ -152,7 +152,7 @@ extern BOOL overrideDisableForStatusBar;
     dispatch_async(dispatch_get_main_queue(), ^{
         [RASnapshotProvider.sharedInstance forceReloadOfSnapshotForIdentifier:self.bundleIdentifier];
     });
-    
+
     %orig;
 }
 %end
@@ -161,7 +161,7 @@ extern BOOL overrideDisableForStatusBar;
 - (void)_postLockCompletedNotification:(_Bool)arg1
 {
     %orig;
-    
+
     if (arg1)
     {
         if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver])
@@ -181,7 +181,7 @@ extern BOOL overrideDisableForStatusBar;
 
 void respring_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    [[UIApplication sharedApplication] _relaunchSpringBoardNow];
+    [[%c(FBSystemService) sharedInstance] exitAndRelaunch:YES];
 }
 
 void reset_settings_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)

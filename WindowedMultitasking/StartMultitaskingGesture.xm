@@ -29,7 +29,7 @@ BOOL locationIsInValidArea(CGFloat x)
 
 %ctor
 {
-    if (!IS_SPRINGBOARD)
+    IF_NOT_SPRINGBOARD
         return;
     __weak __block UIView *appView = nil;
     __block CGFloat lastY = 0;
@@ -62,7 +62,7 @@ BOOL locationIsInValidArea(CGFloat x)
 
             if ([RAWindowStatePreservationSystemManager.sharedInstance hasWindowInformationForIdentifier:topApp.bundleIdentifier])
             {
-                scale = MIN(MAX(scale, 0.01), 1); 
+                scale = MIN(MAX(scale, 0.01), 1);
                 CGFloat actualScale = scale;
                 scale = 1 - scale;
                 RAPreservedWindowInformation info = [RAWindowStatePreservationSystemManager.sharedInstance windowInformationForAppIdentifier:topApp.bundleIdentifier];
@@ -108,7 +108,7 @@ BOOL locationIsInValidArea(CGFloat x)
                     else
                     {
                         appView.transform = CGAffineTransformMakeScale(0.5, 0.5);
-                        appView.center = originalCenter;   
+                        appView.center = originalCenter;
                     }
                 } completion:^(BOOL _) {
                     RAIconIndicatorViewInfo indicatorInfo = [[%c(RABackgrounder) sharedInstance] allAggregatedIndicatorInfoForIdentifier:topApp.bundleIdentifier];
@@ -116,6 +116,11 @@ BOOL locationIsInValidArea(CGFloat x)
                     // Close app
                     [[%c(RABackgrounder) sharedInstance] temporarilyApplyBackgroundingMode:RABackgroundModeForcedForeground forApplication:topApp andCloseForegroundApp:NO];
                     FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
+                        SBDeactivationSettings *deactiveSets = [[%c(SBDeactivationSettings) alloc] init];
+                        [deactiveSets setFlag:YES forDeactivationSetting:20];
+                        [deactiveSets setFlag:NO forDeactivationSetting:2];
+                        [topApp _setDeactivationSettings:deactiveSets];
+                        
                         SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
                         [transaction begin];
 

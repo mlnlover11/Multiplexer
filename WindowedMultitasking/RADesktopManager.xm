@@ -7,7 +7,7 @@ BOOL overrideUIWindow = NO;
 @implementation RADesktopManager
 +(instancetype) sharedInstance
 {
-	SHARED_INSTANCE2(RADesktopManager, 
+	SHARED_INSTANCE2(RADesktopManager,
 		sharedInstance->windows = [NSMutableArray array];
 		[sharedInstance addDesktop:YES];
 		overrideUIWindow = YES;
@@ -35,7 +35,7 @@ BOOL overrideUIWindow = NO;
 	RADesktopWindow *window = windows[index];
 	[window saveInfo];
 	[window closeAllApps];
-	[windows removeObjectAtIndex:index]; 
+	[windows removeObjectAtIndex:index];
 }
 
 -(BOOL) isAppOpened:(NSString*)identifier
@@ -186,6 +186,6 @@ BOOL overrideUIWindow = NO;
 
 %ctor
 {
-	if ([NSBundle.mainBundle.bundleIdentifier isEqual:@"com.apple.springboard"])
+	IF_SPRINGBOARD
 		%init;
 }

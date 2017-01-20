@@ -101,7 +101,7 @@ static Class $memorized$UITextEffectsWindow$class;
         arg3 = YES;
     }
     //arg1 = ((forcingRotation&&NO) || overrideDisplay) ? (isTopApp ? NO : YES) : arg1;
-     
+
     %orig(arg1, arg2, arg3);
 }
 
@@ -165,7 +165,7 @@ static Class $memorized$UITextEffectsWindow$class;
 {
     if (revert)
     {
-        for (UIWindow *window in [[UIApplication sharedApplication] windows]) 
+        for (UIWindow *window in [[UIApplication sharedApplication] windows])
         {
             CGRect frame = window.frame;
             if ([oldFrames objectForKey:@(window.hash)] != nil)
@@ -178,7 +178,7 @@ static Class $memorized$UITextEffectsWindow$class;
                 [window setFrame:frame];
             }];
         }
-        
+
         if ([oldFrames objectForKey:@"statusBar"] != nil)
             UIApplication.sharedApplication.statusBar.frame = [oldFrames[@"statusBar"] CGRectValue];
 
@@ -216,10 +216,10 @@ static Class $memorized$UITextEffectsWindow$class;
     if ([RAMessagingClient.sharedInstance isBeingHosted])
     {
         objc_setAssociatedObject(self, @selector(RA_networkActivity), @(arg1), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        
+
         StatusBarData *data = [UIStatusBarServer getStatusBarData];
-        data->itemIsEnabled[24] = arg1; // 24 = activity indicator
-        [UIApplication.sharedApplication.statusBar forceUpdateToData:data animated:YES];   
+        data->itemIsEnabled[26] = arg1; // 24 = activity indicator
+        [UIApplication.sharedApplication.statusBar forceUpdateToData:data animated:YES];
     }
 }
 
@@ -237,7 +237,7 @@ static Class $memorized$UITextEffectsWindow$class;
 -(void) statusBarServer:(unsafe_id)arg1 didReceiveStatusBarData:(StatusBarData*)arg2 withActions:(int)arg3
 {
     if ([RAMessagingClient.sharedInstance isBeingHosted])
-        arg2->itemIsEnabled[24] = [UIApplication.sharedApplication isNetworkActivityIndicatorVisible];
+        arg2->itemIsEnabled[26] = [UIApplication.sharedApplication isNetworkActivityIndicatorVisible];
     %orig;
 }
 %end

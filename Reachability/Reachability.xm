@@ -16,8 +16,6 @@
 #import "RAMessagingServer.h"
 #import "RAAppSwitcherModelWrapper.h"
 
-#define SPRINGBOARD ([NSBundle.mainBundle.bundleIdentifier isEqual:@"com.apple.springboard"])
-
 /*FBWindowContextHostWrapperView*/ UIView *view = nil;
 NSString *lastBundleIdentifier = @"";
 NSString *currentBundleIdentifier = @"";
@@ -30,8 +28,8 @@ CGPoint firstLocation = CGPointZero;
 CGFloat grabberCenter_X = 0;
 BOOL showingNC = NO;
 BOOL overrideDisableForStatusBar = NO;
-CGRect pre_topAppFrame = CGRectZero;
-CGAffineTransform pre_topAppTransform = CGAffineTransformIdentity;
+//CGRect pre_topAppFrame = CGRectZero;
+//CGAffineTransform pre_topAppTransform = CGAffineTransformIdentity;
 UIView *bottomDraggerView = nil;
 CGFloat old_grabberCenterY = -1;
 
@@ -42,7 +40,7 @@ BOOL wasEnabled = NO;
 %hook SBReachabilityManager
 +(BOOL)reachabilitySupported
 {
-    return YES; 
+    return YES;
 }
 
 - (void)_handleReachabilityActivated
@@ -89,7 +87,7 @@ BOOL wasEnabled = NO;
     if (wasEnabled)
     {
         wasEnabled = NO;
-        // Notify both top and bottom apps Reachability is closing    
+        // Notify both top and bottom apps Reachability is closing
         if ([view isKindOfClass:[RAAppSliderProviderView class]])
         {
             [RAMessagingServer.sharedInstance endResizingApp:[((RAAppSliderProviderView*)view) currentBundleIdentifier] completion:nil];
@@ -194,7 +192,7 @@ id SBWorkspace$sharedInstance;
 
     [RAMessagingServer.sharedInstance unforceStatusBarVisibilityForApp:currentBundleIdentifier completion:nil];
     [RAMessagingServer.sharedInstance setShouldUseExternalKeyboard:NO forApp:currentBundleIdentifier completion:nil];
-        
+
     if ([RASettings.sharedInstance showNCInstead])
     {
         showingNC = NO;
@@ -230,14 +228,14 @@ id SBWorkspace$sharedInstance;
                     FBSMutableSceneSettings *settings = [[scene mutableSettings] mutableCopy];
                     SET_BACKGROUNDED(settings, YES);
                     [scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
-                    MSHookIvar<FBWindowContextHostView*>([app mainScene].contextHostManager, "_hostView").frame = pre_topAppFrame;
-                    MSHookIvar<FBWindowContextHostView*>([app mainScene].contextHostManager, "_hostView").transform = pre_topAppTransform;
+                    //MSHookIvar<FBWindowContextHostView*>([app mainScene].contextHostManager, "_hostView").frame = pre_topAppFrame;
+                    //MSHookIvar<FBWindowContextHostView*>([app mainScene].contextHostManager, "_hostView").transform = pre_topAppTransform;
 
                     SBApplication *currentApp = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:currentBundleIdentifier];
                     if ([currentApp mainScene])
                     {
-                        MSHookIvar<FBWindowContextHostView*>([currentApp mainScene].contextHostManager, "_hostView").frame = pre_topAppFrame;
-                        MSHookIvar<FBWindowContextHostView*>([currentApp mainScene].contextHostManager, "_hostView").transform = pre_topAppTransform;
+                        //MSHookIvar<FBWindowContextHostView*>([currentApp mainScene].contextHostManager, "_hostView").frame = pre_topAppFrame;
+                        //MSHookIvar<FBWindowContextHostView*>([currentApp mainScene].contextHostManager, "_hostView").transform = pre_topAppTransform;
                     }
 
                     FBWindowContextHostManager *contextHostManager = [scene contextHostManager];
@@ -302,8 +300,8 @@ id SBWorkspace$sharedInstance;
     CGFloat knobWidth = 60;
     CGFloat knobHeight = 25;
     draggerView = [[UIView alloc] initWithFrame:CGRectMake(
-        (UIScreen.mainScreen.bounds.size.width / 2) - (knobWidth / 2), 
-        [UIScreen mainScreen].bounds.size.height * .3, 
+        (UIScreen.mainScreen.bounds.size.width / 2) - (knobWidth / 2),
+        [UIScreen mainScreen].bounds.size.height * .3,
         knobWidth, knobHeight)];
     draggerView.alpha = 0.3;
     draggerView.layer.cornerRadius = 10;
@@ -391,8 +389,8 @@ id SBWorkspace$sharedInstance;
     if ([RASettings.sharedInstance showBottomGrabber])
     {
         bottomDraggerView = [[UIView alloc] initWithFrame:CGRectMake(
-            (UIScreen.mainScreen.bounds.size.width / 2) - (knobWidth / 2), 
-            -(knobHeight / 2), 
+            (UIScreen.mainScreen.bounds.size.width / 2) - (knobWidth / 2),
+            -(knobHeight / 2),
             knobWidth, knobHeight)];
         bottomDraggerView.alpha = 0.3;
         bottomDraggerView.layer.cornerRadius = 10;
@@ -409,7 +407,7 @@ id SBWorkspace$sharedInstance;
 {
     if (view)
         [self RA_closeCurrentView];
-        
+
     UIWindow *w = MSHookIvar<UIWindow*>(self, "_reachabilityEffectWindow");
     //CGSize iconSize = [%c(SBIconView) defaultIconImageSize];
     static CGSize fullSize = [%c(SBIconView) defaultIconSize];
@@ -428,7 +426,7 @@ id SBWorkspace$sharedInstance;
     UIView *widgetSelectorView = [[RAWidgetSectionManager sharedInstance] createViewForEnabledSectionsWithBaseFrame:w.frame preferredIconSize:fullSize iconsThatFitPerLine:numIconsPerLine spacing:padding];
     widgetSelectorView.frame = (CGRect){ { 0, 0 }, widgetSelectorView.frame.size };
     //widgetSelectorView.frame = w.frame;
-    
+
     if (draggerView)
         [w insertSubview:widgetSelectorView belowSubview:draggerView];
     else
@@ -515,7 +513,26 @@ CGFloat startingY = -1;
         return;
 
     [self handleReachabilityModeDeactivated];
-    [RADesktopManager.sharedInstance.currentDesktop createAppWindowWithIdentifier:ident animated:YES];
+    SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:ident];
+    RAIconIndicatorViewInfo indicatorInfo = [[%c(RABackgrounder) sharedInstance] allAggregatedIndicatorInfoForIdentifier:ident];
+
+    // Close app
+    [[%c(RABackgrounder) sharedInstance] temporarilyApplyBackgroundingMode:RABackgroundModeForcedForeground forApplication:app andCloseForegroundApp:NO];
+    FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
+        SBDeactivationSettings *deactiveSets = [[%c(SBDeactivationSettings) alloc] init];
+        [deactiveSets setFlag:YES forDeactivationSetting:20];
+        [deactiveSets setFlag:NO forDeactivationSetting:2];
+        [app _setDeactivationSettings:deactiveSets];
+
+        // Open in window
+        [RADesktopManager.sharedInstance.currentDesktop createAppWindowWithIdentifier:ident animated:YES];
+    }];
+    [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
+
+    // Pop forced foreground backgrounding
+    [[%c(RABackgrounder) sharedInstance] queueRemoveTemporaryOverrideForIdentifier:ident];
+    [[%c(RABackgrounder) sharedInstance] removeTemporaryOverrideForIdentifier:ident];
+    [[%c(RABackgrounder) sharedInstance] updateIconIndicatorForIdentifier:ident withInfo:indicatorInfo];
 }
 
 %new - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -642,10 +659,10 @@ CGFloat startingY = -1;
 
         [RAMessagingServer.sharedInstance resizeApp:targetIdentifier toSize:CGSizeMake(width, height) completion:nil];
     }
-
+    /*
     if ([view isKindOfClass:[%c(FBWindowContextHostWrapperView) class]] == NO && [view isKindOfClass:[RAAppSliderProviderView class]] == NO)
         return; // only resize when the app is being shown. That way it's more like native Reachability
-
+    */
     [RAMessagingServer.sharedInstance setHosted:YES forIdentifier:currentBundleIdentifier completion:nil];
 
     [RAMessagingServer.sharedInstance rotateApp:lastBundleIdentifier toOrientation:[UIApplication sharedApplication].statusBarOrientation completion:nil];
@@ -742,7 +759,7 @@ CGFloat startingY = -1;
 
         window = MSHookIvar<UIWindow*>(self,"_reachabilityWindow");
         window.frame = (CGRect) { { window.frame.origin.x, view.frame.size.width }, { window.frame.size.width, view.frame.size.width } };
-        
+
         SBApplication *currentApp = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:currentBundleIdentifier];
         if ([currentApp mainScene]) // just checking...
         {
@@ -845,7 +862,7 @@ CGFloat startingY = -1;
 
 %ctor
 {
-    if (SPRINGBOARD)
+    IF_SPRINGBOARD
     {
         Class c = objc_getClass("SBMainWorkspace") ?: objc_getClass("SBWorkspace");
         %init(hooks, SB_WORKSPACE_CLASS=c);

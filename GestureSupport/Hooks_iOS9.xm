@@ -38,7 +38,7 @@ struct VelocityData {
     VelocityData oldData;
 
     [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&oldData];
-    
+
     // this is really quite simple, it calculates a velocity based off of
     // (current location - last location) / (time taken to move from last location to current location)
     // which effectively gives you a CGPoint of where it would end if the user continued the gesture.
@@ -51,7 +51,7 @@ struct VelocityData {
 }
 
 %new
-- (CGPoint)RA_velocity 
+- (CGPoint)RA_velocity
 {
     VelocityData data;
     [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&data];
@@ -65,7 +65,7 @@ struct VelocityData {
 @end
 
 @implementation Hooks9$SBHandMotionExtractorReplacementByMultiplexer
--(id) init 
+-(id) init
 {
     if (self = [super init])
     {
@@ -75,7 +75,7 @@ struct VelocityData {
     return self;
 }
 
--(void) screenEdgePanRecognizerStateDidChange:(_UIScreenEdgePanRecognizer*) screenEdgePanRecognizer 
+-(void) screenEdgePanRecognizerStateDidChange:(_UIScreenEdgePanRecognizer*) screenEdgePanRecognizer
 {
     if (screenEdgePanRecognizer.state == UIGestureRecognizerStateBegan)
     {
@@ -105,7 +105,7 @@ struct VelocityData {
 }
 @end
 
-void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event) 
+void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event)
 {
     if (IOHIDEventGetType(event) == kIOHIDEventTypeDigitizer)
     {
@@ -115,14 +115,14 @@ void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEvent
             float density = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerDensity);
 
             float x = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerX) * UIScreen.mainScreen._referenceBounds.size.width;
-            float y = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerY) * UIScreen.mainScreen._referenceBounds.size.height; 
+            float y = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerY) * UIScreen.mainScreen._referenceBounds.size.height;
             CGPoint location = (CGPoint) { x, y };
 
             UIInterfaceOrientation interfaceOrientation = GET_STATUSBAR_ORIENTATION;
 
             float rotatedX = x;
             float rotatedY = y;
-            
+
             if (interfaceOrientation == UIInterfaceOrientationLandscapeRight)
             {
                 rotatedX = y;
@@ -136,7 +136,7 @@ void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEvent
 
             CGPoint rotatedLocation = (CGPoint) { rotatedX, rotatedY };
 
-            NSLog(@"[ReachApp] (%f, %d) %@ -> %@", density, isTracking, NSStringFromCGPoint(location), NSStringFromCGPoint(rotatedLocation));
+            HBLogInfo(@"[ReachApp] (%f, %d) %@ -> %@", density, isTracking, NSStringFromCGPoint(location), NSStringFromCGPoint(rotatedLocation));
 
             if (isTracking == NO)
             {
@@ -159,7 +159,7 @@ void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEvent
                 currentEdge9 = UIRectEdgeNone;
                 isTracking = NO;
 
-                NSLog(@"[ReachApp] touch ended.");
+                HBLogInfo(@"[ReachApp] touch ended.");
             }
             else
             {
@@ -197,7 +197,7 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
         IOHIDEventSystemClientRegisterEventCallback(hidEventSystem, (IOHIDEventSystemClientEventCallback)touch_event, NULL, NULL);
 
         class_addProtocol(objc_getClass("Hooks9$SBHandMotionExtractorReplacementByMultiplexer"), @protocol(_UIScreenEdgePanRecognizerDelegate));
-        
+
         UIRectEdge edgesToWatch[] = { UIRectEdgeBottom, UIRectEdgeLeft, UIRectEdgeRight, UIRectEdgeTop };
         int edgeCount = sizeof(edgesToWatch) / sizeof(UIRectEdge);
         gestureRecognizers = [[NSMutableSet alloc] initWithCapacity:edgeCount];
@@ -213,5 +213,5 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
 
         __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer = [[Hooks9$SBHandMotionExtractorReplacementByMultiplexer alloc] init];
     }
-    
+
 }

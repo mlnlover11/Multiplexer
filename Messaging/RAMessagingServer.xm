@@ -23,7 +23,7 @@ extern BOOL launchNextOpenIntoWindow;
 @implementation RAMessagingServer
 +(instancetype) sharedInstance
 {
-	SHARED_INSTANCE2(RAMessagingServer, 
+	SHARED_INSTANCE2(RAMessagingServer,
 		[sharedInstance loadServer];
 		sharedInstance->dataForApps = [NSMutableDictionary dictionary];
 		sharedInstance->contextIds = [NSMutableDictionary dictionary];
@@ -34,16 +34,8 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(void) loadServer
 {
-    messagingCenter = [objc_getClass("CPDistributedMessagingCenter") centerNamed:@"com.efrederickson.reachapp.messaging.server"];
-
-    void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-    if (handle)
-    {
-        void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*);
-        rocketbootstrap_distributedmessagingcenter_apply = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-        rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
-        dlclose(handle);
-    }
+    messagingCenter = [CPDistributedMessagingCenter centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+    rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
 
     [messagingCenter runServerOnCurrentThread];
 
@@ -96,7 +88,7 @@ extern BOOL launchNextOpenIntoWindow;
 			callback(YES);
 		}
 
-		// Got the message, cancel the re-sender	
+		// Got the message, cancel the re-sender
 		if ([asyncHandles objectForKey:identifier] != nil)
 		{
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
@@ -306,7 +298,7 @@ extern BOOL launchNextOpenIntoWindow;
 	}
 
 	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",identifier], nil, nil, YES);
-	
+
 	if (tries <= 4)
 	{
 		if ([asyncHandles objectForKey:identifier] != nil)
@@ -328,11 +320,11 @@ extern BOOL launchNextOpenIntoWindow;
 			if (callback)
 				waitingCompletions[identifier] = [callback copy];
 		}
-		// Reset failure checker 
+		// Reset failure checker
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(checkIfCompletionStillExitsForIdentifierAndFailIt:) object:identifier];
 		[self performSelector:@selector(checkIfCompletionStillExitsForIdentifierAndFailIt:) withObject:identifier afterDelay:4];
 	}
-	
+
 
 /*
 	SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
@@ -471,10 +463,10 @@ extern BOOL launchNextOpenIntoWindow;
 -(void) forcePhoneMode:(BOOL)value forIdentifier:(NSString*)identifier andRelaunchApp:(BOOL)relaunch
 {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
-	
+
 	data.forcePhoneMode = value;
 	[self setData:data forIdentifier:identifier];
-	
+
 	if (relaunch)
 	{
 		[RAAppKiller killAppWithIdentifier:identifier completion:^{
@@ -495,7 +487,7 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(void) setKeyboardContextId:(unsigned int)id forIdentifier:(NSString*)identifier
 {
-	NSLog(@"[ReachApp] got c id %d", id);
+	HBLogDebug(@"[ReachApp] got c id %d", id);
 	contextIds[identifier] = @(id);
 }
 

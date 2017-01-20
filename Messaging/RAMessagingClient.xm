@@ -20,18 +20,20 @@ extern BOOL allowClosingReachabilityNatively;
 		@throw [NSException exceptionWithName:@"IsSpringBoardException" reason:@"Cannot use RAMessagingClient in SpringBoard" userInfo:nil];
 	}
 
-	SHARED_INSTANCE2(RAMessagingClient, 
+	SHARED_INSTANCE2(RAMessagingClient,
 		[sharedInstance loadMessagingCenter];
 		sharedInstance.hasRecievedData = NO;
 
 		if ([NSBundle.mainBundle.executablePath hasPrefix:@"/Applications"] ||
+			[NSBundle.mainBundle.executablePath hasPrefix:@"/var/stash/appsstash"] ||
+			[NSBundle.mainBundle.executablePath hasPrefix:@"/var/containers/Bundle/Application"] ||
 			[NSBundle.mainBundle.executablePath hasPrefix:@"/private/var/db/stash"] ||
 			[NSBundle.mainBundle.executablePath hasPrefix:@"/var/mobile/Applications"] ||
 			[NSBundle.mainBundle.executablePath hasPrefix:@"/private/var/mobile/Applications"] ||
 			[NSBundle.mainBundle.executablePath hasPrefix:@"/var/mobile/Containers/Bundle/Application"] ||
 			[NSBundle.mainBundle.executablePath hasPrefix:@"/private/var/mobile/Containers/Bundle/Application"])
 		{
-			NSLog(@"[ReachApp] valid process for RAMessagingClient");
+			HBLogDebug(@"[ReachApp] valid process for RAMessagingClient");
 			sharedInstance->allowedProcess = YES;
 		}
 	);
@@ -53,38 +55,27 @@ extern BOOL allowClosingReachabilityNatively;
 	data.shouldForceOrientation = NO;
 	data.shouldUseExternalKeyboard = NO;
 	data.forcePhoneMode = NO;
-	data.isBeingHosted = NO; 
+	data.isBeingHosted = NO;
 
 	_currentData = data; // Initialize data
 
-	serverCenter = [objc_getClass("CPDistributedMessagingCenter") centerNamed:@"com.efrederickson.reachapp.messaging.server"];
-
-    void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-    if (handle)
-    {
-        void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*);
-        rocketbootstrap_distributedmessagingcenter_apply = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-        rocketbootstrap_distributedmessagingcenter_apply(serverCenter);
-        dlclose(handle);
-    }
+	serverCenter = [CPDistributedMessagingCenter centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+  rocketbootstrap_distributedmessagingcenter_apply(serverCenter);
 }
 
 -(void) alertUser:(NSString*)description
 {
-#if DEBUG
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:LOCALIZE(@"MULTIPLEXER") message:description delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
-#endif
+		HBLogError(@"%@", description);
 }
 
 -(void) _requestUpdateFromServerWithTries:(int)tries
 {
-	/*if (!NSBundle.mainBundle.bundleIdentifier || 
+	/*if (!NSBundle.mainBundle.bundleIdentifier ||
 		IS_PROCESS("assertiond") ||  // Don't need to load into this anyway
 		IS_PROCESS("searchd") ||  // safe-mode crash fix
 		IS_PROCESS("gputoolsd") || // iMohkles found this crashes (no uikit)
 		IS_PROCESS("filecoordinationd") || // ???
-		IS_PROCESS("backboardd") // Backboardd uses its own messaging center for what it does. 
+		IS_PROCESS("backboardd") // Backboardd uses its own messaging center for what it does.
 		)*/
 
 	if (allowedProcess == NO)
@@ -94,7 +85,7 @@ extern BOOL allowClosingReachabilityNatively;
 		// 1. hang the process
 		// 2. crash after timeout due to no UIKit (?)
 		// 3. something else bad
-		// so therefore all those are simply blacklisted. simple. 
+		// so therefore all those are simply blacklisted. simple.
 		return;
 	}
 
@@ -142,7 +133,7 @@ extern BOOL allowClosingReachabilityNatively;
 	else if (data.shouldForceSize)
 	   	[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:NO];
 
-	if (didOrientationChange && data.shouldForceOrientation == NO)	
+	if (didOrientationChange && data.shouldForceOrientation == NO)
 		[UIApplication.sharedApplication RA_forceRotationToInterfaceOrientation:data.forcedOrientation isReverting:YES];
 	else if (data.shouldForceOrientation)
 		[UIApplication.sharedApplication RA_forceRotationToInterfaceOrientation:data.forcedOrientation isReverting:NO];
@@ -225,7 +216,7 @@ void updateFrontmostApp(CFNotificationCenterRef center,
 	IF_SPRINGBOARD {
 
 	}
-	else 
+	else
 	{
 		[RAMessagingClient sharedInstance];
     	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reloadClientData, (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",NSBundle.mainBundle.bundleIdentifier], NULL, CFNotificationSuspensionBehaviorDeliverImmediately);

@@ -1,6 +1,6 @@
 #import "headers.h"
 
-enum RABackgroundMode {
+typedef NS_ENUM(NSInteger, RABackgroundMode) {
     RABackgroundModeNative = 1,
     RABackgroundModeForceNativeForOldApps = 2,
     RABackgroundModeForcedForeground = 3,
@@ -9,7 +9,7 @@ enum RABackgroundMode {
     RABackgroundModeUnlimitedBackgroundingTime = 6,
 };
 
-enum RAIconIndicatorViewInfo {
+typedef NS_ENUM(NSInteger, RAIconIndicatorViewInfo) {
 	RAIconIndicatorViewInfoNone = 0,
 	RAIconIndicatorViewInfoNative = 1,
 	RAIconIndicatorViewInfoForced = 2,

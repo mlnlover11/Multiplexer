@@ -18,7 +18,7 @@
 }
 
 -(NSString*) currentVersion { return @"1.0"; }
--(BOOL) isOnSupportedOS { return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0") && SYSTEM_VERSION_LESS_THAN(@"9.0"); }
+-(BOOL) isOnSupportedOS { return SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0") && SYSTEM_VERSION_LESS_THAN(@"10.2"); }
 
 -(void) registerExtension:(NSString*)name forMultiplexerVersion:(NSString*)version
 {
@@ -43,22 +43,22 @@
     {
     	// ** below code from Mirmir (https://github.com/EthanArbuckle/Mirmir/blob/lamo_no_ms/Lamo/CDTLamo.mm#L114-L138)
         SBWorkspaceApplicationTransitionContext *transitionContext = [[%c(SBWorkspaceApplicationTransitionContext) alloc] init];
-        
+
         //set layout role to 'side' (deactivating)
         SBWorkspaceDeactivatingEntity *deactivatingEntity = [%c(SBWorkspaceDeactivatingEntity) entity];
         [deactivatingEntity setLayoutRole:3];
         [transitionContext setEntity:deactivatingEntity forLayoutRole:3];
-        
+
         //set layout role for 'primary' (activating)
         SBWorkspaceHomeScreenEntity *homescreenEntity = [[%c(SBWorkspaceHomeScreenEntity) alloc] init];
         [transitionContext setEntity:homescreenEntity forLayoutRole:2];
-        
+
         [transitionContext setAnimationDisabled:YES];
-        
+
         //create transititon request
-        SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[[UIScreen mainScreen] valueForKey:@"_fbsDisplay"]];
-        [transitionRequest setValue:transitionContext forKey:@"_applicationContext"];
-        
+				SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[UIScreen.mainScreen valueForKey:@"_fbsDisplay"]];
+    		[transitionRequest setApplicationContext:transitionContext];
+
         return [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithTransitionRequest:transitionRequest];
         // ** //
     }

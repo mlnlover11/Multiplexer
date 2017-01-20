@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-enum RAGrabArea {
+typedef NS_ENUM(NSInteger, RAGrabArea) {
 	RAGrabAreaBottomLeftThird = 1,
 	RAGrabAreaBottomMiddleThird = 2,
 	RAGrabAreaBottomRightThird = 3,
@@ -78,10 +78,6 @@ enum RAGrabArea {
 
 -(BOOL) quickAccessUseGenericTabLabel;
 
-#if DEBUG
--(BOOL) debug_showIPCMessages;
-#endif
-
 -(BOOL) windowedMultitaskingEnabled;
 -(NSInteger) windowRotationLockMode;
 -(RAGrabArea) windowedMultitaskingGrabArea;
@@ -89,4 +85,4 @@ enum RAGrabArea {
 -(BOOL) onlyShowWindowBarIconsOnOverlay;
 
 -(NSString*) currentThemeIdentifier;
-@end 
+@end

@@ -85,9 +85,14 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     if (startTries > 5)
     {
         isPreloading = NO;
-        NSLog(@"[ReachApp] maxed out preload attempts for app %@", app.bundleIdentifier);
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:LOCALIZE(@"MULTIPLEXER") message:[NSString stringWithFormat:@"Unable to start app %@", app.displayName] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+        HBLogDebug(@"[ReachApp] maxed out preload attempts for app %@", app.bundleIdentifier);
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Zypen"
+                               message:[NSString stringWithFormat:@"Unable to start app %@", app.displayName]
+                               preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                          handler:^(UIAlertAction * action) {}];
+        [alert addAction:defaultAction];
+        [self.inputViewController presentViewController:alert animated:YES completion:nil];
         return;
     }
 
@@ -104,7 +109,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
         [UIApplication.sharedApplication launchApplicationWithIdentifier:self.bundleIdentifier suspended:YES];
         [[%c(FBProcessManager) sharedInstance] createApplicationProcessForBundleID:self.bundleIdentifier]; // ummm...?
     }
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ [self _preloadOrAttemptToUpdateReachabilityCounterpart]; }); 
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ [self _preloadOrAttemptToUpdateReachabilityCounterpart]; });
     // this ^ runs either way. when _preloadOrAttemptToUpdateReachabilityCounterpart runs, if the app is "loaded" it will not call preloadApp again, otherwise
     // it will call it again.
 }
@@ -133,7 +138,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     [self addSubview:view];
 
     [RAMessagingServer.sharedInstance setHosted:YES forIdentifier:app.bundleIdentifier completion:nil];
-    //if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         [RAHostedAppView iPad_iOS83_fixHosting];
 
     [RARunningAppsProvider.sharedInstance addTarget:self];
@@ -192,9 +197,8 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
             [self _actualLoadApp];
         }, failedBlock /* stupid commas */);
     }
-    else
+    else IF_ASPHALEIA2
     {
-        IF_ASPHALEIA2 {
             void (^failedBlock)() = ^{
                 [self removeLoadingIndicator];
                 if (!authenticationDidFailLabel)
@@ -218,10 +222,9 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
             ASPHALEIA2_AUTHENTICATE_APP(app.bundleIdentifier, ^{
                 [self _actualLoadApp];
             }, failedBlock);
-        }
-        else
-            [self _actualLoadApp];
     }
+    else
+        [self _actualLoadApp];
 
     if (self.showSplashscreenInsteadOfSpinner)
     {
@@ -342,7 +345,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
 
     if (_isCurrentlyHosting == NO)
         return;
-    
+
     _isCurrentlyHosting = NO;
 
     FBScene *scene = [app mainScene];
@@ -368,7 +371,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     if (contextHostManager)
     {
         [contextHostManager disableHostingForRequester:@"reachapp"];
-        contextHostManager = nil;    
+        contextHostManager = nil;
     }
 
     //if ([UIApplication.sharedApplication._accessibilityFrontMostApplication isEqual:app])
@@ -378,7 +381,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     __block BOOL didRun = NO;
     RAMessageCompletionCallback block = ^(BOOL success) {
         if (didRun || (weakSelf && [UIApplication.sharedApplication._accessibilityFrontMostApplication isEqual:weakSelf.app]))
-            return;        
+            return;
         if (!scene)
             return;
 
@@ -432,16 +435,16 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
             FBWindowContextHostManager *manager = (FBWindowContextHostManager*)[RAHostManager hostManagerForApp:app_];
             if (manager)
             {
-                NSLog(@"[ReachApp] rehosting for iPad: %@", bundleIdentifier);
+                HBLogDebug(@"[ReachApp] rehosting for iPad: %@", bundleIdentifier);
                 [manager enableHostingForRequester:@"reachapp" priority:1];
             }
         }
     }
-    
+
 }
 
 // This allows for any subviews (with gestures) (e.g. the SwipeOver bar with a negative y origin) to recieve touch events.
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
     BOOL isContained = NO;
     for (UIView *subview in self.subviews)

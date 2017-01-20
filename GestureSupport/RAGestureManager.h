@@ -2,13 +2,13 @@
 
 @class RAGestureCallback;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, RAGestureCallbackResult) {
 	RAGestureCallbackResultSuccessAndContinue,
 	RAGestureCallbackResultFailure,
 	RAGestureCallbackResultSuccessAndStop,
 
 	RAGestureCallbackResultSuccess = RAGestureCallbackResultSuccessAndContinue,
-} RAGestureCallbackResult;
+};
 
 @protocol RAGestureCallbackProtocol
 -(BOOL) RAGestureCallback_canHandle:(CGPoint)point velocity:(CGPoint)velocity;

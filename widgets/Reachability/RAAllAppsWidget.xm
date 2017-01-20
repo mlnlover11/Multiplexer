@@ -42,7 +42,11 @@
 	static NSMutableArray *allApps = nil;
 	if (!allApps)
 	{
-		allApps = [[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] mutableCopy];
+		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+			allApps = [[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] mutableCopy];
+		} else {
+			allApps = [[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] mutableCopy];
+		}
 	    [allApps sortUsingComparator: ^(NSString* a, NSString* b) {
 	    	NSString *a_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:a].displayName;
 	    	NSString *b_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:b].displayName;
@@ -57,12 +61,19 @@
 	for (NSString *str in allApps)
 	{
 		app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:str];
-        SBIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
-        SBIconView *iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+		SBApplicationIcon *icon = nil;
+		SBIconView *iconView = nil;
+		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+			icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
+			iconView = [[%c(SBIconViewMap) homescreenMap] _iconViewForIcon:icon];
+		} else {
+			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
+			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
+		}
         if (!iconView || [icon isKindOfClass:[%c(SBApplicationIcon) class]] == NO)
         	continue;
-        
-        if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
+
+    if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
 		{
 			if (isTop)
 			{
