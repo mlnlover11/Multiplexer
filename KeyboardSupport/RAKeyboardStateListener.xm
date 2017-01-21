@@ -19,7 +19,7 @@ BOOL isShowing = NO;
 
 - (void)didShow:(NSNotification*)notif
 {
-    NSLog(@"[ReachApp] keyboard didShow");
+    HBLogDebug(@"[ReachApp] keyboard didShow");
     _visible = YES;
     _size = [[notif.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
 
@@ -37,7 +37,7 @@ BOOL isShowing = NO;
 
 - (void)didHide
 {
-    NSLog(@"[ReachApp] keyboard didHide");
+    HBLogDebug(@"[ReachApp] keyboard didHide");
     _visible = NO;
 
     IF_NOT_SPRINGBOARD {
@@ -52,7 +52,7 @@ BOOL isShowing = NO;
 
 - (id)init
 {
-    if ((self = [super init])) 
+    if ((self = [super init]))
     {
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(didShow:) name:UIKeyboardDidShowNotification object:nil];
@@ -66,14 +66,14 @@ BOOL isShowing = NO;
 -(void) _setSize:(CGSize)size { _size = size; }
 @end
 
-void externalKeyboardDidShow(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) 
+void externalKeyboardDidShow(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
     [RAKeyboardStateListener.sharedInstance _setVisible:YES];
 }
 
-void externalKeyboardDidHide(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) 
+void externalKeyboardDidHide(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    //NSLog(@"[ReachApp] externalKeyboardDidHide");
+    //HBLogDebug(@"[ReachApp] externalKeyboardDidHide");
     [RAKeyboardStateListener.sharedInstance _setVisible:NO];
 }
 
@@ -97,7 +97,7 @@ void externalKeyboardDidHide(CFNotificationCenterRef center, void *observer, CFS
             assert(contextID == [[[UIKeyboard activeKeyboard] window] _contextId]);
     #endif
 
-            NSLog(@"[ReachApp] c id %d", contextID);
+            HBLogDebug(@"[ReachApp] c id %d", contextID);
         }
     };
 

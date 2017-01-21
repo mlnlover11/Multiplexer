@@ -17,7 +17,7 @@ static RAActivatorListener *sharedInstance;
 	  [RAMissionControlManager.sharedInstance toggleMissionControl:YES];
 		[[[%c(SBUIController) sharedInstance] _appSwitcherController] forceDismissAnimated:NO];
 	}
-    [event setHandled:YES];
+  [event setHandled:YES];
 }
 @end
 

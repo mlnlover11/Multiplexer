@@ -48,13 +48,13 @@
 	//[arr sortUsingComparator:^(RAWidgetSection *a, RAWidgetSection *b) {
 	//	return [@(a.sortOrder) compare:@(b.sortOrder)];
 	//}];
-	
+
 	[arr sortUsingComparator:^NSComparisonResult(RAWidgetSection *a, RAWidgetSection *b) {
 		if (a.sortOrder < b.sortOrder)
 			return NSOrderedAscending;
 		else if (a.sortOrder > b.sortOrder)
 			return NSOrderedDescending;
-		else 
+		else
 			return NSOrderedSame;
 	}];
 
@@ -91,7 +91,7 @@
 					[view addSubview:titleView];
 					currentY += titleView.frame.size.height + VERTICAL_PADDING;
 				}
-				
+
 				//sectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 				sectionView.backgroundColor = [UIColor clearColor];
 				sectionView.clipsToBounds = YES;
@@ -108,7 +108,7 @@
 		}
 		@catch (NSException *ex)
 		{
-			NSLog(@"[ReachApp] an error occurred creating the view for section '%@': %@", section.identifier, ex);
+			HBLogError(@"[ReachApp] an error occurred creating the view for section '%@': %@", section.identifier, ex);
 		}
 	}
 

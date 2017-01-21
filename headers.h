@@ -34,12 +34,6 @@
 
 #define GET_STATUSBAR_ORIENTATION (UIApplication.sharedApplication._accessibilityFrontMostApplication == nil ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
 
-#if DEBUG
-#define NSLog NSLog
-#else
-#define NSLog(...)
-#endif
-
 #if MULTIPLEXER_CORE
 extern BOOL $__IS_SPRINGBOARD;
 #define IS_SPRINGBOARD $__IS_SPRINGBOARD

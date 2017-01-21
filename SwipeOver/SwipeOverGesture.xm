@@ -27,16 +27,16 @@ CGRect adjustFrameForRotation()
     switch ([[UIApplication.sharedApplication _accessibilityFrontMostApplication] statusBarOrientation])
     {
         case UIInterfaceOrientationPortrait:
-            NSLog(@"[ReachApp] portrait");
+            HBLogDebug(@"[ReachApp] portrait");
             return (CGRect){ { width - portraitWidth + 5, (height - portraitHeight) / 2 }, { portraitWidth, portraitHeight } };
         case UIInterfaceOrientationPortraitUpsideDown:
-            NSLog(@"[ReachApp] portrait upside down");
+            HBLogDebug(@"[ReachApp] portrait upside down");
             return (CGRect){ { 0, 0}, { 50, 50 } };
         case UIInterfaceOrientationLandscapeLeft:
-            NSLog(@"[ReachApp] landscape left");
+            HBLogDebug(@"[ReachApp] landscape left");
             return (CGRect){ { ((width - portraitWidth) / 2), -(portraitWidth / 2) }, { portraitWidth, portraitHeight } };
         case UIInterfaceOrientationLandscapeRight:
-            NSLog(@"[ReachApp] landscape right");
+            HBLogDebug(@"[ReachApp] landscape right");
             return (CGRect){ { (height - portraitHeight) / 2, width - portraitWidth - 5 }, { portraitWidth, portraitHeight } };
     }
     return CGRectZero;
@@ -62,7 +62,7 @@ CGPoint adjustCenterForOffscreenSlide(CGPoint center)
 }
 
 CGAffineTransform adjustTransformRotation()
-{    
+{
     switch ([[UIApplication.sharedApplication _accessibilityFrontMostApplication] statusBarOrientation])
     {
         case UIInterfaceOrientationPortrait:
@@ -184,7 +184,7 @@ BOOL swipeOverLocationIsInValidArea(CGFloat y)
 
         if (![RASwipeOverManager.sharedInstance isUsingSwipeOver])
             [RASwipeOverManager.sharedInstance startUsingSwipeOver];
-        
+
         //if (state == UIGestureRecognizerStateChanged)
             [RASwipeOverManager.sharedInstance sizeViewForTranslation:translation state:state];
 
@@ -198,7 +198,7 @@ BOOL swipeOverLocationIsInValidArea(CGFloat y)
             if (CGRectContainsPoint(realKBFrame, location) || realKBFrame.size.height > 50)
                 return NO;
         }
-        
+
         return [[%c(RASettings) sharedInstance] swipeOverEnabled] && ![[%c(SBLockScreenManager) sharedInstance] isUILocked] && ![[%c(SBUIController) sharedInstance] isAppSwitcherShowing] && ![[%c(SBNotificationCenterController) sharedInstance] isVisible] && ![[%c(RAMissionControlManager) sharedInstance] isShowingMissionControl] && (swipeOverLocationIsInValidArea(location.y) || isShowingGrabber);
     } forEdge:UIRectEdgeRight identifier:@"com.efrederickson.reachapp.swipeover.systemgesture" priority:RAGesturePriorityDefault];
 }

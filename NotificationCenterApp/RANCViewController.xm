@@ -122,7 +122,7 @@ int rotationDegsForOrientation(int o)
 		appView.transform = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(rotationDegsForOrientation(UIApplication.sharedApplication.statusBarOrientation))); // Explicitly, SpringBoard's status bar since the NC is shown in SpringBoard
 		CGFloat scale = self.view.frame.size.height / UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height;
 		appView.transform = CGAffineTransformScale(appView.transform, scale, scale);
-		
+
 		// Align vertically
 		CGRect f = appView.frame;
 		f.origin.y = 0;
@@ -144,7 +144,7 @@ int rotationDegsForOrientation(int o)
 	if (appView.isCurrentlyHosting)
 	{
 		appView.hideStatusBar = NO;
-		[appView unloadApp];	
+		[appView unloadApp];
 	}
 }
 
@@ -155,7 +155,7 @@ int rotationDegsForOrientation(int o)
 	appView.hideStatusBar = NO;
 	if (appView.isCurrentlyHosting)
 	{
-		[appView unloadApp];	
+		[appView unloadApp];
 	}
 }
 
@@ -164,13 +164,13 @@ int rotationDegsForOrientation(int o)
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
 	// Override
-	NSLog(@"[ReachApp] RANCViewController: ignoring invocation: %@", anInvocation);
+	HBLogDebug(@"[ReachApp] RANCViewController: ignoring invocation: %@", anInvocation);
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
 	NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
-	if (signature == nil && class_respondsToSelector(%c(SBBulletinObserverViewController), aSelector)) 
+	if (signature == nil && class_respondsToSelector(%c(SBBulletinObserverViewController), aSelector))
 		signature = [%c(SBBulletinObserverViewController) instanceMethodSignatureForSelector:aSelector];
 	return signature;
 }

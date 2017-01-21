@@ -26,8 +26,8 @@ RAKeyboardWindow *keyboardWindow;
         //return;
     }
 
-    NSLog(@"[ReachApp] showing kb window %@", identifier);
-    keyboardWindow = [[RAKeyboardWindow alloc] init];   
+    HBLogDebug(@"[ReachApp] showing kb window %@", identifier);
+    keyboardWindow = [[RAKeyboardWindow alloc] init];
     overrideDisableForStatusBar = YES;
     [keyboardWindow setupForKeyboardAndShow:identifier];
     overrideDisableForStatusBar = NO;
@@ -36,7 +36,7 @@ RAKeyboardWindow *keyboardWindow;
 
 -(void) hideKeyboard
 {
-    NSLog(@"[ReachApp] remove kb window (%@)", _currentIdentifier);
+    HBLogDebug(@"[ReachApp] remove kb window (%@)", _currentIdentifier);
     keyboardWindow.hidden = YES;
     [keyboardWindow removeKeyboard];
     keyboardWindow = nil;

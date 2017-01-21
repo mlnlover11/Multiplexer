@@ -24,8 +24,8 @@
 
     unsigned int value = [RAMessagingServer.sharedInstance getStoredKeyboardContextIdForApp:identifier];
     self.layerHost.contextId = value;
-    
-    NSLog(@"[ReachApp] loaded keyboard view with %d", value);
+
+    HBLogDebug(@"[ReachApp] loaded keyboard view with %d", value);
     if (value == 0 && cancelFetchingContextId == NO)
     {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
@@ -37,7 +37,7 @@
 -(id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) 
+    if (self)
     {
         self.userInteractionEnabled = YES;
         self.layerHost = [[CALayerHost alloc] init];
@@ -48,7 +48,7 @@
         [self.layer addSublayer:self.layerHost];
         update = NO;
     }
-    
+
     return self;
 }
 

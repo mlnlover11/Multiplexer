@@ -108,7 +108,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 		if (_settings == nil)
 		{
-			NSLog(@"[ReachApp] could not load settings from CFPreferences or NSDictionary");
+			HBLogError(@"[ReachApp] could not load settings from CFPreferences or NSDictionary");
 		}
 
 		if ([previousNCAppSetting isEqual:self.NCApp] == NO)
@@ -348,7 +348,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 -(BOOL) isFirstRun
 {
-	NSLog(@"[ReachApp] %d", BOOL(@"isFirstRun", YES));
+	HBLogDebug(@"[ReachApp] %d", BOOL(@"isFirstRun", YES));
 	return BOOL(@"isFirstRun", YES);
 }
 

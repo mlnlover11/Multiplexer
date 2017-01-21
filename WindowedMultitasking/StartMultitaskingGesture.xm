@@ -16,7 +16,7 @@ BOOL locationIsInValidArea(CGFloat x)
     switch ([RASettings.sharedInstance windowedMultitaskingGrabArea])
     {
         case RAGrabAreaBottomLeftThird:
-        NSLog(@"[ReachApp] StartMultitaskingGesture: %f %f", x, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width);
+        HBLogDebug(@"[ReachApp] StartMultitaskingGesture: %f %f", x, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width);
             return x <= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 3.0;
         case RAGrabAreaBottomMiddleThird:
             return x >= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 3.0 && x <= (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 3.0) * 2;
@@ -120,7 +120,7 @@ BOOL locationIsInValidArea(CGFloat x)
                         [deactiveSets setFlag:YES forDeactivationSetting:20];
                         [deactiveSets setFlag:NO forDeactivationSetting:2];
                         [topApp _setDeactivationSettings:deactiveSets];
-                        
+
                         SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
                         [transaction begin];
 

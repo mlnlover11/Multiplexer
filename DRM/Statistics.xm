@@ -4,7 +4,7 @@
 {
 	IF_SPRINGBOARD {
 	#if DEBUG
-		NSLog(@"[ReachApp][DRM] Not checking statistics on debug build");
+		HBLogDebug(@"[ReachApp][DRM] Not checking statistics on debug build");
 	#else
 	    dispatch_async(dispatch_get_main_queue(), ^(void){
 		    NSString *statsPath = @"/var/mobile/Library/Preferences/.multiplexer.stats_checked";

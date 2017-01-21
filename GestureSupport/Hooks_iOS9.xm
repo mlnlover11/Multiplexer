@@ -95,7 +95,7 @@ struct VelocityData {
             location.y = location.x;
             location.x = t;
         }
-        NSLog(@"[ReachApp] _UIScreenEdgePanRecognizer location: %@", NSStringFromCGPoint(location));
+        HBLogDebug(@"[ReachApp] _UIScreenEdgePanRecognizer location: %@", NSStringFromCGPoint(location));
         if ([RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateBegan withPoint:location velocity:screenEdgePanRecognizer.RA_velocity forEdge:screenEdgePanRecognizer.targetEdges])
         {
             currentEdge9 = screenEdgePanRecognizer.targetEdges;

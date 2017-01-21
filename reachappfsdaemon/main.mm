@@ -24,7 +24,7 @@ int main(int argc, char **argv, char **envp) {
 			BOOL success = [infoPlist writeToURL:[NSURL URLWithString:path] atomically:YES];
 
 			if (!success)
-				NSLog(@"[ReachApp] FS Daemon: error writing to plist: %@", path);
+				HBLogError(@"[ReachApp] FS Daemon: error writing to plist: %@", path);
 			else
 				[NSFileManager.defaultManager removeItemAtPath:filePath error:nil];
 
