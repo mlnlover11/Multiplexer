@@ -21,7 +21,7 @@ BOOL willShowMissionControl = NO;
 
 	%orig;
 }
-
+/*
 -(BOOL)_appSwitcherSystemGestureShouldBegin:(id)arg1
 {
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
@@ -60,7 +60,7 @@ BOOL willShowMissionControl = NO;
 	}
 	return s;
 }
-
+*/
 - (_Bool)_activateAppSwitcher
 {
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
@@ -188,7 +188,6 @@ BOOL willShowMissionControl = NO;
 
 - (void)_layoutInOrientation:(long long)arg1
 {
-	HBLogDebug(@"Ran layout in orientation");
 	%orig;
 
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
@@ -229,7 +228,6 @@ BOOL willShowMissionControl = NO;
 -(void)viewDidAppear:(BOOL)a
 {
 	%orig;
-
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
 
 	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
@@ -426,8 +424,6 @@ BOOL willShowMissionControl = NO;
 }
 %end
 
-@interface SBDeckSwitcherViewController : UIViewController
-@end
 %hook SBDeckSwitcherViewController
 -(void)viewWillLayoutSubviews
 {

@@ -1485,3 +1485,6 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (CGRect)snapshotReferenceFrame;
 - (void)setSnapshotReferenceFrame:(CGRect)arg1 ;
 @end
+
+@interface SBDeckSwitcherViewController : UIViewController
+@end
