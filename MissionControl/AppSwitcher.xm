@@ -22,6 +22,45 @@ BOOL willShowMissionControl = NO;
 	%orig;
 }
 
+-(BOOL)_appSwitcherSystemGestureShouldBegin:(id)arg1
+{
+	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
+	willShowMissionControl = NO;
+
+	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled])
+	{
+		if (RAMissionControlManager.sharedInstance.isShowingMissionControl == NO)
+		{
+			[RAMissionControlManager.sharedInstance showMissionControl:YES];
+	    }
+	    else
+	    	[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+
+		return YES;
+	}
+	else
+	{
+		if ([RAMissionControlManager.sharedInstance isShowingMissionControl])
+		{
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
+	}
+
+	BOOL s = %orig;
+	if (s && [[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999] != nil)
+	{
+		[UIView animateWithDuration:0.3 animations:^{
+			[[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].alpha = 1;
+		}];
+	}
+	if (s)
+	{
+		[[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO];
+		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] unloadApps];
+	}
+	return s;
+}
+
 - (_Bool)_activateAppSwitcher
 {
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
@@ -149,6 +188,7 @@ BOOL willShowMissionControl = NO;
 
 - (void)_layoutInOrientation:(long long)arg1
 {
+	HBLogDebug(@"Ran layout in orientation");
 	%orig;
 
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
@@ -236,8 +276,13 @@ BOOL willShowMissionControl = NO;
 
 %new -(RAGestureCallbackResult) RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge
 {
-	[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureFailed)];
-	[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureCancelled)];
+	if ([%c(SBUIController) respondsToSelector:@selector(_showNotificationsGestureFailed)]) {
+		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureFailed)];
+		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureCancelled)];
+	} else {
+		[[%c(SBNotificationCenterController) sharedInstance] performSelector:@selector(_showNotificationCenterGestureFailed)];
+		[[%c(SBNotificationCenterController) sharedInstance] performSelector:@selector(_showNotificationCenterGestureCancelled)];
+	}
 
 	static CGFloat origY = -1;
 	static UIView *fakeView;
@@ -381,12 +426,11 @@ BOOL willShowMissionControl = NO;
 }
 %end
 
-@interface SBAppSwitcherPageViewController : UIViewController
+@interface SBDeckSwitcherViewController : UIViewController
 @end
-%hook SBAppSwitcherPageViewController
-- (void)_layout
+%hook SBDeckSwitcherViewController
+-(void)viewWillLayoutSubviews
 {
-	HBLogDebug(@"Ran _layout");
 	%orig;
 
 	UIView *view = [self view];
@@ -397,7 +441,7 @@ BOOL willShowMissionControl = NO;
 		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 		{
 			width = 60;
-		    height = 40;
+		  height = 40;
 		}
 		SBControlCenterGrabberView *grabber = [[%c(SBControlCenterGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 		grabber.center = CGPointMake(view.frame.size.width / 2, 20/2);
@@ -413,10 +457,6 @@ BOOL willShowMissionControl = NO;
 		[grabber.chevronView setState:1 animated:NO];
 
 		grabber.layer.cornerRadius = 5;
-
-		//[grabber.chevronView setState:1 animated:YES];
-		grabber.tag = 999;
-		[view addSubview:grabber];
 
 		//[grabber.chevronView setState:1 animated:YES];
 		grabber.tag = 999;

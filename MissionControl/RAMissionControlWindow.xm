@@ -16,7 +16,7 @@
 	UIScrollView *desktopScrollView, *windowedAppScrollView, *otherRunningAppsScrollView;
 	UILabel *desktopLabel, *windowedLabel, *otherLabel;
 	UIButton *windowedKillAllButton, *otherKillAllButton;
-	
+
 	UIImageView *trashImageView;
 	UIView *shadowView;
 	UIImage *trashIcon;
@@ -42,7 +42,7 @@
 -(UIWindowLevel) windowLevel
 {
 	//return UIWindowLevelStatusBar + 1;
-	return 1000; 
+	return 1000;
 }
 
 - (BOOL)_shouldAutorotateToInterfaceOrientation:(int)arg1 checkForDismissal:(BOOL)arg2 isRotationDisabled:(BOOL*)arg3
@@ -61,7 +61,7 @@
 		count += 1;
 		panePadding += width;
 	}
-	panePadding = (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width - panePadding) / 5; 
+	panePadding = (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width - panePadding) / 5;
 	/*if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 	{
 		width = (UIScreen.mainScreen.bounds.size.width / 3) * 0.9;
@@ -123,7 +123,7 @@
 		[preview addGestureRecognizer:g];
 
 		UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget: self action:@selector(handleDoubleDesktopTap:)];
-		doubleTap.numberOfTapsRequired = 2; 
+		doubleTap.numberOfTapsRequired = 2;
 		[preview addGestureRecognizer:doubleTap];
 
 		[g requireGestureRecognizerToFail:doubleTap];
@@ -167,9 +167,15 @@
 	[runningApplications sortUsingComparator:^NSComparisonResult(SBApplication *obj1, SBApplication *obj2) {
     	return [@([switcherOrder indexOfObject:obj1.bundleIdentifier]) compare:@([switcherOrder indexOfObject:obj2.bundleIdentifier])];
 	}];
-	
+
 	appsWithoutWindows = [runningApplications mutableCopy];
-	NSArray *visibleIcons = [[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers];
+	NSArray *visibleIcons = nil;
+	if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
+		visibleIcons = [[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers];
+	} else {
+		visibleIcons = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers];
+	}
+
 	for (SBApplication *app in runningApplications)
 	{
 		if ([visibleIcons containsObject:app.bundleIdentifier] == NO)// || [RAMissionControlManager.sharedInstance.inhibitedApplications containsObject:app.bundleIdentifier])
@@ -423,7 +429,7 @@
 			draggedView = [gesture.view snapshotViewAfterScreenUpdates:YES];
 			draggedView.frame = gesture.view.frame;
 			draggedView.center = [gesture.view.superview convertPoint:gesture.view.center toView:self];
-	
+
 			[self addSubview:draggedView];
 			gesture.view.alpha = 0.6;
 
@@ -497,7 +503,7 @@
 						SBApplication *app = ((RAMissionControlPreviewView*)gesture.view).application;
 
 						[[[%c(RADesktopManager) sharedInstance] currentDesktop] removeAppWithIdentifier:app.bundleIdentifier animated:NO];
-						
+
 						[desktop createAppWindowForSBApplication:app animated:NO];
 
 						[[%c(RASnapshotProvider) sharedInstance] forceReloadSnapshotOfDesktop:[[%c(RADesktopManager) sharedInstance] currentDesktop]];
@@ -511,11 +517,11 @@
 			}
 		}
 
-		[UIView animateWithDuration:0.4 animations:^{ 
+		[UIView animateWithDuration:0.4 animations:^{
 			if (!didKill)
 			{
 				draggedView.transform = CGAffineTransformIdentity;
-				draggedView.center = initialCenter; 
+				draggedView.center = initialCenter;
 			}
 		} completion:^(BOOL _) {
 			[draggedView removeFromSuperview];
@@ -666,7 +672,7 @@
 {
     NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
     UIView *subview;
-    while ((subview = [objects nextObject])) 
+    while ((subview = [objects nextObject]))
     {
         UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
         if (success)
@@ -676,7 +682,7 @@
     //return [super hitTest:point withEvent:event];
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
 	if (CGRectContainsPoint(self.frame, point))
 		return YES;
