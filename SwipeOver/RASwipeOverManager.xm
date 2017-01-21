@@ -51,7 +51,7 @@ extern int rotationDegsForOrientation(int o);
 	if (currentAppIdentifier)
 	{
 		[[%c(RAMessagingServer) sharedInstance] endResizingApp:currentAppIdentifier completion:nil];
-		[[%c(RAMessagingServer) sharedInstance] setShouldUseExternalKeyboard:YES forApp:currentAppIdentifier completion:nil];	
+		[[%c(RAMessagingServer) sharedInstance] setShouldUseExternalKeyboard:YES forApp:currentAppIdentifier completion:nil];
 	}
 
 	[%c(RAOrientationLocker) unlockOrientation];
@@ -93,7 +93,7 @@ extern int rotationDegsForOrientation(int o);
 	[overlayWindow showEnoughToDarkenUnderlyingApp];
 	[overlayWindow makeKeyAndVisible];
 	[overlayWindow updateForOrientation:UIApplication.sharedApplication.statusBarOrientation];
-	
+
 	[self showApp:nil];
 }
 
@@ -136,13 +136,13 @@ extern int rotationDegsForOrientation(int o);
 
     RAHostedAppView *view = [[%c(RAHostedAppView) alloc] initWithBundleIdentifier:identifier];
     view.autosizesApp = NO;
-	if (overlayWindow.isHidingUnderlyingApp == NO)
-		view.autosizesApp = YES;
+		if (overlayWindow.isHidingUnderlyingApp == NO)
+			view.autosizesApp = YES;
     view.shouldUseExternalKeyboard = YES;
     view.allowHidingStatusBar = NO;
     view.frame = UIScreen.mainScreen._referenceBounds;
     view.showSplashscreenInsteadOfSpinner = YES;
-	view.renderWallpaper = YES;
+		view.renderWallpaper = YES;
     [view rotateToOrientation:UIInterfaceOrientationPortrait];
     [view loadApp];
 
@@ -159,14 +159,14 @@ extern int rotationDegsForOrientation(int o);
 
     if (overlayWindow.isHidingUnderlyingApp == NO) // side-by-side
 	    view.frame = CGRectMake(10, 0, view.frame.size.width, view.frame.size.height);
-	else // overlay
-	{
-		view.frame = CGRectMake(SCREEN_WIDTH - 50, 0, view.frame.size.width, view.frame.size.height);
+		else // overlay
+		{
+			view.frame = CGRectMake(SCREEN_WIDTH - 50, 0, view.frame.size.width, view.frame.size.height);
 
-		CGFloat scale = 0.1; // MIN(MAX(scale, 0.1), 0.98);
-		view.transform = CGAffineTransformMakeScale(scale, scale);
-		view.center = (CGPoint) { SCREEN_WIDTH - (view.frame.size.width / 2), view.center.y };
-	}
+			CGFloat scale = 0.1; // MIN(MAX(scale, 0.1), 0.98);
+			view.transform = CGAffineTransformMakeScale(scale, scale);
+			view.center = (CGPoint) { SCREEN_WIDTH - (view.frame.size.width / 2), view.center.y };
+		}
 
     view.tag = RASWIPEOVER_VIEW_TAG;
     [overlayWindow addSubview:view];
@@ -227,10 +227,10 @@ extern int rotationDegsForOrientation(int o);
 		CGFloat underWidth = [overlayWindow isHidingUnderlyingApp] ? -1 : overlayWindow.frame.origin.x;
 		[[%c(RAMessagingServer) sharedInstance] resizeApp:currentAppIdentifier toSize:CGSizeMake(underWidth, -1) completion:nil];
 	}
-	
+
 	if (overlayWindow.isShowingAppSelector && reloadAppSelectorSizeNow)
 		[self showAppSelector];
-	else if (overlayWindow.isHidingUnderlyingApp == NO) // Update swiped-over app in side-by-side mode. RAHostedAppView takes care of the app sizing if we resize the RAHostedAppView. 
+	else if (overlayWindow.isHidingUnderlyingApp == NO) // Update swiped-over app in side-by-side mode. RAHostedAppView takes care of the app sizing if we resize the RAHostedAppView.
 	{
 		overlayWindow.currentView.frame = CGRectMake(10, 0, SCREEN_WIDTH - overlayWindow.frame.origin.x - 10, overlayWindow.currentView.frame.size.height);
 	}
@@ -244,7 +244,7 @@ extern int rotationDegsForOrientation(int o);
 
 	if (start == 0)
 		start = targetView.center.x;
-	
+
 	if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled || state == UIGestureRecognizerStateFailed)
 	{
 		lastX = -1;
@@ -254,7 +254,7 @@ extern int rotationDegsForOrientation(int o);
 		CGFloat scale = (SCREEN_WIDTH - targetView.frame.origin.x) / [overlayWindow currentView].bounds.size.width;
 		if (scale <= 0.12 && (!CGPointEqualToPoint(translation, CGPointZero)))
 		{
-			[self stopUsingSwipeOver]; 
+			[self stopUsingSwipeOver];
 			return;
 		}
 	}
@@ -272,7 +272,7 @@ extern int rotationDegsForOrientation(int o);
 				if (lastX == -1)
 					lastX = translation.x;
 				CGFloat newScale = (lastX - translation.x) / SCREEN_WIDTH;
-				lastX = translation.x; 
+				lastX = translation.x;
 
 				newScale = newScale + sqrt(targetView.transform.a * targetView.transform.a + targetView.transform.c * targetView.transform.c);
 				CGFloat scale = MIN(MAX(newScale, 0.1), UIInterfaceOrientationIsLandscape(UIApplication.sharedApplication.statusBarOrientation) ? (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / targetView.bounds.size.height) - 0.02 : 0.98);
@@ -291,7 +291,7 @@ extern int rotationDegsForOrientation(int o);
 				//targetView.transform = CGAffineTransformMakeScale(scale, scale);
 				//targetView.center = (CGPoint) { SCREEN_WIDTH - (targetView.frame.size.width / 2), targetView.center.y };
 			}
-		} 
+		}
 		else
 		{
 			if (overlayOriginX == -1)

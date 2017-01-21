@@ -90,7 +90,7 @@ BOOL willShowMissionControl = NO;
 	{
 		[RAMissionControlManager.sharedInstance hideMissionControl:arg1];
 	}
-	
+
 	%orig;
 }
 %end
@@ -150,7 +150,7 @@ BOOL willShowMissionControl = NO;
 - (void)_layoutInOrientation:(long long)arg1
 {
 	%orig;
-	
+
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
 
 	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
@@ -163,7 +163,7 @@ BOOL willShowMissionControl = NO;
 		}
 		SBControlCenterGrabberView *grabber = [[%c(SBControlCenterGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 		grabber.center = CGPointMake(view.frame.size.width / 2, 20/2);
-		
+
 		grabber.backgroundColor = [UIColor clearColor];
 		//grabber.chevronView.vibrantSettings = [%c(_SBFVibrantSettings) vibrantSettingsWithReferenceColor:UIColor.whiteColor referenceContrast:0.5 legibilitySettings:nil];
 
@@ -198,12 +198,12 @@ BOOL willShowMissionControl = NO;
 		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 		{
 			width = 60;
-		    height = 40;
+		  height = 40;
 		}
 		SBControlCenterGrabberView *grabber = [[%c(SBControlCenterGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 		grabber.center = CGPointMake(view.frame.size.width / 2, 20/2);
-		
-		
+
+
 		grabber.backgroundColor = [UIColor clearColor];
 		//grabber.chevronView.vibrantSettings = [%c(_SBFVibrantSettings) vibrantSettingsWithReferenceColor:UIColor.whiteColor referenceContrast:0.5 legibilitySettings:nil];
 
@@ -330,15 +330,15 @@ BOOL willShowMissionControl = NO;
 		origY = fakeView.center.y;
 	}
 
-	if (state == UIGestureRecognizerStateChanged)	
+	if (state == UIGestureRecognizerStateChanged)
 		fakeView.center = (CGPoint) { fakeView.center.x, origY + location.y };
-	
+
 	if (state == UIGestureRecognizerStateEnded)
 	{
 		//NSLog(@"[ReachApp] %@ + %@ = %@ > %@", NSStringFromCGPoint(fakeView.frame.origin), NSStringFromCGPoint(velocity), @(fakeView.frame.origin.y + velocity.y), @(-(UIScreen.mainScreen.bounds.size.height / 2)));
 
 		if (fakeView.frame.origin.y + velocity.y > -(UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 2))
-		{			
+		{
 			willShowMissionControl = YES;
 			CGFloat distance = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - (fakeView.frame.origin.y + fakeView.frame.size.height);
 			CGFloat duration = MIN(distance / velocity.y, 0.3);
@@ -386,6 +386,7 @@ BOOL willShowMissionControl = NO;
 %hook SBAppSwitcherPageViewController
 - (void)_layout
 {
+	HBLogDebug(@"Ran _layout");
 	%orig;
 
 	UIView *view = [self view];
@@ -400,8 +401,8 @@ BOOL willShowMissionControl = NO;
 		}
 		SBControlCenterGrabberView *grabber = [[%c(SBControlCenterGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 		grabber.center = CGPointMake(view.frame.size.width / 2, 20/2);
-		
-		
+
+
 		grabber.backgroundColor = [UIColor clearColor];
 		//grabber.chevronView.vibrantSettings = [%c(_SBFVibrantSettings) vibrantSettingsWithReferenceColor:UIColor.whiteColor referenceContrast:0.5 legibilitySettings:nil];
 

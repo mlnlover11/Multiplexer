@@ -6,6 +6,7 @@
 	if (self = [super initWithFrame:frame])
 	{
   		self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.7];
+			self.scrollEnabled = YES;
 	}
 	return self;
 }
@@ -14,18 +15,18 @@
 {
 	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
-    static CGSize fullSize = [%c(SBIconView) defaultIconSize];
-    fullSize.height = fullSize.width;
-    CGFloat padding = 20;
+  static CGSize fullSize = [%c(SBIconView) defaultIconSize];
+  fullSize.height = fullSize.width;
+  CGFloat padding = 20;
 
-    NSInteger numIconsPerLine = 0;
-    CGFloat tmpWidth = 10;
-    while (tmpWidth + fullSize.width <= self.frame.size.width)
-    {
-        numIconsPerLine++;
-        tmpWidth += fullSize.width + 20;
-    }
-    padding = (self.frame.size.width - (numIconsPerLine * fullSize.width)) / (numIconsPerLine + 1);
+  NSInteger numIconsPerLine = 0;
+  CGFloat tmpWidth = 10;
+  while (tmpWidth + fullSize.width <= self.frame.size.width)
+  {
+      numIconsPerLine++;
+      tmpWidth += fullSize.width + 20;
+  }
+  padding = (self.frame.size.width - (numIconsPerLine * fullSize.width)) / (numIconsPerLine + 1);
 
 	CGSize contentSize = CGSizeMake(padding, 10);
 	int horizontal = 0;
@@ -78,7 +79,7 @@
 	}
 	contentSize.width = self.frame.size.width;
 	contentSize.height += fullSize.height * 1.5;
-	[self setContentSize:contentSize];
+	self.contentSize = contentSize;
 }
 
 -(void) appViewItemTap:(UITapGestureRecognizer*)recognizer

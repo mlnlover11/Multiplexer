@@ -98,19 +98,19 @@
 -(void) handlePan:(UIPanGestureRecognizer*)gesture
 {
 	CGPoint newPoint = [gesture translationInView:gesture.view];
-    [RASwipeOverManager.sharedInstance sizeViewForTranslation:newPoint state:gesture.state];
+  [RASwipeOverManager.sharedInstance sizeViewForTranslation:newPoint state:gesture.state];
 }
 
 -(void) longPress:(UILongPressGestureRecognizer*)gesture
 {
 	[RASwipeOverManager.sharedInstance closeCurrentView];
-    if ([[self currentView] isKindOfClass:[%c(RAAppSelectorView) class]])
-    {
-    	[(RAAppSelectorView*)[self currentView] relayoutApps];
-    	[self currentView].frame = CGRectMake(isHidingUnderlyingApp ? 0 : 10, 0, self.frame.size.width - (isHidingUnderlyingApp ? 0 : 10), self.frame.size.height);
-    	return;
-    }
-    RAAppSelectorView *appSelector = [[%c(RAAppSelectorView) alloc] initWithFrame:CGRectMake(isHidingUnderlyingApp ? 0 : 10, 0, self.frame.size.width - (isHidingUnderlyingApp ? 0 : 10), self.frame.size.height)];
+  if ([[self currentView] isKindOfClass:[%c(RAAppSelectorView) class]])
+  {
+  	[(RAAppSelectorView*)[self currentView] relayoutApps];
+  	[self currentView].frame = CGRectMake(isHidingUnderlyingApp ? 0 : 10, 0, self.frame.size.width - (isHidingUnderlyingApp ? 0 : 10), self.frame.size.height);
+  	return;
+  }
+  RAAppSelectorView *appSelector = [[%c(RAAppSelectorView) alloc] initWithFrame:CGRectMake(isHidingUnderlyingApp ? 0 : 10, 0, self.frame.size.width - (isHidingUnderlyingApp ? 0 : 10), self.frame.size.height)];
 	appSelector.tag = RASWIPEOVER_VIEW_TAG;
 	appSelector.target = self;
 	[appSelector relayoutApps];

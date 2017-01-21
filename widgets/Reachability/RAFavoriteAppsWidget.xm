@@ -53,10 +53,10 @@
 			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
 			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
 		}
-        if (!iconView)
-        	continue;
+    if (!iconView)
+    	continue;
 
-        if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
+    if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
 		{
 			if (isTop)
 			{
@@ -73,16 +73,16 @@
 			isTop = !isTop;
 		}
 
-        iconView.frame = CGRectMake(contentSize.width, contentSize.height, iconView.frame.size.width, iconView.frame.size.height);
+    iconView.frame = CGRectMake(contentSize.width, contentSize.height, iconView.frame.size.width, iconView.frame.size.height);
 
-        iconView.tag = app.pid;
-        iconView.restorationIdentifier = app.bundleIdentifier;
-        UITapGestureRecognizer *iconViewTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(appViewItemTap:)];
-        [iconView addGestureRecognizer:iconViewTapGestureRecognizer];
+    iconView.tag = app.pid;
+    iconView.restorationIdentifier = app.bundleIdentifier;
+    UITapGestureRecognizer *iconViewTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(appViewItemTap:)];
+    [iconView addGestureRecognizer:iconViewTapGestureRecognizer];
 
-        [favoritesView addSubview:iconView];
+    [favoritesView addSubview:iconView];
 
-        contentSize.width += iconView.frame.size.width + spacing;
+    contentSize.width += iconView.frame.size.width + spacing;
 	}
 	contentSize.width = width;
 	contentSize.height = 10 + ((size.height + 10) * (hasSecondRow ? 2 : 1));
