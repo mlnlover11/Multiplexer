@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <Preferences/PSSwitchTableCell.h>
@@ -35,9 +38,9 @@
 -(UIView*) headerView
 {
     RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
-    header.colors = @[ 
+    header.colors = @[
         (id) [UIColor colorWithRed:255/255.0f green:94/255.0f blue:58/255.0f alpha:1.0f].CGColor,
-        (id) [UIColor colorWithRed:255/255.0f green:149/255.0f blue:0/255.0f alpha:1.0f].CGColor, 
+        (id) [UIColor colorWithRed:255/255.0f green:149/255.0f blue:0/255.0f alpha:1.0f].CGColor,
     ];
     header.shouldBlend = NO;
     header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/EmpoleonHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(32, 32)]];
@@ -194,7 +197,7 @@
     {
         LAListenerSettingsViewController *vc = [[objc_getClass("LAListenerSettingsViewController") alloc] init];
         vc.listenerName = @"com.efrederickson.reachapp.windowedmultitasking.sortWindows";
-        [self.rootController pushViewController:vc animated:YES];
+        [self.rootController pushController:vc animate:YES];
     }
 }
 
@@ -210,7 +213,7 @@
     {
         LAListenerSettingsViewController *vc = [[objc_getClass("LAListenerSettingsViewController") alloc] init];
         vc.listenerName = @"com.efrederickson.reachapp.windowedmultitasking.toggleEditMode";
-        [self.rootController pushViewController:vc animated:YES];
+        [self.rootController pushController:vc animate:YES];
     }
 }
 @end

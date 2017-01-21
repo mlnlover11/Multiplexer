@@ -1,13 +1,13 @@
 ARCHS = armv7 armv7s arm64
-CFLAGS = -I../Messaging/
+CFLAGS = -I../Messaging/ -O2
 #CFLAGS += -fno-objc-arc
-LDFLAGS += -Wl,-segalign,4000
 
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = ReachAppBackboarddHooks
 ReachAppBackboarddHooks_FILES = Tweak.xm
-ReachAppBackboarddHooks_LIBRARIES = IOKit
+ReachAppBackboarddHooks_PRIVATE_FRAMEWORKS = AppSupport IOKit
+ReachAppBackboarddHooks_LIBRARIES = rocketbootstrap
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 

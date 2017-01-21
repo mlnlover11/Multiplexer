@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <Preferences/PSSwitchTableCell.h>
@@ -36,9 +39,9 @@
 -(UIView*) headerView
 {
     RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
-    header.colors = @[ 
-        (id) [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f].CGColor, 
-        (id) [UIColor colorWithRed:255/255.0f green:111/255.0f blue:124/255.0f alpha:1.0f].CGColor 
+    header.colors = @[
+        (id) [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f].CGColor,
+        (id) [UIColor colorWithRed:255/255.0f green:111/255.0f blue:124/255.0f alpha:1.0f].CGColor
     ];
     header.shouldBlend = NO;
     header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/BackgrounderHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(15, 33)]];
@@ -92,7 +95,7 @@
              },
 
              @{ @"label": @"Global", @"footerText": @"" },
-    
+
              @{
                 @"cell": @"PSLinkListCell",
                 @"label": @"Background Mode",
@@ -115,7 +118,7 @@
                 @"cell": @"PSLinkListCell",
                 @"detail": @"RABackgrounderStatusbarOptionsListController",
                 @"label": @"Status Bar Indicator Options",
-            },   
+            },
              @{ @"label": @"Specific" },
              @{
                 @"cell": @"PSLinkCell",
@@ -137,7 +140,7 @@
     {
         LAListenerSettingsViewController *vc = [[objc_getClass("LAListenerSettingsViewController") alloc] init];
         vc.listenerName = @"com.efrederickson.reachapp.backgrounder.togglemode";
-        [self.rootController pushViewController:vc animated:YES];
+        [self.rootController pushController:vc animate:YES];
     }
 }
 @end
@@ -148,7 +151,7 @@
 @implementation RABackgrounderIconIndicatorOptionsListController
 -(UIColor*) navigationTintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
 -(BOOL) showHeartImage { return NO; }
--(NSArray*) customSpecifiers 
+-(NSArray*) customSpecifiers
 {
     return @[
              @{
@@ -177,7 +180,7 @@
 @implementation RABackgrounderStatusbarOptionsListController
 -(UIColor*) navigationTintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
 -(BOOL) showHeartImage { return NO; }
--(NSArray*) customSpecifiers 
+-(NSArray*) customSpecifiers
 {
     return @[
              @{
@@ -195,7 +198,7 @@
                 @"key": @"shouldShowStatusBarNativeIcons",
                 @"defaults": @"com.efrederickson.reachapp.settings",
                 @"PostNotification": @"com.efrederickson.reachapp.settings/reloadSettings",
-             },        
+             },
                  ];
 }
 @end

@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <Preferences/PSSwitchTableCell.h>
@@ -33,9 +36,9 @@
 -(UIView*) headerView
 {
     RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50)];
-    header.colors = @[ 
+    header.colors = @[
         (id) [UIColor colorWithRed:90/255.0f green:212/255.0f blue:39/255.0f alpha:1.0f].CGColor,
-        (id) [UIColor colorWithRed:164/255.0f green:231/255.0f blue:134/255.0f alpha:1.0f].CGColor, 
+        (id) [UIColor colorWithRed:164/255.0f green:231/255.0f blue:134/255.0f alpha:1.0f].CGColor,
     ];
     header.shouldBlend = NO;
     header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/NCAppHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(53, 32)]];
@@ -70,7 +73,7 @@
                  @"PostNotification": @"com.efrederickson.reachapp.settings/reloadSettings",
                  },
              @{ @"footerText": @"Instead of using the app's name, the tab label will simply show \"App\"." },
-             @{ 
+             @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
                  @"defaults": @"com.efrederickson.reachapp.settings",
@@ -79,7 +82,7 @@
                  @"PostNotification": @"com.efrederickson.reachapp.settings/reloadSettings",
                  },
              @{ @"footerText": @"Instead of displaying a label, this will completely hide the Quick Access tab on the Lock Screen." },
-             @{ 
+             @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
                  @"defaults": @"com.efrederickson.reachapp.settings",
@@ -164,18 +167,18 @@
 -(id)init
 {
     if (!(self = [super init])) return nil;
-    
+
     CGRect bounds = [[UIScreen mainScreen] bounds];
-    
+
     _dataSource = [[RANCApplicationTableDataSource alloc] init];
-    
+
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
     _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _tableView.delegate = self;
     _tableView.dataSource = _dataSource;
     _dataSource.tableView = _tableView;
     [self updateDataSource:nil];
-    
+
     return self;
 }
 
@@ -194,7 +197,7 @@
 
     UITableViewCellAccessoryType type = [cell accessoryType];
     BOOL selected = type == UITableViewCellAccessoryCheckmark;
-    
+
     NSString *identifier = [_dataSource displayIdentifierForIndexPath:indexPath];
     if (selected)
         CFPreferencesSetAppValue((__bridge CFStringRef)@"NCApp", (CFPropertyListRef)(identifier), CFSTR("com.efrederickson.reachapp.settings"));
@@ -209,7 +212,7 @@
     [alert show];
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 1)
     {

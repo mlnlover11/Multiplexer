@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <Preferences/PSSwitchTableCell.h>
@@ -30,9 +33,9 @@
 -(UIView*) headerView
 {
     RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
-    header.colors = @[ 
+    header.colors = @[
         (id) [UIColor colorWithRed:88/255.0f green:86/255.0f blue:214/255.0f alpha:1.0f].CGColor,
-        (id) [UIColor colorWithRed:198/255.0f green:68/255.0f blue:252/255.0f alpha:1.0f].CGColor, 
+        (id) [UIColor colorWithRed:198/255.0f green:68/255.0f blue:252/255.0f alpha:1.0f].CGColor,
     ];
     header.shouldBlend = NO;
     header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/SwipeOverHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(54, 32)]];
@@ -89,4 +92,3 @@
             ];
 }
 @end
-

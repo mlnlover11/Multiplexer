@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <Preferences/PSSwitchTableCell.h>
@@ -33,9 +36,9 @@
 -(UIView*) headerView
 {
     RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
-    header.colors = @[ 
-        (id) [UIColor colorWithRed:29/255.0f green:119/255.0f blue:239/255.0f alpha:1.0f].CGColor, 
-        (id) [UIColor colorWithRed:82/255.0f green:191/255.0f blue:232/255.0f alpha:1.0f].CGColor 
+    header.colors = @[
+        (id) [UIColor colorWithRed:29/255.0f green:119/255.0f blue:239/255.0f alpha:1.0f].CGColor,
+        (id) [UIColor colorWithRed:82/255.0f green:191/255.0f blue:232/255.0f alpha:1.0f].CGColor
     ];
     header.shouldBlend = NO;
     //header.title = @"ReachApp";
@@ -177,7 +180,7 @@
 
 @implementation RAAppChooserOptionsListController
 -(BOOL) showHeartImage { return NO; }
--(NSArray*) customSpecifiers 
+-(NSArray*) customSpecifiers
 {
     return @[
              @{ @"footerText": @"If enabled, the app selector will scale to the size of available apps." },
@@ -189,7 +192,7 @@
                  @"label": @"Auto-size Widget Chooser",
                  @"PostNotification": @"com.efrederickson.reachapp.settings/reloadSettings",
                  },
-             
+
              @{ @"footerText": @"If enabled, a list of your recent apps will display in the app selector." },
              @{
                  @"cell": @"PSSwitchCell",
@@ -242,7 +245,7 @@
 
 @interface RASwitchCell : PSSwitchTableCell //our class
 @end
- 
+
 @implementation RASwitchCell
 -(id)initWithStyle:(int)arg1 reuseIdentifier:(id)arg2 specifier:(id)arg3 { //init method
     self = [super initWithStyle:arg1 reuseIdentifier:arg2 specifier:arg3]; //call the super init method
@@ -318,18 +321,18 @@
 -(id)init
 {
     if (!(self = [super init])) return nil;
-    
+
     CGRect bounds = [[UIScreen mainScreen] bounds];
-    
+
     _dataSource = [[RAApplicationTableDataSource alloc] init];
-    
+
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
     _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _tableView.delegate = self;
     _tableView.dataSource = _dataSource;
     _dataSource.tableView = _tableView;
     [self updateDataSource:nil];
-    
+
     return self;
 }
 
@@ -348,7 +351,7 @@
 
     UITableViewCellAccessoryType type = [cell accessoryType];
     BOOL selected = type == UITableViewCellAccessoryCheckmark;
-    
+
     NSString *identifier = [_dataSource displayIdentifierForIndexPath:indexPath];
     CFPreferencesSetAppValue((__bridge CFStringRef)[NSString stringWithFormat:@"Favorites-%@", identifier], (CFPropertyListRef)(@(selected)), CFSTR("com.efrederickson.reachapp.settings"));
 

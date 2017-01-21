@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <SettingsKit/SKStandardController.h>
@@ -144,7 +147,7 @@ Crafted with love in 🇨🇦 and 🇺🇸. \n\
 
 -(void) openElijahTwitter { [SKSharedHelper openTwitter:@"daementor"]; }
 -(void) openAndrewTwitter { [SKSharedHelper openTwitter:@"drewplex"]; }
--(void) openAndiTwitter { [SKSharedHelper openTwitter:@"Nexuist"]; } 
+-(void) openAndiTwitter { [SKSharedHelper openTwitter:@"Nexuist"]; }
 -(void) openBetaPage { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://www.reddit.com/user/beta382"]]; }
 -(void) openChonTwitter { [SKSharedHelper openTwitter:@"HikoMitsuketa"]; }
 -(void) openDavidTwitter { [SKSharedHelper openTwitter:@"djaovx"]; }

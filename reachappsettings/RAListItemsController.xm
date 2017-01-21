@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKTintedListController.h>
 
 @interface PSListItemsController (tableView)
@@ -14,7 +17,7 @@
 @implementation RAListItemsController
 -(UIColor*) navigationTintColor { return [UIColor blackColor]; }
 
-- (void)viewWillAppear:(BOOL)animated 
+- (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 
@@ -22,10 +25,10 @@
     [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
 }
 
-- (void)viewWillDisappear:(BOOL)animated 
+- (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-    
+
     [[UIApplication sharedApplication] keyWindow].tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }
@@ -40,7 +43,7 @@
                                         detail:Nil
                                           cell:PSButtonCell
                                           edit:Nil];
-        [themeSpecifier setProperty:RSIMG(@"tutorial.png") forKey:@"iconImage"];
+        [themeSpecifier setProperty:SK_RSIMG(@"tutorial.png") forKey:@"iconImage"];
         [themeSpecifier setProperty:@"poop" forKey:@"isTheming"];
         _specifiers = [super specifiers];
         [(NSMutableArray*)_specifiers addObject:[PSSpecifier emptyGroupSpecifier]];
@@ -74,7 +77,7 @@
 @implementation RABackgroundingListItemsController
 -(UIColor*) navigationTintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
 
-- (void)viewWillAppear:(BOOL)animated 
+- (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 
@@ -82,10 +85,10 @@
     [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
 }
 
-- (void)viewWillDisappear:(BOOL)animated 
+- (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-    
+
     [[UIApplication sharedApplication] keyWindow].tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }

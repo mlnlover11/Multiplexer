@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <Preferences/PSSwitchTableCell.h>
@@ -39,9 +42,9 @@
 -(UIView*) headerView
 {
     RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 95)];
-    header.colors = @[ 
-        (id) [UIColor colorWithRed:234/255.0f green:152/255.0f blue:115/255.0f alpha:1.0f].CGColor, 
-        (id) [UIColor colorWithRed:190/255.0f green:83/255.0f blue:184/255.0f alpha:1.0f].CGColor 
+    header.colors = @[
+        (id) [UIColor colorWithRed:234/255.0f green:152/255.0f blue:115/255.0f alpha:1.0f].CGColor,
+        (id) [UIColor colorWithRed:190/255.0f green:83/255.0f blue:184/255.0f alpha:1.0f].CGColor
     ];
 #if DEBUG
     if (arc4random_uniform(1000000) == 11)
@@ -153,7 +156,7 @@
                  },
              @{ @"footerText": [NSString stringWithFormat:@"%@%@",
 #if DEBUG
-                    arc4random_uniform(10000) == 9901 ? @"2fast5me" : 
+                    arc4random_uniform(10000) == 9901 ? @"2fast5me" :
 #endif
                     @"© 2015 Elijah Frederickson & Andrew Abosh.",
 #if DEBUG
@@ -204,9 +207,9 @@
     [alert show];
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 1) 
+    if (buttonIndex == 1)
     {
         CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.resetSettings"), nil, nil, YES);
     }
@@ -243,15 +246,15 @@
         mailViewController = [[MFMailComposeViewController alloc] init];
         mailViewController.mailComposeDelegate = self;
         [mailViewController setSubject:@"Multiplexer"];
-        
+
         struct utsname systemInfo;
         uname(&systemInfo);
         NSString *sysInfo = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
-        
+
         NSString *msg = [NSString stringWithFormat:@"\n\n%@ %@\nModel: %@\n", [UIDevice currentDevice].systemName, [UIDevice currentDevice].systemVersion, sysInfo];
         [mailViewController setMessageBody:msg isHTML:NO];
         [mailViewController setToRecipients:@[@"elijahandandrew@gmail.com"]];
-            
+
         [self.rootController presentViewController:mailViewController animated:YES completion:nil];
     }
 }
