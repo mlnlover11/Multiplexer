@@ -1,11 +1,11 @@
 Package: org.thebigboss.multiplexer
 Name: Multiplexer
-Depends: mobilesubstrate, applist, preferenceloader, com.elijahandandrew.MultiplexerTutorial, com.rpetrich.rocketbootstrap
+Depends: mobilesubstrate, applist, preferenceloader, com.rpetrich.rocketbootstrap
 Conflicts: cc.tweak.statushud
 Replaces: com.efrederickson.reachapp
 Version: 0.1
 Architecture: iphoneos-arm
-Description: All sorts of multitasking. 
+Description: All sorts of multitasking.
 Depiction: http://elijahandandrew.com/repo/depictions/Multiplexer/index.html
 Maintainer: Elijah and Andrew <elijahandandrew@gmail.com>
 Author: Elijah and Andrew <elijahandandrew@gmail.com>

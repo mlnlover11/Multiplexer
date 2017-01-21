@@ -26,7 +26,7 @@ RANCViewController *ncAppViewController;
 
 %group iOS8
 %hook SBNotificationCenterViewController
-- (void)viewWillAppear:(BOOL)animated 
+- (void)viewWillAppear:(BOOL)animated
 {
    	%orig;
 
@@ -35,7 +35,7 @@ RANCViewController *ncAppViewController;
    	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
    	{
 		SBModeViewController* modeVC = MSHookIvar<id>(self, "_modeController");
-		if (ncAppViewController == nil) 
+		if (ncAppViewController == nil)
 			ncAppViewController = [self _newBulletinObserverViewControllerOfClass:[RANCViewController class]];
 		[modeVC _addBulletinObserverViewController:ncAppViewController];
 	}
@@ -43,14 +43,14 @@ RANCViewController *ncAppViewController;
 
 + (NSString *)_localizableTitleForBulletinViewControllerOfClass:(__unsafe_unretained Class)aClass
 {
-	if (aClass == [RANCViewController class]) 
+	if (aClass == [RANCViewController class])
 	{
 		BOOL useGenericLabel = THEMED(quickAccessUseGenericTabLabel) || [RASettings.sharedInstance quickAccessUseGenericTabLabel];
 		if (useGenericLabel)
 			return LOCALIZE(@"APP");
 		return ncAppViewController.hostedApp.displayName ?: getAppName() ?: LOCALIZE(@"APP");
 	}
-	else 
+	else
 		return %orig;
 }
 %end
@@ -58,7 +58,7 @@ RANCViewController *ncAppViewController;
 
 %group iOS9
 %hook SBNotificationCenterLayoutViewController
-- (void)_loadContentViewControllers
+- (void)viewWillAppear:(BOOL)animated
 {
    	%orig;
 
@@ -67,15 +67,16 @@ RANCViewController *ncAppViewController;
    	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
    	{
 		SBModeViewController* modeVC = MSHookIvar<id>(self, "_modeViewController");
-		if (ncAppViewController == nil) 
+		if (ncAppViewController == nil)
 			ncAppViewController = [[RANCViewController alloc] init];
 		[modeVC _addBulletinObserverViewController:ncAppViewController];
 	}
 }
+
 %end
 
 // This is more of a hack than anything else. Note that `_localizableTitleForColumnViewController` on iOS 9 does not seem to work (I may be doing something else wrong)
-// if more than one custom nc tab is added, this will not work correctly. 
+// if more than one custom nc tab is added, this will not work correctly.
 %hook SBModeViewController
 - (void)_layoutHeaderViewIfNecessary
 {
