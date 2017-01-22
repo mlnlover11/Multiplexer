@@ -10,10 +10,9 @@ static RAActivatorListener *sharedInstance;
 @implementation RAActivatorListener
 - (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
 {
-	if ([[%c(SBLockScreenManager) sharedInstance] isUILocked])
+	if ([[%c(SBLockScreenManager) sharedInstance] isUILocked]) {
 		return;
-	else if ([[%c(RASettings) sharedInstance] missionControlEnabled])
-	{
+	} else if ([[%c(RASettings) sharedInstance] missionControlEnabled]) {
 	  [RAMissionControlManager.sharedInstance toggleMissionControl:YES];
 		if ([%c(SBUIController) respondsToSelector:@selector(_appSwitcherController)]) {
 			[[[%c(SBUIController) sharedInstance] _appSwitcherController] forceDismissAnimated:NO];

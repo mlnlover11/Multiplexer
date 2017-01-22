@@ -22,45 +22,6 @@ BOOL willShowMissionControl = NO;
 	%orig;
 }
 
--(BOOL)_appSwitcherSystemGestureShouldBegin:(id)arg1
-{
-	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
-	willShowMissionControl = NO;
-
-	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled])
-	{
-		if (RAMissionControlManager.sharedInstance.isShowingMissionControl == NO)
-		{
-			[RAMissionControlManager.sharedInstance showMissionControl:YES];
-	    }
-	    else
-	    	[RAMissionControlManager.sharedInstance hideMissionControl:YES];
-
-		return YES;
-	}
-	else
-	{
-		if ([RAMissionControlManager.sharedInstance isShowingMissionControl])
-		{
-			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
-		}
-	}
-
-	BOOL s = %orig;
-	if (s && [[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999] != nil)
-	{
-		[UIView animateWithDuration:0.3 animations:^{
-			[[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].alpha = 1;
-		}];
-	}
-	if (s)
-	{
-		[[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO];
-		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] unloadApps];
-	}
-	return s;
-}
-
 - (_Bool)_activateAppSwitcher
 {
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
@@ -154,6 +115,7 @@ BOOL willShowMissionControl = NO;
 // iOS 9
 - (void)_switcherWasDismissed:(_Bool)arg1
 {
+	HBLogDebug(@"_switcherWasDismissed");
 	if (willShowMissionControl == NO)
 	{
 		[[%c(RADesktopManager) sharedInstance] reshowDesktop];
@@ -161,7 +123,7 @@ BOOL willShowMissionControl = NO;
 	}
 
 	[UIView animateWithDuration:0.3 animations:^{
-		[[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].alpha = 0;
+		[[%c(SBMainSwitcherViewController) sharedInstance] viewWithTag:999].alpha = 0;
 	}];
 
 	%orig;
@@ -274,6 +236,7 @@ BOOL willShowMissionControl = NO;
 
 %new -(RAGestureCallbackResult) RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge
 {
+	HBLogDebug(@"Ran RAGestureCallback_handle");
 	if ([%c(SBUIController) respondsToSelector:@selector(_showNotificationsGestureFailed)]) {
 		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureFailed)];
 		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureCancelled)];
@@ -424,24 +387,20 @@ BOOL willShowMissionControl = NO;
 }
 %end
 
-%hook SBDeckSwitcherViewController
-/*
--(void)viewWillLayoutSubviews
-{
+%hook SBMainSwitcherViewController
+- (void)viewDidLoad {
 	%orig;
 
 	UIView *view = [self view];
 
-	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
-	{
+	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
 		CGFloat width = 50, height = 30;
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-		{
+		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
 			width = 60;
 		  height = 40;
 		}
 		SBControlCenterGrabberView *grabber = [[%c(SBControlCenterGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
-		grabber.center = CGPointMake(view.frame.size.width / 2, 20/2);
+		grabber.center = CGPointMake(UIScreen.mainScreen._referenceBounds.size.width / 2, 20/2);
 
 
 		grabber.backgroundColor = [UIColor clearColor];
@@ -460,9 +419,8 @@ BOOL willShowMissionControl = NO;
 		[view addSubview:grabber];
 
 		[[%c(RAGestureManager) sharedInstance] addGestureRecognizerWithTarget:(NSObject<RAGestureCallbackProtocol> *)self forEdge:UIRectEdgeTop identifier:@"com.efrederickson.reachapp.appswitchergrabber"];
+	} else {
+		((UIView*)[view viewWithTag:999]).center = CGPointMake(UIScreen.mainScreen._referenceBounds.size.width / 2, 20/2);
 	}
-	else
-		((UIView*)[view viewWithTag:999]).center = CGPointMake(view.frame.size.width / 2, 20/2);
 }
-*/
 %end
