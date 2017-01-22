@@ -1488,4 +1488,5 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 
 @interface SBMainSwitcherViewController : UIViewController
 + (id)sharedInstance;
+- (BOOL)dismissSwitcherNoninteractively;
 @end

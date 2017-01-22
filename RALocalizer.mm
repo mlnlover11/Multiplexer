@@ -25,10 +25,13 @@
 
 	for (NSString *lang in langs)
 	{
+		//NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:lang];
+		//NSString *languageDesignator = components[NSLocaleLanguageCode];
 		if ([self attemptLoadForLanguageCode:lang])
 			break;
 	}
 	if (!translation)
+		HBLogWarn(@"Failed Translation loading English");
 		[self attemptLoadForLanguageCode:@"en"];
 }
 
