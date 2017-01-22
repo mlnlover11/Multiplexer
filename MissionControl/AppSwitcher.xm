@@ -95,6 +95,17 @@ BOOL willShowMissionControl = NO;
 }
 %end
 
+%hook SBNotificationCenterController
+-(void)_showNotificationCenterGestureBeganWithGestureRecognizer:(id)arg1 {
+	CGPoint location = [arg1 locationInView:[[%c(SBMainSwitcherViewController) sharedInstance] view]];
+	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[%c(SBUIController) sharedInstance] isAppSwitcherShowing] && CGRectContainsPoint([[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999].frame, location)) {
+		return;
+	}
+
+	%orig;
+}
+%end
+
 %hook SBAppSwitcherController
 // iOS 8
 - (void)switcherWillBeDismissed:(_Bool)arg1
@@ -107,23 +118,6 @@ BOOL willShowMissionControl = NO;
 
 	[UIView animateWithDuration:0.3 animations:^{
 		[[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].alpha = 0;
-	}];
-
-	%orig;
-}
-
-// iOS 9
-- (void)_switcherWasDismissed:(_Bool)arg1
-{
-	HBLogDebug(@"_switcherWasDismissed");
-	if (willShowMissionControl == NO)
-	{
-		[[%c(RADesktopManager) sharedInstance] reshowDesktop];
-		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
-	}
-
-	[UIView animateWithDuration:0.3 animations:^{
-		[[%c(SBMainSwitcherViewController) sharedInstance] viewWithTag:999].alpha = 0;
 	}];
 
 	%orig;
@@ -236,7 +230,6 @@ BOOL willShowMissionControl = NO;
 
 %new -(RAGestureCallbackResult) RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge
 {
-	HBLogDebug(@"Ran RAGestureCallback_handle");
 	if ([%c(SBUIController) respondsToSelector:@selector(_showNotificationsGestureFailed)]) {
 		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureFailed)];
 		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureCancelled)];
@@ -422,5 +415,45 @@ BOOL willShowMissionControl = NO;
 	} else {
 		((UIView*)[view viewWithTag:999]).center = CGPointMake(UIScreen.mainScreen._referenceBounds.size.width / 2, 20/2);
 	}
+}
+
+- (void)viewWillDisappear:(BOOL)arg1 {
+	if (willShowMissionControl == NO)
+	{
+		[[%c(RADesktopManager) sharedInstance] reshowDesktop];
+		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
+	}
+
+	[UIView animateWithDuration:0.3 animations:^{
+		[[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999].alpha = 0;
+	}];
+
+	%orig;
+}
+
+-(void)viewDidAppear:(BOOL)arg1 {
+	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
+	willShowMissionControl = NO;
+
+	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled]) {
+		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl) {
+			[RAMissionControlManager.sharedInstance showMissionControl:YES];
+	  } else {
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
+	} else {
+		if ([RAMissionControlManager.sharedInstance isShowingMissionControl]) {
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
+	}
+
+	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999] != nil) {
+		[UIView animateWithDuration:0.3 animations:^{
+			[[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999].alpha = 1;
+		}];
+	}
+	[[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO];
+
+	%orig;
 }
 %end
