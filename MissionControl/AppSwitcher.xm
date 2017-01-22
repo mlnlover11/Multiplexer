@@ -21,7 +21,7 @@ BOOL willShowMissionControl = NO;
 
 	%orig;
 }
-/*
+
 -(BOOL)_appSwitcherSystemGestureShouldBegin:(id)arg1
 {
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
@@ -60,7 +60,7 @@ BOOL willShowMissionControl = NO;
 	}
 	return s;
 }
-*/
+
 - (_Bool)_activateAppSwitcher
 {
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
@@ -425,6 +425,7 @@ BOOL willShowMissionControl = NO;
 %end
 
 %hook SBDeckSwitcherViewController
+/*
 -(void)viewWillLayoutSubviews
 {
 	%orig;
@@ -463,4 +464,5 @@ BOOL willShowMissionControl = NO;
 	else
 		((UIView*)[view viewWithTag:999]).center = CGPointMake(view.frame.size.width / 2, 20/2);
 }
+*/
 %end

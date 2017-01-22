@@ -8,6 +8,8 @@
 	<string>/usr/bin/ReachAppFSDaemon</string>
 	<key>RunAtLoad</key>
 	<false/>
+	<key>ExecuteAllowed</key>
+	<true/>
 	<key>StandardErrorPath</key>
 	<string>/dev/null</string>
 	<key>WatchPaths</key>
