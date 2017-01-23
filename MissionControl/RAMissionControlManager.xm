@@ -68,7 +68,7 @@ CGRect swappedForOrientation2(CGRect in)
 @implementation RAMissionControlManager
 +(instancetype) sharedInstance
 {
-	SHARED_INSTANCE2(RAMissionControlManager, 
+	SHARED_INSTANCE2(RAMissionControlManager,
 		sharedInstance->originalAppView = nil;
 		sharedInstance.inhibitDismissalGesture = NO;
 		sharedInstance->hasMoved = NO;
@@ -82,7 +82,7 @@ CGRect swappedForOrientation2(CGRect in)
 		dispatch_sync(dispatch_get_main_queue(), ^{ [self showMissionControl:animated]; });
 		return;
 	}
-	
+
 	_isShowingMissionControl = YES;
 
 	SBApplication *app = UIApplication.sharedApplication._accessibilityFrontMostApplication;
@@ -94,7 +94,7 @@ CGRect swappedForOrientation2(CGRect in)
 	if (animated)
 		//window.alpha = 0;
 		window.frame = swappedForOrientation(CGRectMake(0, -window.frame.size.height, window.frame.size.width, window.frame.size.height));
-	
+
 	[window makeKeyAndVisible];
 
 	if (lastOpenedApp && lastOpenedApp.isRunning)
@@ -106,8 +106,8 @@ CGRect swappedForOrientation2(CGRect in)
 	if (animated)
 	{
 		//[UIView animateWithDuration:0.5 animations:^{ window.alpha = 1; }];
-		[UIView animateWithDuration:0.5 animations:^{ 
-			window.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height); 
+		[UIView animateWithDuration:0.5 animations:^{
+			window.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
 
 			if (originalAppView)
 					originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppFrame.origin.x, originalAppView.frame.size.height, originalAppFrame.size.width, originalAppFrame.size.height));
@@ -123,7 +123,7 @@ CGRect swappedForOrientation2(CGRect in)
 	[[%c(RAGestureManager) sharedInstance] ignoreSwipesBeginningInRect:UIScreen.mainScreen.bounds forIdentifier:@"com.efrederickson.reachapp.windowedmultitasking.systemgesture"];
 	[[%c(RARunningAppsProvider) sharedInstance] addTarget:window];
 	[%c(RAOrientationLocker) lockOrientation];
-    [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAMissionControlManager"];
+  [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAMissionControlManager"];
 	self.inhibitDismissalGesture = NO;
 	[%c(RAControlCenterInhibitor) setInhibited:YES];
 
@@ -205,7 +205,7 @@ CGRect swappedForOrientation2(CGRect in)
 	if (animated)
 	{
 		[UIView animateWithDuration:0.5 animations:^{
-			window.frame = swappedForOrientation(CGRectMake(0, -window.frame.size.height, window.frame.size.width, window.frame.size.height)); 
+			window.frame = swappedForOrientation(CGRectMake(0, -window.frame.size.height, window.frame.size.width, window.frame.size.height));
 
 			if (originalAppView)
 					originalAppView.frame = originalAppFrame;
@@ -280,7 +280,7 @@ CGRect swappedForOrientation2(CGRect in)
 			[UIView animateWithDuration:duration animations:^{
 				if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait)
 					window.center = CGPointMake(window.center.x, -initialCenter.y);
-				if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)	
+				if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
 				{
 					CGRect f = window.frame;
 					f.origin.x = UIScreen.mainScreen.bounds.size.width;
@@ -360,7 +360,7 @@ CGRect swappedForOrientation2(CGRect in)
 -(void) _updateLockState
 {
     %orig;
-    
+
     if ([self hasAnyLockState])
 		if (RAMissionControlManager.sharedInstance.isShowingMissionControl)
 			[RAMissionControlManager.sharedInstance hideMissionControl:NO];

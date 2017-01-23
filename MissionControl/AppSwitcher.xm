@@ -380,11 +380,11 @@ BOOL willShowMissionControl = NO;
 }
 %end
 
-%hook SBMainSwitcherViewController
-- (void)viewDidLoad {
+%hook SBSwitcherContainerView
+- (void)layoutSubviews {
 	%orig;
 
-	UIView *view = [self view];
+	UIView *view = self;
 
 	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
 		CGFloat width = 50, height = 30;
@@ -417,38 +417,6 @@ BOOL willShowMissionControl = NO;
 	}
 }
 
-- (void)viewWillDisappear:(BOOL)arg1 {
-	if (willShowMissionControl == NO)
-	{
-		[[%c(RADesktopManager) sharedInstance] reshowDesktop];
-		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
-	}
-
-	[UIView animateWithDuration:0.3 animations:^{
-		[[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999].alpha = 0;
-	}];
-
-	%orig;
-}
-
-- (void)viewDidAppear:(BOOL)arg1 {
-	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
-	willShowMissionControl = NO;
-
-	if ([RAMissionControlManager.sharedInstance isShowingMissionControl]) {
-		[RAMissionControlManager.sharedInstance hideMissionControl:YES];
-	}
-
-	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999] != nil) {
-		[UIView animateWithDuration:0.3 animations:^{
-			[[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999].alpha = 1;
-		}];
-	}
-	[[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO];
-
-	%orig;
-}
-
 %new - (BOOL)RAGestureCallback_canHandle:(CGPoint)point velocity:(CGPoint)velocity {
 	return allowMissionControlActivationFromSwitcher && [[%c(RASettings) sharedInstance] missionControlEnabled] && [[%c(SBUIController) sharedInstance] isAppSwitcherShowing];
 }
@@ -464,7 +432,7 @@ BOOL willShowMissionControl = NO;
 
 	static CGFloat origY = -1;
 	static UIView *fakeView;
-	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
+	UIView *view = self;
 
 	if (!fakeView) {
 		UIImage *snapshot = [[%c(RASnapshotProvider) sharedInstance] storedSnapshotOfMissionControl];
@@ -490,7 +458,7 @@ BOOL willShowMissionControl = NO;
 			CGFloat y = 25;
 
 			desktopLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, y, fakeView.frame.size.width - 20, 20)];
-			desktopLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+			desktopLabel.font = [UIFont fontWithName:@"SFUIText-Medium" size:14];
 			desktopLabel.textColor = UIColor.whiteColor;
 			desktopLabel.text = @"Desktops";
 			[fakeView addSubview:desktopLabel];
@@ -513,7 +481,7 @@ BOOL willShowMissionControl = NO;
 			y = desktopScrollView.frame.origin.y + desktopScrollView.frame.size.height + 5;
 
 			windowedLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, y, fakeView.frame.size.width - 20, 20)];
-			windowedLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+			windowedLabel.font = [UIFont fontWithName:@"SFUIText-Medium" size:14];
 			windowedLabel.textColor = UIColor.whiteColor;
 			windowedLabel.text = @"On This Desktop";
 			[fakeView addSubview:windowedLabel];
@@ -527,7 +495,7 @@ BOOL willShowMissionControl = NO;
 			y = windowedAppScrollView.frame.origin.y + windowedAppScrollView.frame.size.height + 5;
 
 			otherLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, y, fakeView.frame.size.width - 20, 20)];
-			otherLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+			otherLabel.font = [UIFont fontWithName:@"SFUIText-Medium" size:14];
 			otherLabel.textColor = UIColor.whiteColor;
 			otherLabel.text = @"Running Elsewhere";
 			[fakeView addSubview:otherLabel];
@@ -596,5 +564,35 @@ BOOL willShowMissionControl = NO;
 	}
 
 	return RAGestureCallbackResultSuccess;
+}
+%end
+
+%hook SBMainSwitcherViewController
+- (void)viewDidAppear:(BOOL)arg1 {
+	%orig;
+	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
+	willShowMissionControl = NO;
+
+	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled]) {
+		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl) {
+			[RAMissionControlManager.sharedInstance showMissionControl:YES];
+	  } else {
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
+	} else {
+		if ([RAMissionControlManager.sharedInstance isShowingMissionControl]) {
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
+	}
+
+	[[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO];
+}
+
+- (void)viewWillDisappear:(BOOL)arg1 {
+	if (!willShowMissionControl) {
+		[[%c(RADesktopManager) sharedInstance] reshowDesktop];
+		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
+	}
+	%orig;
 }
 %end

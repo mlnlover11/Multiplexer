@@ -1490,3 +1490,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 + (id)sharedInstance;
 - (BOOL)dismissSwitcherNoninteractively;
 @end
+
+@interface SBSwitcherContainerView : UIView 
+-(void)layoutSubviews;
+@end
