@@ -29,7 +29,7 @@
 	if ([model respondsToSelector:@selector(snapshotOfFlattenedArrayOfAppIdentifiersWhichIsOnlyTemporary)])
 		return [model snapshotOfFlattenedArrayOfAppIdentifiersWhichIsOnlyTemporary];
 
-	// iOS 9 most likely. 
+	// iOS 9 most likely.
 
 	NSMutableArray *ret = [NSMutableArray array];
 

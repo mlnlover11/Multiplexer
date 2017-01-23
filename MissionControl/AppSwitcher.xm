@@ -435,16 +435,8 @@ BOOL willShowMissionControl = NO;
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
 	willShowMissionControl = NO;
 
-	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled]) {
-		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl) {
-			[RAMissionControlManager.sharedInstance showMissionControl:YES];
-	  } else {
-			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
-		}
-	} else {
-		if ([RAMissionControlManager.sharedInstance isShowingMissionControl]) {
-			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
-		}
+	if ([RAMissionControlManager.sharedInstance isShowingMissionControl]) {
+		[RAMissionControlManager.sharedInstance hideMissionControl:YES];
 	}
 
 	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999] != nil) {
