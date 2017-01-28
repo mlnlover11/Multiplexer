@@ -191,7 +191,7 @@ void reset_settings_notification(CFNotificationCenterRef center, void *observer,
 
 %ctor
 {
-    if (IS_SPRINGBOARD)
+    IF_SPRINGBOARD
     {
         %init;
         LOAD_ASPHALEIA;
