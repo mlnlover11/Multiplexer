@@ -3,12 +3,12 @@ update status:
 Windowed: working
 fs daemon: working
 SwipeOver: working (replace with native slide over(?))
-Reachability: fixed
+Reachability: working
 GestureSupport: fixed
-Backgrounding: fixed
+Backgrounding: working
 KeyboardSupport: hackily fixed but it works now
-MissionControl: working
-NCApp: fixed on phone, not working right on ipad (misplaced view & no title)
+MissionControl: fixed
+NCApp: fixed on phone, not working right on ipad (misplaced view & no title) needs major overhaul for 10.X
 assertiond hooks: working
 backboardd hooks: unknown
 fake phone mode: working

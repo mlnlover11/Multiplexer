@@ -73,6 +73,10 @@ RANCViewController *ncAppViewController;
 	}
 }
 
+- (id)_localizableTitleForColumnViewController:(id)arg1 {
+	HBLogDebug(@"Ran _localizableTitleForColumnViewController");
+	return %orig;
+}
 %end
 
 // This is more of a hack than anything else. Note that `_localizableTitleForColumnViewController` on iOS 9 does not seem to work (I may be doing something else wrong)

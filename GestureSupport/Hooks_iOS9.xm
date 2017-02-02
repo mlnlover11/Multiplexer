@@ -23,11 +23,11 @@ static BOOL isTracking = NO;
 static NSMutableSet *gestureRecognizers;
 UIRectEdge currentEdge9;
 
-struct VelocityData {
+typedef struct {
     CGPoint velocity;
     double timestamp;
     CGPoint location;
-};
+} VelocityData;
 
 %hook _UIScreenEdgePanRecognizer
 - (void)incorporateTouchSampleAtLocation:(CGPoint)location timestamp:(double)timestamp modifier:(NSInteger)modifier interfaceOrientation:(UIInterfaceOrientation)orientation forceState:(int)arg5
@@ -205,7 +205,7 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
         {
             _UIScreenEdgePanRecognizer *recognizer = [[_UIScreenEdgePanRecognizer alloc] initWithType:2];
             recognizer.targetEdges = edgesToWatch[i];
-            recognizer.screenBounds = UIScreen.mainScreen.bounds;
+            recognizer.screenBounds = UIScreen.mainScreen._referenceBounds;
             [gestureRecognizers addObject:recognizer];
         }
 

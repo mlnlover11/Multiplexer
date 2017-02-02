@@ -266,7 +266,6 @@ return sharedInstance;
 @interface BKSProcess : NSObject { //BSBaseXPCClient  {
     int _pid;
     NSString *_bundlePath;
-    NSObject<OS_dispatch_queue> *_clientQueue;
     bool _workspaceLocked;
     bool _connectedToExternalAccessories;
     bool _nowPlayingWithAudio;
@@ -1491,6 +1490,6 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (BOOL)dismissSwitcherNoninteractively;
 @end
 
-@interface SBSwitcherContainerView : UIView 
+@interface SBSwitcherContainerView : UIView
 -(void)layoutSubviews;
 @end

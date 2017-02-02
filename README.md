@@ -18,22 +18,22 @@ See /wiki for some code tutorials.
 - Empoleon: working
 - fs daemon: working
 - SwipeOver: fixed
-- Reachability: fixed
+- Reachability: working
 - GestureSupport: fixed
-- Backgrounding: fixed
+- Backgrounding: working
 - KeyboardSupport: hackily fixed but it works now
-- MissionControl: initialization broken, otherwise fixed
+- MissionControl: fixed
 - NCApp: fixed
-- assertiond hooks: unknown
+- assertiond hooks: working
 - backboardd hooks: unknown
-- fake phone mode: unknown
+- fake phone mode: fixed
 
 see the update_status file for more info on the iOS 9 changes.
 
 ### API
-There is a full public API (as opposed to the private/interval api and headers) that allows anyone to create addons, widgets, and tweaks (Tweakception!) for Multiplexer. 
+There is a full public API (as opposed to the private/interval api and headers) that allows anyone to create addons, widgets, and tweaks (Tweakception!) for Multiplexer.
 The public api can be found in public_api. This api is less likely to change or be removed as opposed to the other headers and stuff.
 For the end user's ease of use, please register your extensions with -[Multiplexer registerExtension:forMultiplexerVersion:]. I hope to also move the core functions into extensions, provide api requirements, etc at some point.
 
 Currently it is only compatible with iOS 8, however some measures have been taken to ease the process of making it compatible with other iOS editions (whether future or past).
-There are some "options" or features that are in here but are disabled or otherwise removed because either they don't work or there's no point having them. 
+There are some "options" or features that are in here but are disabled or otherwise removed because either they don't work or there's no point having them.

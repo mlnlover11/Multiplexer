@@ -45,6 +45,30 @@ extern BOOL overrideDisableForStatusBar;
     return %orig;
 }
 
+- (BOOL)handleHomeButtonSinglePressUp 
+{
+	if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver])
+	{
+		[[%c(RASwipeOverManager) sharedInstance] stopUsingSwipeOver];
+		return YES;
+	}
+
+		if ([RASettings.sharedInstance homeButtonClosesReachability] && [GET_SBWORKSPACE isUsingReachApp] && ((SBReachabilityManager*)[%c(SBReachabilityManager) sharedInstance]).reachabilityModeActive)
+		{
+				overrideDisableForStatusBar = NO;
+				[[%c(SBReachabilityManager) sharedInstance] _handleReachabilityDeactivated];
+				return YES;
+		}
+
+		if ([[%c(RAMissionControlManager) sharedInstance] isShowingMissionControl])
+		{
+				[[%c(RAMissionControlManager) sharedInstance] hideMissionControl:YES];
+				return YES;
+		}
+
+		return %orig;
+}
+
 /*- (_Bool)handleMenuDoubleTap
 {
     if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver])

@@ -36,7 +36,7 @@ CGFloat old_grabberCenterY = -1;
 
 BOOL wasEnabled = NO;
 
-%group hooks
+%group SBReachability
 
 %hook SBReachabilityManager
 +(BOOL)reachabilitySupported
@@ -144,6 +144,10 @@ BOOL wasEnabled = NO;
 }
 
 %end
+
+%end
+
+%group SBWorkspace
 
 id SBWorkspace$sharedInstance;
 %hook SB_WORKSPACE_CLASS
@@ -852,10 +856,21 @@ CGFloat startingY = -1;
 }
 %end
 
+%end
+
+%group SpringBoard
+
 %hook SpringBoard
 - (UIInterfaceOrientation)activeInterfaceOrientation
 {
     return overrideOrientation ? UIInterfaceOrientationPortrait : %orig;
+}
+
+- (void)applicationDidFinishLaunching:(id)arg1
+{
+  Class c = objc_getClass("SBMainWorkspace") ?: objc_getClass("SBWorkspace");
+  %init(SBWorkspace, SB_WORKSPACE_CLASS=c);
+  %orig;
 }
 %end
 
@@ -865,7 +880,7 @@ CGFloat startingY = -1;
 {
     IF_SPRINGBOARD
     {
-        Class c = objc_getClass("SBMainWorkspace") ?: objc_getClass("SBWorkspace");
-        %init(hooks, SB_WORKSPACE_CLASS=c);
+        %init(SBReachability);
+        %init(SpringBoard);
     }
 }
