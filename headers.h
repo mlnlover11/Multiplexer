@@ -1493,3 +1493,13 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @interface SBSwitcherContainerView : UIView
 -(void)layoutSubviews;
 @end
+
+@interface SBUIChevronView : UIView
+-(id)initWithFrame:(CGRect)arg1;
+-(void)setState:(long long)arg1 animated:(BOOL)arg2;
+-(void)setBackgroundView:(id)arg1;
+@end
+
+@interface NCNotificationGrabberView : UIView
+-(id)initWithFrame:(CGRect)arg1;
+@end

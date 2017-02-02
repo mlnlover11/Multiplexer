@@ -7,7 +7,7 @@ Reachability: working
 GestureSupport: fixed
 Backgrounding: working
 KeyboardSupport: hackily fixed but it works now
-MissionControl: fixed
+MissionControl: broken in app and grabber disappears?
 NCApp: fixed on phone, not working right on ipad (misplaced view & no title) needs major overhaul for 10.X
 assertiond hooks: working
 backboardd hooks: unknown
