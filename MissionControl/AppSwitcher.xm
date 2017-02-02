@@ -415,7 +415,7 @@ BOOL willShowMissionControl = NO;
 			[view addSubview:grabber];
 
 		} else {
-			NCNotificationGrabberView *grabber = [[NCNotificationGrabberView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+			NCNotificationGrabberView *grabber = [[%c(NCNotificationGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 
 			grabber.tag = 999;
 			[view addSubview:grabber];

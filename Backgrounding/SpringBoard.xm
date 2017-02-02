@@ -62,12 +62,27 @@
     }
     return %orig(arg1, arg2, arg3, arg4, arg5, arg6);
 }
+
+- (id)_initWithQueue:(id)arg1 callOutQueue:(id)arg2 identifier:(id)arg3 specification:(id)arg4 display:(id)arg5 settings:(__unsafe_unretained UIMutableApplicationSceneSettings*)arg6 clientSettings:(id)arg7
+{
+    if ([RABackgrounder.sharedInstance shouldKeepInForeground:arg3])
+    {
+        // what?
+        if (!arg6)
+        {
+            UIMutableApplicationSceneSettings *fakeSettings = [[%c(UIMutableApplicationSceneSettings) alloc] init];
+            arg6 = fakeSettings;
+        }
+        SET_BACKGROUNDED(arg6, NO);
+    }
+    return %orig(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+}
 %end
 
 %hook FBUIApplicationWorkspaceScene
 -(void) host:(__unsafe_unretained FBScene*)arg1 didUpdateSettings:(__unsafe_unretained FBSSceneSettings*)arg2 withDiff:(unsafe_id)arg3 transitionContext:(unsafe_id)arg4 completion:(unsafe_id)arg5
 {
-    [RABackgrounder.sharedInstance removeTemporaryOverrideForIdentifier:arg1.identifier]; 
+    [RABackgrounder.sharedInstance removeTemporaryOverrideForIdentifier:arg1.identifier];
     if (arg1 && arg1.identifier && arg2 && arg1.clientProcess) // FIX: sanity check to prevent NC App crash. untested/not working.
     {
         if (arg2.backgrounded)
@@ -86,24 +101,24 @@
                         [%c(RAAppSwitcherModelWrapper) removeItemWithIdentifier:arg1.identifier];
                     }
                 }
-                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier]; 
+                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier];
             }
 
             if ([RABackgrounder.sharedInstance shouldKeepInForeground:arg1.identifier])
             {
                 [RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:arg1.identifier withInfo:[RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:arg1.identifier]];
-                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier]; 
+                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier];
                 return;
             }
             else if ([RABackgrounder.sharedInstance backgroundModeForIdentifier:arg1.identifier] == RABackgroundModeNative)
             {
                 [RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:arg1.identifier withInfo:[RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:arg1.identifier]];
-                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier]; 
+                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier];
             }
             else if ([RABackgrounder.sharedInstance shouldSuspendImmediately:arg1.identifier])
             {
                 [RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:arg1.identifier withInfo:[RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:arg1.identifier]];
-                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier]; 
+                [RABackgrounder.sharedInstance queueRemoveTemporaryOverrideForIdentifier:arg1.identifier];
             }
         }
         else if ([RABackgrounder.sharedInstance shouldSuspendImmediately:arg1.identifier])

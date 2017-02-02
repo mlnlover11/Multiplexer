@@ -1503,3 +1503,6 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @interface NCNotificationGrabberView : UIView
 -(id)initWithFrame:(CGRect)arg1;
 @end
+
+@interface SBDashBoardPageViewController : UIViewController
+@end
