@@ -1,6 +1,6 @@
 update status:
 
-Windowed: working
+Windowed: working (asphaleia breaks for some reason?)
 fs daemon: working
 SwipeOver: working (replace with native slide over(?))
 Reachability: working

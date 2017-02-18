@@ -57,7 +57,7 @@
 
         //create transititon request
 				SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[UIScreen.mainScreen valueForKey:@"_fbsDisplay"]];
-    		[transitionRequest setApplicationContext:transitionContext];
+				[transitionRequest setValue:transitionContext forKey:@"_applicationContext"];
 
         return [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithTransitionRequest:transitionRequest];
         // ** //

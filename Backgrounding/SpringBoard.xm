@@ -63,19 +63,19 @@
     return %orig(arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
-- (id)_initWithQueue:(id)arg1 callOutQueue:(id)arg2 identifier:(id)arg3 specification:(id)arg4 display:(id)arg5 settings:(__unsafe_unretained UIMutableApplicationSceneSettings*)arg6 clientSettings:(id)arg7
+- (id)initWithQueue:(id)arg1 identifier:(id)arg2 display:(id)arg3 settings:(__unsafe_unretained UIMutableApplicationSceneSettings*)arg4 clientSettings:(id)arg5
 {
-    if ([RABackgrounder.sharedInstance shouldKeepInForeground:arg3])
+    if ([RABackgrounder.sharedInstance shouldKeepInForeground:arg2])
     {
         // what?
-        if (!arg6)
+        if (!arg4)
         {
             UIMutableApplicationSceneSettings *fakeSettings = [[%c(UIMutableApplicationSceneSettings) alloc] init];
-            arg6 = fakeSettings;
+            arg4 = fakeSettings;
         }
-        SET_BACKGROUNDED(arg6, NO);
+        SET_BACKGROUNDED(arg4, NO);
     }
-    return %orig(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+    return %orig(arg1, arg2, arg3, arg4, arg5);
 }
 %end
 

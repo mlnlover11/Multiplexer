@@ -28,3 +28,11 @@ BOOL overrideCC = NO;
         %orig;
 }
 %end
+
+%hook SBControlCenterController
+- (void)presentAnimated:(BOOL)arg1 completion:(id)arg2
+{
+		if (!overrideCC)
+				%orig;
+}
+%end
