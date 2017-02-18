@@ -384,7 +384,7 @@ BOOL willShowMissionControl = NO;
 - (void)layoutSubviews {
 	%orig;
 
-	UIView *view = self;
+	UIView *view = self.contentView;
 
 	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
 		CGFloat width = 50, height = 30;
@@ -396,7 +396,7 @@ BOOL willShowMissionControl = NO;
 		if ([%c(SBControlCenterGrabberView) class]) {
 			SBControlCenterGrabberView *grabber = [[%c(SBControlCenterGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 
-			grabber.center = CGPointMake(UIScreen.mainScreen._referenceBounds.size.width / 2, 20/2);
+			grabber.center = CGPointMake(UIScreen.mainScreen.bounds.size.width / 2, 20/2);
 
 
 			grabber.backgroundColor = [UIColor clearColor];
@@ -423,7 +423,7 @@ BOOL willShowMissionControl = NO;
 		}
 		[[%c(RAGestureManager) sharedInstance] addGestureRecognizerWithTarget:(NSObject<RAGestureCallbackProtocol> *)self forEdge:UIRectEdgeTop identifier:@"com.efrederickson.reachapp.appswitchergrabber"];
 	} else {
-		((UIView*)[view viewWithTag:999]).center = CGPointMake(UIScreen.mainScreen._referenceBounds.size.width / 2, 20/2);
+		((UIView*)[view viewWithTag:999]).center = CGPointMake(UIScreen.mainScreen.bounds.size.width / 2, 20/2);
 	}
 }
 
@@ -442,7 +442,7 @@ BOOL willShowMissionControl = NO;
 
 	static CGFloat origY = -1;
 	static UIView *fakeView;
-	UIView *view = self;
+	UIView *view = self.contentView;
 
 	if (!fakeView) {
 		UIImage *snapshot = [[%c(RASnapshotProvider) sharedInstance] storedSnapshotOfMissionControl];

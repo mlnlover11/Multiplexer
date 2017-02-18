@@ -1491,6 +1491,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @end
 
 @interface SBSwitcherContainerView : UIView
+@property (nonatomic,retain) UIView * contentView;
 -(void)layoutSubviews;
 @end
 
