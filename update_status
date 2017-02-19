@@ -1,13 +1,13 @@
 update status:
 
-Windowed: working (asphaleia breaks for some reason?)
+Windowed: working
 fs daemon: working
 SwipeOver: working (replace with native slide over(?))
 Reachability: working
 GestureSupport: fixed
 Backgrounding: working
 KeyboardSupport: hackily fixed but it works now
-MissionControl: broken in app and grabber disappears?
+MissionControl: working (MC presents even when not dragging grabber)
 NCApp: fixed on phone, not working right on ipad (misplaced view & no title) needs major overhaul for 10.X
 assertiond hooks: working
 backboardd hooks: unknown

@@ -429,7 +429,7 @@ BOOL willShowMissionControl = NO;
 
 			SBUIChevronView *chevronView = [[%c(SBUIChevronView) alloc] initWithColor:[UIColor blackColor]];
 			chevronView.frame = CGRectMake((width - 36) / 2, (height - 14) / 2, 36, 14);
-			[chevronView setState:1 animated:YES];
+			[chevronView setState:1 animated:NO];
 			chevronView.alpha = 0.6499;
 			[grabber addSubview:chevronView];
 
