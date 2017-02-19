@@ -98,7 +98,8 @@ BOOL willShowMissionControl = NO;
 %hook SBNotificationCenterController
 -(void)_showNotificationCenterGestureBeganWithGestureRecognizer:(id)arg1 {
 	CGPoint location = [arg1 locationInView:[[%c(SBMainSwitcherViewController) sharedInstance] view]];
-	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[%c(SBUIController) sharedInstance] isAppSwitcherShowing] && CGRectContainsPoint([[[%c(SBMainSwitcherViewController) sharedInstance] view] viewWithTag:999].frame, location)) {
+	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[%c(SBUIController) sharedInstance] isAppSwitcherShowing] && CGRectContainsPoint([[[[%c(SBMainSwitcherViewController) sharedInstance] valueForKey:@"_contentView"] contentView] viewWithTag:999].frame, location)) {
+		HBLogDebug(@"contains rect");
 		return;
 	}
 
@@ -415,7 +416,24 @@ BOOL willShowMissionControl = NO;
 			[view addSubview:grabber];
 
 		} else {
-			NCNotificationGrabberView *grabber = [[%c(NCNotificationGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+			UIView *grabber = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+
+			grabber.center = CGPointMake(UIScreen.mainScreen.bounds.size.width / 2, 20/2);
+
+			_UIBackdropView *blurView = [[%c(_UIBackdropView) alloc] initWithStyle:2060];
+			blurView.frame = grabber.frame;
+			blurView._blurRadius = 30;
+			[blurView _setCornerRadius:6];
+			[blurView _applyCornerRadiusToSubviews];
+			[grabber addSubview:blurView];
+
+			SBUIChevronView *chevronView = [[%c(SBUIChevronView) alloc] initWithColor:[UIColor blackColor]];
+			chevronView.frame = CGRectMake((width - 36) / 2, (height - 14) / 2, 36, 14);
+			[chevronView setState:1 animated:YES];
+			chevronView.alpha = 0.6499;
+			[grabber addSubview:chevronView];
+
+			grabber.layer.cornerRadius = 6;
 
 			grabber.tag = 999;
 			[view addSubview:grabber];

@@ -638,12 +638,15 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @interface _UIBackdropView : UIView
 @property (retain, nonatomic) _UIBackdropViewSettings *outputSettings;
 @property (retain, nonatomic) _UIBackdropViewSettings *inputSettings;
+@property (assign,nonatomic) double _blurRadius;
 @property (nonatomic) int blurHardEdges;
+- (void)_applyCornerRadiusToSubviews;
+- (void)_setCornerRadius:(double)arg1 ;
 - (void) setBlursWithHardEdges:(BOOL)arg1;
 - (void)setBlurQuality:(id)arg1;
--(void) setBlurRadius:(CGFloat)radius;
--(void) setBlurRadiusSetOnce:(BOOL)v;
--(id) initWithStyle:(NSInteger)style;
+- (void)setBlurRadius:(CGFloat)radius;
+- (void)setBlurRadiusSetOnce:(BOOL)v;
+- (id)initWithStyle:(NSInteger)style;
 @property (nonatomic) BOOL autosizesToFitSuperview;
 @property (nonatomic) BOOL blursBackground;
 - (void)_setBlursBackground:(BOOL)arg1;
@@ -1485,18 +1488,23 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (void)setSnapshotReferenceFrame:(CGRect)arg1 ;
 @end
 
-@interface SBMainSwitcherViewController : UIViewController
+@interface SBMainSwitcherViewController : UIViewController 
 + (id)sharedInstance;
 - (BOOL)dismissSwitcherNoninteractively;
 @end
 
 @interface SBSwitcherContainerView : UIView
 @property (nonatomic,retain) UIView * contentView;
--(void)layoutSubviews;
+- (void)layoutSubviews;
+- (UIView *)contentView;
 @end
 
 @interface SBUIChevronView : UIView
+@property (assign,nonatomic) long long state;
+@property (nonatomic,retain) UIColor * color;
 -(id)initWithFrame:(CGRect)arg1;
+-(id)initWithColor:(id)arg1 ;
+-(void)setColor:(UIColor *)arg1 ;
 -(void)setState:(long long)arg1 animated:(BOOL)arg2;
 -(void)setBackgroundView:(id)arg1;
 @end
