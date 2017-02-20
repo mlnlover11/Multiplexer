@@ -45,7 +45,7 @@ extern BOOL overrideDisableForStatusBar;
     return %orig;
 }
 
-- (BOOL)handleHomeButtonSinglePressUp 
+- (BOOL)handleHomeButtonSinglePressUp
 {
 	if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver])
 	{
@@ -205,7 +205,13 @@ extern BOOL overrideDisableForStatusBar;
 
 void respring_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    [[%c(FBSystemService) sharedInstance] exitAndRelaunch:YES];
+		SpringBoard *springBoard = (SpringBoard*)[UIApplication sharedApplication];
+		if ([springBoard respondsToSelector:@selector(_relaunchSpringBoardNow)]) {
+				[springBoard _relaunchSpringBoardNow];
+		} else {
+			SBSRestartRenderServerAction *restartAction = [%c(SBSRestartRenderServerAction) restartActionWithTargetRelaunchURL:nil];
+			[[%c(FBSSystemService) sharedService] sendActions:[NSSet setWithObject:restartAction] withResult:nil];
+		}
 }
 
 void reset_settings_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
@@ -220,7 +226,7 @@ void reset_settings_notification(CFNotificationCenterRef center, void *observer,
         %init;
         LOAD_ASPHALEIA;
 
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, respring_notification, CFSTR("com.efrederickson.reachapp.respring"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, reset_settings_notification, CFSTR("com.efrederickson.reachapp.resetSettings"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &respring_notification, CFSTR("com.efrederickson.reachapp.respring"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reset_settings_notification, CFSTR("com.efrederickson.reachapp.resetSettings"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
     }
 }

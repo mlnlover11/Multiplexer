@@ -52,7 +52,7 @@ extern void RA_BGAppsControllerNeedsToReload();
              	},
              @{
              	@"cell": @"PSSwitchCell",
-             	@"label": @"Auto Launch",
+             	@"label": @"Auto Launch (On Boot)",
              	@"key": @"autoLaunch",
                  @"default": @NO,
              	},
@@ -62,7 +62,7 @@ extern void RA_BGAppsControllerNeedsToReload();
          	 	@"key": @"autoRelaunch",
                  @"default": @NO,
          		},
-                
+
              @{ @"footerText": @"If the app's background mode is Disabled, this will remove the app from the switcher in addition to killing it." },
              @{
                 @"cell": @"PSSwitchCell",
@@ -89,9 +89,9 @@ extern void RA_BGAppsControllerNeedsToReload();
                 @"enabled": @(!preventDeath),
                 @"reloadSpecifiersXX": @YES,
             },
-            @{ 
+            @{
                 @"cell": @"PSGroupCell",
-                @"label": @"Native Backgrounding Modes", 
+                @"label": @"Native Backgrounding Modes",
                 @"footerText": @"A respring is required to apply changes to these values. Just because a mode has been enabled does not necessarily mean it will be used by the app.",
                 },
             @{

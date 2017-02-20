@@ -19,6 +19,8 @@
 #import <notify.h>
 #import <IOKit/hid/IOHIDEvent.h>
 #import <GraphicsServices/GraphicsServices.h>
+#import <SpringBoardServices/SBSRestartRenderServerAction.h>
+#import <FrontBoardServices/FBSSystemService.h>
 
 #define RA_BASE_PATH @"/Library/Multiplexer"
 
@@ -1488,7 +1490,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (void)setSnapshotReferenceFrame:(CGRect)arg1 ;
 @end
 
-@interface SBMainSwitcherViewController : UIViewController 
+@interface SBMainSwitcherViewController : UIViewController
 + (id)sharedInstance;
 - (BOOL)dismissSwitcherNoninteractively;
 @end
@@ -1509,9 +1511,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 -(void)setBackgroundView:(id)arg1;
 @end
 
-@interface NCNotificationGrabberView : UIView
--(id)initWithFrame:(CGRect)arg1;
-@end
-
-@interface SBDashBoardPageViewController : UIViewController
+@interface SBPagedScrollView : UIScrollView
+- (NSArray *)pageViews;
+- (void)setPageViews:(NSArray *)arg1;
 @end
