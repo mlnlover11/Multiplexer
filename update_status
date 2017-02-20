@@ -8,7 +8,7 @@ GestureSupport: fixed
 Backgrounding: working
 KeyboardSupport: hackily fixed but it works now
 MissionControl: working (MC presents even when not dragging grabber)
-NCApp: fixed on phone, not working right on ipad (misplaced view & no title) needs major overhaul for 10.X
+NCApp: working (not tested on ipad / needs to freeze app when NC not visible);
 assertiond hooks: working
 backboardd hooks: unknown
 fake phone mode: working

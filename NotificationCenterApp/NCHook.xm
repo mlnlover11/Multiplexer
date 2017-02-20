@@ -101,14 +101,58 @@ RANCViewController *ncAppViewController;
 %end
 %end
 
+%group iOS10
+%hook SBPagedScrollView
+static BOOL hasEnteredPages = NO;
+
+- (void)layoutSubviews
+{
+	%orig;
+
+	if (!hasEnteredPages && [self.superview isKindOfClass:[%c(SBSearchEtceteraLayoutView) class]])
+	{
+		if (ncAppViewController == nil)
+			ncAppViewController = [[RANCViewController alloc] init];
+
+		NSMutableArray *newArray = [[self pageViews] mutableCopy];
+		[newArray addObject:ncAppViewController.view];
+		[self setPageViews:newArray];
+
+		hasEnteredPages = YES;
+	}
+}
+%end
+
+%hook SBNotificationCenterController
+- (void)_handleDismissGesture:(id)arg1
+{
+	%orig;
+	[ncAppViewController viewDidDisappear:YES];
+}
+%end
+
+%hook SBNotificationCenterViewController
+- (UIPageControl*)pageControl
+{
+		UIPageControl *original = %orig;
+		original.numberOfPages = 3;
+		return original;
+}
+%end
+%end
+
 %ctor
 {
-	if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
-	{
-		%init(iOS9);
-	}
-	else
-	{
-		%init(iOS8);
-	}
+		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
+		{
+				%init(iOS10);
+		}
+		else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
+		{
+				%init(iOS9);
+		}
+		else
+		{
+				%init(iOS8);
+		}
 }

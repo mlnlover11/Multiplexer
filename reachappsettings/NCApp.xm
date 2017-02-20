@@ -72,7 +72,7 @@
                  @"label": @"Enabled",
                  @"PostNotification": @"com.efrederickson.reachapp.settings/reloadSettings",
                  },
-             @{ @"footerText": @"Instead of using the app's name, the tab label will simply show \"App\"." },
+             @{ @"footerText": @"Instead of using the app's name, the tab label will simply show \"App\". Only Works on iOS 9 and below" },
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
