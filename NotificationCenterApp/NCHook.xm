@@ -109,7 +109,7 @@ static BOOL hasEnteredPages = NO;
 {
 	%orig;
 
-	if (!hasEnteredPages && [self.superview isKindOfClass:[%c(SBSearchEtceteraLayoutView) class]])
+	if (!hasEnteredPages && [self.superview isKindOfClass:[%c(SBSearchEtceteraLayoutView) class]] && [[%c(SBNotificationCenterController) sharedInstance] isVisible])
 	{
 		if (ncAppViewController == nil)
 			ncAppViewController = [[RANCViewController alloc] init];
@@ -123,15 +123,17 @@ static BOOL hasEnteredPages = NO;
 }
 %end
 
-%hook SBNotificationCenterController
-- (void)_handleDismissGesture:(id)arg1
+%hook SBNotificationCenterViewController
+- (void)viewDidDisappear:(BOOL)arg1
 {
 	%orig;
-	[ncAppViewController viewDidDisappear:YES];
+	[ncAppViewController hostedApp].hideStatusBar = YES;
+	if ([ncAppViewController hostedApp].isCurrentlyHosting)
+	{
+		[[ncAppViewController hostedApp] unloadApp];
+	}
 }
-%end
 
-%hook SBNotificationCenterViewController
 - (UIPageControl*)pageControl
 {
 		UIPageControl *original = %orig;
@@ -143,16 +145,16 @@ static BOOL hasEnteredPages = NO;
 
 %ctor
 {
-		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
-		{
-				%init(iOS10);
-		}
-		else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
-		{
-				%init(iOS9);
-		}
-		else
-		{
-				%init(iOS8);
-		}
+	if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
+	{
+		%init(iOS10);
+	}
+	else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
+	{
+		%init(iOS9);
+	}
+	else
+	{
+		%init(iOS8);
+	}
 }

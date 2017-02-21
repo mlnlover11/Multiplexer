@@ -9,6 +9,7 @@
 BOOL allowMissionControlActivationFromSwitcher = YES;
 BOOL statusBarVisibility;
 BOOL willShowMissionControl = NO;
+BOOL toggleOrActivate = NO;
 
 %hook SBUIController
 - (void)_showNotificationsGestureBeganWithLocation:(CGPoint)arg1
@@ -597,7 +598,6 @@ BOOL willShowMissionControl = NO;
 
 %hook SBMainSwitcherViewController
 - (void)viewDidAppear:(BOOL)arg1 {
-	%orig;
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
 	willShowMissionControl = NO;
 
@@ -613,6 +613,8 @@ BOOL willShowMissionControl = NO;
 		}
 	}
 
+	%orig;
+
 	[[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO];
 }
 
@@ -622,5 +624,15 @@ BOOL willShowMissionControl = NO;
 		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
 	}
 	%orig;
+}
+
+- (BOOL)toggleSwitcherNoninteractively {
+	HBLogDebug(@"toggleSwitcherNoninteractively");
+	return %orig;
+}
+
+- (BOOL)activateSwitcherNoninteractively {
+	HBLogDebug(@"activateSwitcherNoninteractively");
+	return %orig;
 }
 %end
