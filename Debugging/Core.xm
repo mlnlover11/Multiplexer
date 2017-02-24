@@ -7,26 +7,16 @@
 #import "headers.h"
 
 %hook NSObject
--(void)doesNotRecognizeSelector:(SEL)selector
+- (void)doesNotRecognizeSelector:(SEL)selector
 {
 	HBLogDebug(@"[ReachApp] doesNotRecognizeSelector: selector '%@' on class '%s' (image: %s)", NSStringFromSelector(selector), class_getName(self.class), class_getImageName(self.class));
 
-	void *array[10];
-	size_t size;
-	char **strings;
-	size_t i;
-
-	size = backtrace (array, 10);
-	strings = backtrace_symbols (array, size);
-
-	HBLogDebug(@"[ReachApp] Obtained %zd stack frames:\n", size);
-
-	for (i = 0; i < size; i++)
+	NSArray * symbols = [NSThread callStackSymbols];
+	HBLogDebug(@"[ReachApp] Obtained %zd stack frames:\n", symbols.count);
+	for (NSString * symbol in symbols)
 	{
-		HBLogDebug(@"[ReachApp] %s\n", strings[i]);
+		HBLogDebug(@"[ReachApp] %@\n", symbol);
 	}
-
-	free(strings);
 
 	%orig;
 }
