@@ -33,10 +33,10 @@ typedef void (^ASCommonAuthenticationHandler) (BOOL wasCancelled);
 
 #define LOAD_ASPHALEIA if ([NSFileManager.defaultManager fileExistsAtPath:@"/usr/lib/libasphaleiaui.dylib"]) dlopen("/usr/lib/libasphaleiaui.dylib", RTLD_LAZY);
 
-#define HAS_ASPHALEIA2 (objc_getClass("ASCommon") != nil)
-#define IF_ASPHALEIA2  if (HAS_ASPHALEIA2)
+#define HAS_ASPHALEIA (objc_getClass("ASCommon") != nil)
+#define IF_ASPHALEIA  if (HAS_ASPHALEIA)
 
-#define ASPHALEIA2_AUTHENTICATE_APP(ident, success, failure_) \
+#define ASPHALEIA_AUTHENTICATE_APP(ident, success, failure_) \
     BOOL isAppProtected = [[objc_getClass("ASCommon") sharedInstance] authenticateAppWithDisplayIdentifier:ident customMessage:nil dismissedHandler:^(BOOL wasCancelled) { \
         if (!wasCancelled) \
             success(); \

@@ -21,6 +21,7 @@
 #import <GraphicsServices/GraphicsServices.h>
 #import <SpringBoardServices/SBSRestartRenderServerAction.h>
 #import <FrontBoardServices/FBSSystemService.h>
+#import <version.h>
 
 #define RA_BASE_PATH @"/Library/Multiplexer"
 
@@ -36,13 +37,6 @@
 
 #define GET_STATUSBAR_ORIENTATION (UIApplication.sharedApplication._accessibilityFrontMostApplication == nil ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
 
-#if MULTIPLEXER_CORE
-extern BOOL $__IS_SPRINGBOARD;
-#define IS_SPRINGBOARD $__IS_SPRINGBOARD
-#else
-#define IS_SPRINGBOARD [NSBundle.mainBundle.bundleIdentifier isEqual:@"com.apple.springboard"]
-#endif
-
 #define ON_MAIN_THREAD(block) \
     { \
         dispatch_block_t _blk = block; \
@@ -52,8 +46,8 @@ extern BOOL $__IS_SPRINGBOARD;
             dispatch_sync(dispatch_get_main_queue(), _blk); \
     }
 
-#define IF_SPRINGBOARD if (IS_SPRINGBOARD)
-#define IF_NOT_SPRINGBOARD if (!IS_SPRINGBOARD)
+#define IF_SPRINGBOARD if (IN_SPRINGBOARD)
+#define IF_NOT_SPRINGBOARD if (!IN_SPRINGBOARD)
 #define IF_THIS_PROCESS(x) if ([[x objectForKey:@"bundleIdentifier"] isEqual:NSBundle.mainBundle.bundleIdentifier])
 
 // ugh, i got so tired of typing this in by hand, plus it expands method declarations by a LOT.
@@ -97,12 +91,6 @@ dispatch_once(&onceToken, ^{ \
 return sharedInstance;
 
 #define SHARED_INSTANCE(cls) SHARED_INSTANCE2(cls, );
-
-#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
-#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -418,8 +406,13 @@ typedef struct {
 +(StatusBarData*) getStatusBarData;
 @end
 
+@interface SBNotificationCenterViewController : UIViewController
+-(void)_setContainerFrame:(CGRect)arg1 ;
+@end
+
 @interface SBNotificationCenterController : NSObject
 +(id) sharedInstance;
+-(SBNotificationCenterViewController *)viewController;
 -(BOOL) isVisible;
 @end
 

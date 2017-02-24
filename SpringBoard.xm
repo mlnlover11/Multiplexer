@@ -15,7 +15,7 @@
 #import "RAMissionControlManager.h"
 #import "RADesktopManager.h"
 #import "RADesktopWindow.h"
-#import "Asphaleia2.h"
+#import "Asphaleia.h"
 #import "RASnapshotProvider.h"
 
 extern BOOL overrideDisableForStatusBar;
@@ -205,12 +205,11 @@ extern BOOL overrideDisableForStatusBar;
 
 void respring_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-		SpringBoard *springBoard = (SpringBoard*)[UIApplication sharedApplication];
-		if ([springBoard respondsToSelector:@selector(_relaunchSpringBoardNow)]) {
-				[springBoard _relaunchSpringBoardNow];
+		if (IS_IOS_OR_NEWER(iOS_9_3)) {
+				SBSRestartRenderServerAction *restartAction = [%c(SBSRestartRenderServerAction) restartActionWithTargetRelaunchURL:nil];
+				[[%c(FBSSystemService) sharedService] sendActions:[NSSet setWithObject:restartAction] withResult:nil];
 		} else {
-			SBSRestartRenderServerAction *restartAction = [%c(SBSRestartRenderServerAction) restartActionWithTargetRelaunchURL:nil];
-			[[%c(FBSSystemService) sharedService] sendActions:[NSSet setWithObject:restartAction] withResult:nil];
+				[[UIApplication sharedApplication] _relaunchSpringBoardNow];
 		}
 }
 

@@ -20,7 +20,7 @@
 /*FBWindowContextHostWrapperView*/ UIView *view = nil;
 NSString *lastBundleIdentifier = @"";
 NSString *currentBundleIdentifier = @"";
-UIViewController *ncViewController = nil;
+SBNotificationCenterViewController *ncViewController = nil;
 UIView *draggerView = nil;
 
 BOOL overrideOrientation = NO;
@@ -204,9 +204,11 @@ id SBWorkspace$sharedInstance;
         UIWindow *window = MSHookIvar<UIWindow*>(self, "_reachabilityEffectWindow");
         [window _setRotatableViewOrientation:UIInterfaceOrientationPortrait updateStatusBar:YES duration:0.0 force:YES];
         window.rootViewController = nil;
-        UIViewController *viewController = [[%c(SBNotificationCenterController) performSelector:@selector(sharedInstance)] performSelector:@selector(viewController)];
-        [viewController performSelector:@selector(hostWillDismiss)];
-        [viewController performSelector:@selector(hostDidDismiss)];
+        SBNotificationCenterViewController *viewController = [[%c(SBNotificationCenterController) performSelector:@selector(sharedInstance)] performSelector:@selector(viewController)];
+        if ([viewController respondsToSelector:@selector(hostWillDismiss)]) {
+          [viewController performSelector:@selector(hostWillDismiss)];
+          [viewController performSelector:@selector(hostDidDismiss)];
+        }
         //[viewController.view removeFromSuperview];
     }
     else
@@ -317,15 +319,17 @@ id SBWorkspace$sharedInstance;
     {
         showingNC = YES;
 
-        if (ncViewController == nil)
+        if (!ncViewController)
             ncViewController = [[%c(SBNotificationCenterViewController) alloc] init];
         ncViewController.view.frame = (CGRect) { { 0, 0 }, w.frame.size };
         w.rootViewController = ncViewController;
         [w addSubview:ncViewController.view];
 
         //[[%c(SBNotificationCenterController) performSelector:@selector(sharedInstance)] performSelector:@selector(_setupForViewPresentation)];
-        [ncViewController performSelector:@selector(hostWillPresent)];
-        [ncViewController performSelector:@selector(hostDidPresent)];
+        if ([ncViewController respondsToSelector:@selector(hostWillPresent)]) {
+          [ncViewController performSelector:@selector(hostWillPresent)];
+          [ncViewController performSelector:@selector(hostDidPresent)];
+        }
 
         if ([RASettings.sharedInstance enableRotation])
         {
@@ -604,7 +608,7 @@ CGFloat startingY = -1;
     if ([RASettings.sharedInstance showNCInstead])
     {
         if (ncViewController)
-            ncViewController.view.frame = (CGRect) { { 0, 0 }, topFrame.size };
+            ncViewController.view.frame = CGRectMake(0, 0, topFrame.size.width, topFrame.size.height);
     }
     else if (lastBundleIdentifier != nil || [view isKindOfClass:[RAAppSliderProviderView class]])
     {

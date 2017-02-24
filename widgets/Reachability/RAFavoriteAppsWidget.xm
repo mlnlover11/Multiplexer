@@ -20,12 +20,12 @@
 -(UIView*) viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size_ iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing
 {
 	CGSize size = [%c(SBIconView) defaultIconSize];
-	spacing = (frame.size.width - (iconsPerLine * size.width)) / iconsPerLine;
+	spacing = (frame.size.width - (iconsPerLine * size.width)) / (iconsPerLine + 0);
 	NSString *currentBundleIdentifier = [[UIApplication sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
 	if (!currentBundleIdentifier)
 		return nil;
-	CGSize contentSize = CGSizeMake(spacing / 2.0, 10);
-	CGFloat interval = (size.width + spacing) * iconsPerLine;
+	CGSize contentSize = CGSizeMake((spacing / 2.0), 10);
+	CGFloat interval = ((size.width + spacing) * iconsPerLine);
 	NSInteger intervalCount = 1;
 	BOOL isTop = YES;
 	BOOL hasSecondRow = NO;

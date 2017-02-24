@@ -4,7 +4,7 @@
 #import "RAMessagingServer.h"
 #import "RASnapshotProvider.h"
 #import "RASpringBoardKeyboardActivation.h"
-#import "Asphaleia2.h"
+#import "Asphaleia.h"
 #import "dispatch_after_cancel.h"
 
 NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
@@ -197,7 +197,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
             [self _actualLoadApp];
         }, failedBlock /* stupid commas */);
     }
-    else IF_ASPHALEIA2
+    else IF_ASPHALEIA
     {
             void (^failedBlock)() = ^{
                 [self removeLoadingIndicator];
@@ -210,7 +210,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
                     authenticationDidFailLabel.font = [UIFont systemFontOfSize:36];
                     authenticationDidFailLabel.numberOfLines = 0;
                     authenticationDidFailLabel.lineBreakMode = NSLineBreakByWordWrapping;
-                    authenticationDidFailLabel.text = [NSString stringWithFormat:LOCALIZE(@"ASPHALEIA2_AUTH_FAILED"),self.app.displayName];
+                    authenticationDidFailLabel.text = [NSString stringWithFormat:LOCALIZE(@"ASPHALEIA_AUTH_FAILED"),self.app.displayName];
                     [self addSubview:authenticationDidFailLabel];
 
                     authenticationFailedRetryTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(loadApp)];
@@ -219,7 +219,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
                 }
             };
 
-            ASPHALEIA2_AUTHENTICATE_APP(app.bundleIdentifier, ^{
+            ASPHALEIA_AUTHENTICATE_APP(app.bundleIdentifier, ^{
                 [self _actualLoadApp];
             }, failedBlock);
     }

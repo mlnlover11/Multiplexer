@@ -2,7 +2,7 @@
 #import "RAGestureManager.h"
 
 /*
-Some code modified/adapted/based off of MultitaskingGestures by HamzaSood. 
+Some code modified/adapted/based off of MultitaskingGestures by HamzaSood.
 MultitaskingGestures source code: https://github.com/hamzasood/MultitaskingGestures/
 License (GPL): https://github.com/hamzasood/MultitaskingGestures/blob/master/License.md
 */
@@ -22,7 +22,7 @@ struct VelocityData {
 };
 
 %hook _UIScreenEdgePanRecognizer
-- (void)incorporateTouchSampleAtLocation:(CGPoint)location timestamp:(double)timestamp modifier:(NSInteger)modifier interfaceOrientation:(UIInterfaceOrientation)orientation 
+- (void)incorporateTouchSampleAtLocation:(CGPoint)location timestamp:(double)timestamp modifier:(NSInteger)modifier interfaceOrientation:(UIInterfaceOrientation)orientation
 {
     %orig;
 
@@ -30,7 +30,7 @@ struct VelocityData {
     VelocityData oldData;
 
     [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&oldData];
-    
+
     // this is really quite simple, it calculates a velocity based off of
     // (current location - last location) / (time taken to move from last location to current location)
     // which effectively gives you a CGPoint of where it would end if the user continued the gesture.
@@ -43,7 +43,7 @@ struct VelocityData {
 }
 
 %new
-- (CGPoint)RA_velocity 
+- (CGPoint)RA_velocity
 {
     VelocityData data;
     [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&data];
@@ -53,7 +53,7 @@ struct VelocityData {
 %end
 
 %hook SBHandMotionExtractor
--(id) init 
+-(id) init
 {
     if ((self = %orig))
     {
@@ -63,7 +63,7 @@ struct VelocityData {
     return self;
 }
 
--(void) extractHandMotionForActiveTouches:(SBActiveTouch*) activeTouches count:(NSUInteger)count centroid:(CGPoint)centroid 
+-(void) extractHandMotionForActiveTouches:(SBActiveTouch*) activeTouches count:(NSUInteger)count centroid:(CGPoint)centroid
 {
     %orig;
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -92,7 +92,7 @@ struct VelocityData {
     });
 }
 
-%new -(void) screenEdgePanRecognizerStateDidChange:(_UIScreenEdgePanRecognizer*) screenEdgePanRecognizer 
+%new -(void) screenEdgePanRecognizerStateDidChange:(_UIScreenEdgePanRecognizer*) screenEdgePanRecognizer
 {
     if (screenEdgePanRecognizer.state == UIGestureRecognizerStateBegan)
     {
@@ -145,15 +145,15 @@ struct VelocityData {
 }
 %end
 
-%ctor 
+%ctor
 {
     IF_SPRINGBOARD
     {
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
+        if (IS_IOS_OR_NEWER(iOS_9_0))
             return;
 
         class_addProtocol(objc_getClass("SBHandMotionExtractor"), @protocol(_UIScreenEdgePanRecognizerDelegate));
-        
+
         UIRectEdge edgesToWatch[] = { UIRectEdgeBottom, UIRectEdgeLeft, UIRectEdgeRight, UIRectEdgeTop };
         int edgeCount = sizeof(edgesToWatch) / sizeof(UIRectEdge);
         gestureRecognizers = [[NSMutableSet alloc] initWithCapacity:edgeCount];
@@ -167,5 +167,5 @@ struct VelocityData {
 
         %init;
     }
-    
+
 }

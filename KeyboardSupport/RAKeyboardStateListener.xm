@@ -101,7 +101,7 @@ void externalKeyboardDidHide(CFNotificationCenterRef center, void *observer, CFS
         }
     };
 
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
+    if (IS_IOS_OR_NEWER(iOS_9_0))
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), block);
     else
         block();

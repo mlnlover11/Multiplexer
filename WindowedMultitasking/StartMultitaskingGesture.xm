@@ -51,7 +51,7 @@ BOOL locationIsInValidArea(CGFloat x)
 
             // Assign view
             appView = [RAHostManager systemHostViewForApplication:topApp].superview;
-            if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
+            if (IS_IOS_OR_NEWER(iOS_9_0))
                 appView = appView.superview;
             originalCenter = appView.center;
         }

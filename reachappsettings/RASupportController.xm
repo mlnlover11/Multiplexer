@@ -38,6 +38,13 @@
                  @"label": @"Andrew Abosh",
                  @"icon": @"andrew"
                  },
+             @{
+                 @"cell": @"PSLinkCell",
+                 @"height": @45,
+                 @"action": @"openShadeTwitter",
+                 @"label": @"Shade Zepheri",
+                 @"icon": @"shade"
+                 },
 
              @{ @"label": @"Beta tested by" },
              @{
@@ -147,6 +154,7 @@ Crafted with love in 🇨🇦 and 🇺🇸. \n\
 
 -(void) openElijahTwitter { [SKSharedHelper openTwitter:@"daementor"]; }
 -(void) openAndrewTwitter { [SKSharedHelper openTwitter:@"drewplex"]; }
+-(void) openShadeTwitter { [SKSharedHelper openTwitter:@"ShadeZepheri"]; }
 -(void) openAndiTwitter { [SKSharedHelper openTwitter:@"Nexuist"]; }
 -(void) openBetaPage { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://www.reddit.com/user/beta382"]]; }
 -(void) openChonTwitter { [SKSharedHelper openTwitter:@"HikoMitsuketa"]; }

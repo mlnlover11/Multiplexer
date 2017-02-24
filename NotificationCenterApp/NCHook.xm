@@ -3,7 +3,7 @@
 #import "RASettings.h"
 #import "headers.h"
 
-@interface SBNotificationCenterViewController <UITextFieldDelegate>
+@interface SBNotificationCenterViewController () <UITextFieldDelegate>
 -(id)_newBulletinObserverViewControllerOfClass:(Class)aClass;
 @end
 
@@ -109,14 +109,18 @@ static BOOL hasEnteredPages = NO;
 {
 	%orig;
 
-	if (!hasEnteredPages && [self.superview isKindOfClass:[%c(SBSearchEtceteraLayoutView) class]] && [[%c(SBNotificationCenterController) sharedInstance] isVisible])
+	if (!hasEnteredPages && [RASettings.sharedInstance NCAppEnabled] && [self.superview isKindOfClass:[%c(SBSearchEtceteraLayoutView) class]] && [[%c(SBNotificationCenterController) sharedInstance] isVisible])
 	{
-		if (ncAppViewController == nil)
+		if (ncAppViewController == nil) {
 			ncAppViewController = [[RANCViewController alloc] init];
+			HBLogDebug(@"created ncAppViewController");
+		}
 
 		NSMutableArray *newArray = [[self pageViews] mutableCopy];
 		[newArray addObject:ncAppViewController.view];
 		[self setPageViews:newArray];
+
+		HBLogDebug(@"added custom page")
 
 		hasEnteredPages = YES;
 	}
@@ -145,11 +149,11 @@ static BOOL hasEnteredPages = NO;
 
 %ctor
 {
-	if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0"))
+	if (IS_IOS_OR_NEWER(iOS_10_0))
 	{
 		%init(iOS10);
 	}
-	else if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0"))
+	else if (IS_IOS_BETWEEN(iOS_8_4, iOS_9_3))
 	{
 		%init(iOS9);
 	}

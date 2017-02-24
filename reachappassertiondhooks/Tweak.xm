@@ -1,8 +1,7 @@
 #import <dlfcn.h>
 #import <substrate.h>
 #import <Foundation/Foundation.h>
-
-#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+#import <version.h>
 
 extern const char *__progname;
 
@@ -27,9 +26,8 @@ static int hax_BSXPCConnectionHasEntitlement(__unsafe_unretained id connection, 
 %ctor {
     // We can never be too sure
 	if (strcmp(__progname, "assertiond") == 0)  {
-        HBLogDebug(@"Is assertiond");
         dlopen("/System/Library/PrivateFrameworks/XPCObjects.framework/XPCObjects", RTLD_LAZY);
-        if (SYSTEM_VERSION_LESS_THAN(@"9.0")) {
+        if (IS_IOS_OR_OLDER(iOS_8_4)) {
           void *xpcFunction = MSFindSymbol(NULL, "_BSAuditTokenTaskHasEntitlement");
           MSHookFunction(xpcFunction, (void *)hax_BSAuditTokenTaskHasEntitlement, (void **)&orig_BSAuditTokenTaskHasEntitlement);
         } else {

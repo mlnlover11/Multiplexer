@@ -186,7 +186,7 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
 
     IF_SPRINGBOARD
     {
-        if (SYSTEM_VERSION_LESS_THAN(@"9.0"))
+        if (IS_IOS_OR_OLDER(iOS_8_4))
             return;
 
         clientCreatePointer clientCreate;

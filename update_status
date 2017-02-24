@@ -3,12 +3,12 @@ update status:
 Windowed: working
 fs daemon: working
 SwipeOver: working (replace with native slide over(?))
-Reachability: working
+Reachability: working (show NC broken in 10.x)
 GestureSupport: fixed
 Backgrounding: working
 KeyboardSupport: hackily fixed but it works now
 MissionControl: working (MC presents even when not dragging grabber)
-NCApp: working (not tested on ipad / needs to freeze app when NC not visible);
+NCApp: working (not tested on ipad / app should be frozen but doesn't appear to be);
 assertiond hooks: working
 backboardd hooks: unknown
 fake phone mode: working
@@ -18,6 +18,13 @@ fake phone mode: working
 - SwipeOver sliding off screen animation is broken (RASwipeOverManager.xm:L62)
 - icons and apps do not show up in RASnapshotProvider
 - GestureSupport: LandscapeLeft is, once again, broken
+
+Bugs:
+- Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
+- MC view invokes regardless if grabbing the grabber or not
+- Replace AppSwitcher with MC is broken
+- Invoking keyboard in reachapp closes view
+
 
 notes:
 use _referenceBounds instead of bounds on UIScreen to get physical bounds. Makes landscape support easier?
