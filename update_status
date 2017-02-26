@@ -23,6 +23,7 @@ Bugs:
 - Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
 - MC view invokes regardless if grabbing the grabber or not
 - Replace AppSwitcher with MC is broken
+- Invoking MC shows appswitcher dismissing
 - Invoking keyboard in reachapp closes view
 - NCApp doesnt properly unload
 - Showing NC with reachapp doesnt properly resize

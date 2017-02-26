@@ -131,7 +131,8 @@ int rotationDegsForOrientation(int o)
 	}
 	//[appView rotateToOrientation:UIApplication.sharedApplication.statusBarOrientation];
 
-	if (IS_IOS_OR_NEWER(iOS_9_0)) // Must manually place view controller :(
+
+	if (IS_IOS_BETWEEN(iOS_9_0, iOS_9_3)) // Must manually place view controller :(
 	{
 		CGRect frame = self.view.frame;
 		frame.origin.x = UIScreen.mainScreen.bounds.size.width * 2.0;

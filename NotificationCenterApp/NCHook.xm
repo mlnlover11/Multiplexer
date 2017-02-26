@@ -111,17 +111,13 @@ static BOOL hasEnteredPages = NO;
 
 	if (!hasEnteredPages && [RASettings.sharedInstance NCAppEnabled] && [self.superview isKindOfClass:[%c(SBSearchEtceteraLayoutView) class]] && [[%c(SBNotificationCenterController) sharedInstance] isVisible])
 	{
-		if (ncAppViewController == nil) {
+		if (!ncAppViewController) {
 			ncAppViewController = [[RANCViewController alloc] init];
-			HBLogDebug(@"created ncAppViewController");
 		}
 
 		NSMutableArray *newArray = [[self pageViews] mutableCopy];
 		[newArray addObject:ncAppViewController.view];
 		[self setPageViews:newArray];
-
-		HBLogDebug(@"added custom page")
-
 		hasEnteredPages = YES;
 	}
 }
@@ -131,11 +127,7 @@ static BOOL hasEnteredPages = NO;
 - (void)viewDidDisappear:(BOOL)arg1
 {
 	%orig;
-	[ncAppViewController hostedApp].hideStatusBar = YES;
-	if ([ncAppViewController hostedApp].isCurrentlyHosting)
-	{
-		[[ncAppViewController hostedApp] unloadApp];
-	}
+	[ncAppViewController viewDidDisappear:YES];
 }
 
 - (UIPageControl*)pageControl
@@ -153,7 +145,7 @@ static BOOL hasEnteredPages = NO;
 	{
 		%init(iOS10);
 	}
-	else if (IS_IOS_BETWEEN(iOS_8_4, iOS_9_3))
+	else if (IS_IOS_BETWEEN(iOS_9_0, iOS_9_3))
 	{
 		%init(iOS9);
 	}

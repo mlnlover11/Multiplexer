@@ -562,11 +562,6 @@ BOOL toggleOrActivate = NO;
 				fakeView.frame = UIScreen.mainScreen.RA_interfaceOrientedBounds;
 			} completion:^(BOOL _) {
 				//((UIWindow*)[[%c(SBUIController) sharedInstance] switcherWindow]).alpha = 0;
-				if ([%c(SBUIController) respondsToSelector:@selector(dismissSwitcherAnimated:)]) {
-					[[%c(SBUIController) sharedInstance] dismissSwitcherAnimated:NO];
-				} else {
-					[[%c(SBMainSwitcherViewController) sharedInstance] dismissSwitcherNoninteractively];
-				}
 				[[%c(SBUIController) sharedInstance] restoreContentUpdatingStatusBar:YES];
 				[RAMissionControlManager.sharedInstance showMissionControl:NO];
 				[fakeView removeFromSuperview];
@@ -624,15 +619,5 @@ BOOL toggleOrActivate = NO;
 		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
 	}
 	%orig;
-}
-
-- (BOOL)toggleSwitcherNoninteractively {
-	HBLogDebug(@"toggleSwitcherNoninteractively");
-	return %orig;
-}
-
-- (BOOL)activateSwitcherNoninteractively {
-	HBLogDebug(@"activateSwitcherNoninteractively");
-	return %orig;
 }
 %end
