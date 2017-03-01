@@ -25,8 +25,12 @@ Bugs:
 - Replace AppSwitcher with MC is broken
 - Invoking MC shows appswitcher dismissing
 - Invoking keyboard in reachapp closes view
-- NCApp doesnt properly unload
+- NCApp doesnt properly unload (Should now after hacky fix?)
 - Showing NC with reachapp doesnt properly resize
+- Startup bug still isnt fixed
+- Some say it causes serios lag?
+- Launching MC from activator gesture black screen
+- Empoleon frozen upon homebutton press
 
 
 notes:

@@ -6,7 +6,7 @@ Replaces: com.efrederickson.reachapp
 Version: 0.1
 Architecture: iphoneos-arm
 Description: All sorts of multitasking.
-Depiction: http://shade-zepheri.github.io/depic/index.html?p=org.bigboss.multiplexer
+Depiction: https://shade-zepheri.github.io/depic/index.html?p=com.shade.multiplexer
 Maintainer: Shade Zepheri <ziroalpha@gmail.com>
 Author: Shade Zepheri <ziroalpha@gmail.com>
 Section: Tweaks
