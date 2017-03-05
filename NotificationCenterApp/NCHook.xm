@@ -127,15 +127,14 @@ static BOOL hasEnteredPages = NO;
 - (void)viewDidDisappear:(BOOL)arg1
 {
 	%orig;
-	NSNumber *passedValue = [NSNumber numberWithBool:YES];
-	[ncAppViewController performSelector:@selector(viewDidDisappear:) withObject:passedValue afterDelay:2.0];
+	[ncAppViewController.hostedApp unloadApp];
 }
 
 - (UIPageControl*)pageControl
 {
-		UIPageControl *original = %orig;
-		original.numberOfPages = 3;
-		return original;
+	UIPageControl *original = %orig;
+	original.numberOfPages = 3;
+	return original;
 }
 %end
 %end

@@ -6,7 +6,7 @@ BOOL allowClosingReachabilityNatively = NO;
 %hook UIApplication
 - (void)_deactivateReachability
 {
-    if (allowClosingReachabilityNatively == NO)
+    if (!allowClosingReachabilityNatively)
     {
         HBLogDebug(@"[ReachApp] attempting to close reachability but not allowed to.");
         return;

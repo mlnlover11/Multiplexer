@@ -414,6 +414,8 @@ typedef struct {
 +(id) sharedInstance;
 -(SBNotificationCenterViewController *)viewController;
 -(BOOL) isVisible;
+-(BOOL)isTransitioning;
+-(BOOL)isPresentingControllerTransitioning;
 @end
 
 @interface UIStatusBarItem : NSObject

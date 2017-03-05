@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, RAIconIndicatorViewInfo) {
 NSString *FriendlyNameForBackgroundMode(RABackgroundMode mode);
 
 @interface RABackgrounder : NSObject
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(BOOL) shouldAutoLaunchApplication:(NSString*)identifier;
 -(BOOL) shouldAutoRelaunchApplication:(NSString*)identifier;

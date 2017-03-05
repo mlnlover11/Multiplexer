@@ -17,7 +17,7 @@ CGSize forcePhoneModeSize = RA_6P_SIZE;
 +(void) load
 {
     // Prevent iPhone issue
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    if (IS_IPAD)
     {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ // somehow, this is needed to make sure that both force resizing and Fake Phone Mode work. Without the dispatch_after, even if fake phone mode is disabled,
                 // force resizing seems to render touches incorrectly ¯\_(ツ)_/¯

@@ -44,7 +44,7 @@
 	if (animated)
 		[UIView animateWithDuration:0.5 animations:^{ windowBar.alpha = 1; }];
 
-	if (self.hidden == NO)
+	if (!self.hidden)
 		[view loadApp];
 	view.hideStatusBar = YES;
 	windowBar.transform = CGAffineTransformMakeScale(0.5, 0.5);
@@ -66,7 +66,7 @@
 			windowBar.center = info.center;
 			windowBar.transform = info.transform;
 		} completion:^(BOOL _) {
-			[windowBar updateClientRotation];	
+			[windowBar updateClientRotation];
 			RADesktopManager.sharedInstance.lastUsedWindow = windowBar;
 		}];
 	}
@@ -117,7 +117,7 @@
 				[appViews removeObject:view];
 				[self saveInfo];
 
-				if (dontClearForcedPhoneState == NO && [RAFakePhoneMode shouldFakeForAppWithIdentifier:identifier])
+				if (!dontClearForcedPhoneState && [RAFakePhoneMode shouldFakeForAppWithIdentifier:identifier])
 					[RAMessagingServer.sharedInstance forcePhoneMode:NO forIdentifier:identifier andRelaunchApp:YES];
 			};
 			if (animated)
@@ -126,7 +126,7 @@
 					view.superview.layer.position = CGPointMake(UIScreen.mainScreen._referenceBounds.size.width / 2, UIScreen.mainScreen._referenceBounds.size.height);
 					view.superview.layer.opacity = 0.0f;
 					[RADesktopManager.sharedInstance findNewForemostApp];
-				//view.superview.alpha = 0; 
+				//view.superview.alpha = 0;
 				} completion:^(BOOL _) { destructor(); }];
 			else
 				destructor();
@@ -186,7 +186,7 @@
 	while (i --> 0) // Always wanted to use that 😍
 	{
 		[self removeAppWithIdentifier:((RAHostedAppView*)appViews[i]).bundleIdentifier animated:YES];
-	}	
+	}
 }
 
 -(void) updateRotationOnClients:(UIInterfaceOrientation)orientation
@@ -195,7 +195,7 @@
 
 	for (RAWindowBar *app in self.subviews)
 		if ([app isKindOfClass:[RAWindowBar class]]) // could be a diferent kind of UIView actually
-			[app updateClientRotation:orientation];	
+			[app updateClientRotation:orientation];
 }
 
 -(BOOL) isAppOpened:(NSString*)identifier
@@ -325,7 +325,7 @@
 {
     NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
     UIView *subview;
-    while ((subview = [objects nextObject])) 
+    while ((subview = [objects nextObject]))
     {
     	if (self.rootViewController && [self.rootViewController.view isEqual:subview])
     		continue;
@@ -338,7 +338,7 @@
     return [super hitTest:point withEvent:event];
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
 	BOOL isContained = NO;
 	for (UIView *view in self.subviews)

@@ -67,6 +67,11 @@ int rotationDegsForOrientation(int o)
 {
 	[super viewDidAppear:animated];
 
+	if (![[%c(SBNotificationCenterController) sharedInstance] isVisible] && ![[%c(SBNotificationCenterController) sharedInstance] isTransitioning])
+	{
+		return;
+	}
+
 	if ([[%c(SBLockScreenManager) sharedInstance] isUILocked])
 	{
 		if (isLockedLabel == nil)
@@ -75,7 +80,7 @@ int rotationDegsForOrientation(int o)
 			isLockedLabel.numberOfLines = 2;
 			isLockedLabel.textAlignment = NSTextAlignmentCenter;
 			isLockedLabel.textColor = [UIColor whiteColor];
-			isLockedLabel.font = [UIFont systemFontOfSize:UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 36 : 30];
+			isLockedLabel.font = [UIFont systemFontOfSize:IS_IPAD ? 36 : 30];
 			[self.view addSubview:isLockedLabel];
 		}
 

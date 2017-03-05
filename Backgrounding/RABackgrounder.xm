@@ -1,5 +1,6 @@
 #import "RABackgrounder.h"
 #import "RASettings.h"
+#import "Multiplexer.h"
 
 NSString *FriendlyNameForBackgroundMode(RABackgroundMode mode)
 {
@@ -24,7 +25,7 @@ NSMutableDictionary *temporaryOverrides = [NSMutableDictionary dictionary];
 NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 
 @implementation RABackgrounder
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
 	SHARED_INSTANCE(RABackgrounder);
 }
@@ -68,7 +69,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 {
 	if (!identifier) return;
 
-	if ([temporaryShouldPop objectForKey:identifier] != nil && [[temporaryShouldPop objectForKey:identifier] boolValue])
+	if ([temporaryShouldPop objectForKey:identifier] && [[temporaryShouldPop objectForKey:identifier] boolValue])
 	{
 		[temporaryShouldPop removeObjectForKey:identifier];
 		[temporaryOverrides removeObjectForKey:identifier];
@@ -117,7 +118,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 -(NSInteger) backgroundModeForIdentifier:(NSString*)identifier
 {
 	@autoreleasepool {
-		if (!identifier || [[%c(RASettings) sharedInstance] backgrounderEnabled] == NO)
+		if (!identifier || ![[%c(RASettings) sharedInstance] backgrounderEnabled])
 			return RABackgroundModeNative;
 
 		NSInteger temporaryOverride = [self popTemporaryOverrideForApplication:identifier];
@@ -152,11 +153,11 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 
 	if (close)
 	{
-        FBWorkspaceEvent *event = [objc_getClass("FBWorkspaceEvent") eventWithName:@"ActivateSpringBoard" handler:^{
-            SBAppToAppWorkspaceTransaction *transaction = [[objc_getClass("SBAppExitedWorkspaceTransaction") alloc] initWithAlertManager:nil exitedApp:app];
+        FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
+						SBAppToAppWorkspaceTransaction *transaction = [%c(Multiplexer) createSBAppToAppWorkspaceTransactionForExitingApp:app];
             [transaction begin];
         }];
-        [(FBWorkspaceEventQueue*)[objc_getClass("FBWorkspaceEventQueue") sharedInstance] executeOrAppendEvent:event];
+        [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
 	}
 }
 
@@ -195,18 +196,18 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 	@autoreleasepool {
 		SBIconView *ret = nil;
 			if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
-				if ([[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] respondsToSelector:@selector(applicationIconForBundleIdentifier:)])
+				if ([[[%c(SBIconViewMap) homescreenMap] iconModel] respondsToSelector:@selector(applicationIconForBundleIdentifier:)])
 				{
 						// iOS 8.0+
 
-						SBApplicationIcon *icon = [[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] applicationIconForBundleIdentifier:identifier];
-						ret = [[objc_getClass("SBIconViewMap") homescreenMap] mappedIconViewForIcon:icon];
+						SBApplicationIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:identifier];
+						ret = [[%c(SBIconViewMap) homescreenMap] mappedIconViewForIcon:icon];
 				}
 				else
 				{
 						// iOS 7.X
-						SBApplicationIcon *icon = [[[objc_getClass("SBIconViewMap") homescreenMap] iconModel] applicationIconForDisplayIdentifier:identifier];
-						ret = [[objc_getClass("SBIconViewMap") homescreenMap] mappedIconViewForIcon:icon];
+						SBApplicationIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForDisplayIdentifier:identifier];
+						ret = [[%c(SBIconViewMap) homescreenMap] mappedIconViewForIcon:icon];
 				}
 			} else {
 					SBApplicationIcon *icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:identifier];

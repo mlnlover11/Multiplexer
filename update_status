@@ -23,15 +23,13 @@ Bugs:
 - Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
 - MC view invokes regardless if grabbing the grabber or not
 - Replace AppSwitcher with MC is broken
-- Invoking MC shows appswitcher dismissing
+- Invoking MC shows appswitcher dismissing (dont know if can fix)
 - Invoking keyboard in reachapp closes view
-- NCApp doesnt properly unload (Should now after hacky fix?)
+- viewDidAppear is called when NC disappeared causing NCapp to not unload
 - Showing NC with reachapp doesnt properly resize
 - Startup bug still isnt fixed
 - Some say it causes serios lag?
 - Launching MC from activator gesture black screen
-- Empoleon frozen upon homebutton press
-
 
 notes:
 use _referenceBounds instead of bounds on UIScreen to get physical bounds. Makes landscape support easier?

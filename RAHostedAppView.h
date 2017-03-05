@@ -10,7 +10,7 @@
 
 +(void) iPad_iOS83_fixHosting;
 
--(id) initWithBundleIdentifier:(NSString*)bundleIdentifier;
+-(instancetype) initWithBundleIdentifier:(NSString*)bundleIdentifier;
 
 @property (nonatomic) BOOL showSplashscreenInsteadOfSpinner;
 @property (nonatomic) BOOL renderWallpaper;

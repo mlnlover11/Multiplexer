@@ -57,7 +57,7 @@ static RAActivatorBackgrounderToggleModeListener *sharedInstance$RAActivatorBack
 
 %ctor
 {
-    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
+    if (IN_SPRINGBOARD)
     {
         sharedInstance$RAActivatorBackgrounderToggleModeListener = [[RAActivatorBackgrounderToggleModeListener alloc] init];
         [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorBackgrounderToggleModeListener forName:@"com.efrederickson.reachapp.backgrounder.togglemode"];

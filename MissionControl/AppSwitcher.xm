@@ -153,7 +153,7 @@ BOOL toggleOrActivate = NO;
 	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
 	{
 		CGFloat width = 50, height = 30;
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		if (IS_IPAD)
 		{
 			width = 60;
 		    height = 40;
@@ -191,7 +191,7 @@ BOOL toggleOrActivate = NO;
 	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
 	{
 		CGFloat width = 50, height = 30;
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		if (IS_IPAD)
 		{
 			width = 60;
 		  height = 40;
@@ -390,7 +390,7 @@ BOOL toggleOrActivate = NO;
 
 	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
 		CGFloat width = 50, height = 30;
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		if (IS_IPAD) {
 			width = 60;
 		  height = 40;
 		}
@@ -562,6 +562,11 @@ BOOL toggleOrActivate = NO;
 				fakeView.frame = UIScreen.mainScreen.RA_interfaceOrientedBounds;
 			} completion:^(BOOL _) {
 				//((UIWindow*)[[%c(SBUIController) sharedInstance] switcherWindow]).alpha = 0;
+				if ([%c(SBUIController) respondsToSelector:@selector(dismissSwitcherAnimated:)]) {
+ 					[[%c(SBUIController) sharedInstance] dismissSwitcherAnimated:NO];
+ 				} else {
+ 					[[%c(SBMainSwitcherViewController) sharedInstance] dismissSwitcherNoninteractively];
+ 				}
 				[[%c(SBUIController) sharedInstance] restoreContentUpdatingStatusBar:YES];
 				[RAMissionControlManager.sharedInstance showMissionControl:NO];
 				[fakeView removeFromSuperview];

@@ -35,4 +35,9 @@ BOOL overrideCC = NO;
 		if (!overrideCC)
 				%orig;
 }
+
+- (BOOL)inGrabberOnlyMode
+{
+		return overrideCC || %orig;
+}
 %end

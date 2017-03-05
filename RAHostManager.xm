@@ -29,6 +29,7 @@
 	    if (!settings)
 	        return nil;
 
+			[[UIApplication sharedApplication] launchApplicationWithIdentifier:app.bundleIdentifier suspended:YES];
 	    SET_BACKGROUNDED(settings, NO);
 	    [scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
 
@@ -44,7 +45,7 @@
 {
 	if (!app)
 		return nil;
-		
+
 	if ([app respondsToSelector:@selector(mainScene)])
 	{
 	    FBScene *scene = [app mainScene];

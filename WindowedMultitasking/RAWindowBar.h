@@ -3,7 +3,7 @@
 
 @class RADesktopWindow;
 
-@interface RAWindowBar : UIView<UIGestureRecognizerDelegate> {
+@interface RAWindowBar : UIView <UIGestureRecognizerDelegate> {
 	RAHostedAppView *attachedView;
 }
 

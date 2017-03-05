@@ -47,7 +47,7 @@ extern BOOL allowOpenApp;
 -(void) attachView:(RAHostedAppView*)view
 {
 	height = 40;
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	if (IS_IPAD)
 	{
 	    height = 45;
 	}
@@ -64,9 +64,9 @@ extern BOOL allowOpenApp;
 	view.hideStatusBar = YES;
 	[self addSubview:view];
 
-    panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-    panGesture.delegate = self;
-    [self addGestureRecognizer:panGesture];
+  panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+  panGesture.delegate = self;
+  [self addGestureRecognizer:panGesture];
 
 	scaleGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
 	scaleGesture.delegate = self;
@@ -87,12 +87,12 @@ extern BOOL allowOpenApp;
 	[self addGestureRecognizer:tapGesture];
 
 	doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
-	doubleTapGesture.numberOfTapsRequired = 2; 
+	doubleTapGesture.numberOfTapsRequired = 2;
 	doubleTapGesture.delegate = self;
 	[self addGestureRecognizer:doubleTapGesture];
 
 	tripleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTripleTap:)];
-	tripleTapGesture.numberOfTapsRequired = 3; 
+	tripleTapGesture.numberOfTapsRequired = 3;
 	tripleTapGesture.delegate = self;
 	[self addGestureRecognizer:tripleTapGesture];
 
@@ -155,18 +155,18 @@ extern BOOL allowOpenApp;
 	    tmpItem.item = closeItemIdentifier;
 	    [infos addObject:tmpItem];
 
-		tmpItem = [[RAWindowBarIconInfo alloc] init];
+			tmpItem = [[RAWindowBarIconInfo alloc] init];
 	    tmpItem.alignment = maxAlignment;
 	    tmpItem.priority = maxPriority;
 	    tmpItem.item = maxItemIdentifier;
 	    [infos addObject:tmpItem];
-	    
+
 	    tmpItem = [[RAWindowBarIconInfo alloc] init];
 	    tmpItem.alignment = minAlignment;
 	    tmpItem.priority = minPriority;
 	    tmpItem.item = minItemIdentifier;
 	    [infos addObject:tmpItem];
-	    
+
 	    tmpItem = [[RAWindowBarIconInfo alloc] init];
 	    tmpItem.alignment = rotationAlignment;
 	    tmpItem.priority = rotationPriority;
@@ -303,8 +303,8 @@ extern BOOL allowOpenApp;
 	self.layer.mask = maskLayer;
 }
 
--(void) drawRect:(CGRect)rect 
-{ 
+-(void) drawRect:(CGRect)rect
+{
     CGRect topRect = CGRectMake(0, 0, rect.size.width, height);
     // Fill the rectangle with grey
     [barBackgroundColor setFill];
@@ -404,14 +404,14 @@ extern BOOL allowOpenApp;
 	CGFloat rotation = atan2(self.transform.b, self.transform.a);
 
 	CGAffineTransform transform = CGAffineTransformMakeScale(scale, scale);
-	if (derotate == NO)
+	if (!derotate)
 		transform = CGAffineTransformRotate(transform, rotation);
 
 	if (animate)
 		[UIView animateWithDuration:0.2 animations:^{
 	    	[self setTransform:transform];
 	    }];
-	else 
+	else
 		[self setTransform:transform];
 
 	[self saveWindowInfo];
@@ -421,7 +421,7 @@ extern BOOL allowOpenApp;
 {
 	if (sizingLocked)
 		return;
-	
+
 	if (rads != 0)
 		self.transform = CGAffineTransformRotate(self.transform, rads);
 
@@ -430,7 +430,7 @@ extern BOOL allowOpenApp;
     	CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
     	CGFloat rotateSnapDegrees = 0;
 
-    	if (currentRotation < 0) 
+    	if (currentRotation < 0)
     		currentRotation = 360 + currentRotation;
 
     	if (currentRotation >= 315 || currentRotation <= 45)
@@ -497,7 +497,7 @@ extern BOOL allowOpenApp;
 
 - (void)handleRotate:(UIRotationGestureRecognizer *)gesture
 {
-	if ([RASettings.sharedInstance alwaysEnableGestures] == NO && self.isOverlayShowing == NO)
+	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing)
 		return;
 
     if (gesture.state == UIGestureRecognizerStateChanged)
@@ -569,7 +569,7 @@ extern BOOL allowOpenApp;
 
 -(void) handleTripleTap:(UITapGestureRecognizer*)tap
 {
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	if (IS_IPAD)
 		[RAMessagingServer.sharedInstance forcePhoneMode:![RAFakePhoneMode shouldFakeForAppWithIdentifier:attachedView.app.bundleIdentifier] forIdentifier:attachedView.app.bundleIdentifier andRelaunchApp:YES];
 }
 
@@ -624,7 +624,7 @@ extern BOOL allowOpenApp;
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)gesture
 {
-	if ([RASettings.sharedInstance alwaysEnableGestures] == NO && self.isOverlayShowing == NO)
+	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing)
 		return;
 
     switch (gesture.state) {
@@ -639,7 +639,7 @@ extern BOOL allowOpenApp;
             break;
         case UIGestureRecognizerStateEnded:
         	enableDrag = YES; enableLongPress = YES;
-			
+
 			if ([RAWindowSnapDataProvider shouldSnapWindow:self])
 			{
 				[RAWindowSnapDataProvider snapWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self] animated:YES];
@@ -667,7 +667,7 @@ extern BOOL allowOpenApp;
 
 	[super setTransform:trans];
 
-	if (isBeingTouched == NO)
+	if (!isBeingTouched)
 	{
 		if ([RAWindowSnapDataProvider shouldSnapWindow:self])
 			[RAWindowSnapDataProvider snapWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self] animated:YES];
@@ -698,7 +698,7 @@ extern BOOL allowOpenApp;
 
 	if (![RASettings.sharedInstance showSnapHelper])
 		return;
-		
+
 	if (!snapShadowView)
 	{
 		snapShadowView = [[UIView alloc] initWithFrame:self.bounds];
@@ -768,7 +768,7 @@ extern BOOL allowOpenApp;
     return [super hitTest:point withEvent:event];
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
 	BOOL isContained = NO;
 	for (UIView *view in self.subviews)
@@ -779,11 +779,11 @@ extern BOOL allowOpenApp;
 	return isContained || [super pointInside:point withEvent:event];
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
 	if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
 		return NO;
-	return YES; 
+	return YES;
 }
 -(RAHostedAppView*) attachedView { return attachedView; }
 @end

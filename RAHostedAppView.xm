@@ -30,18 +30,18 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
 @end
 
 @implementation RAHostedAppView
--(id) initWithBundleIdentifier:(NSString*)bundleIdentifier
+-(instancetype) initWithBundleIdentifier:(NSString*)bundleIdentifier
 {
 	if (self = [super init])
 	{
 		self.bundleIdentifier = bundleIdentifier;
-        self.autosizesApp = NO;
-        self.allowHidingStatusBar = YES;
-        self.showSplashscreenInsteadOfSpinner = NO;
-        startTries = 0;
-        disablePreload = NO;
-        self.renderWallpaper = NO;
-        self.backgroundColor = [UIColor clearColor];
+    self.autosizesApp = NO;
+    self.allowHidingStatusBar = YES;
+    self.showSplashscreenInsteadOfSpinner = NO;
+    startTries = 0;
+    disablePreload = NO;
+    self.renderWallpaper = NO;
+    self.backgroundColor = [UIColor clearColor];
 	}
 	return self;
 }
@@ -96,15 +96,15 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
         return;
     }
 
-    if (app == nil)
+    if (!app)
         return;
 
     if (_isCurrentlyHosting)
         return;
 
     isPreloading = YES;
-	FBScene *scene = [app mainScene];
-    if (![app pid] || scene == nil)
+	  FBScene *scene = [app mainScene];
+    if (![app pid] || !scene)
     {
         [UIApplication.sharedApplication launchApplicationWithIdentifier:self.bundleIdentifier suspended:YES];
         [[%c(FBProcessManager) sharedInstance] createApplicationProcessForBundleID:self.bundleIdentifier]; // ummm...?
@@ -138,7 +138,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     [self addSubview:view];
 
     [RAMessagingServer.sharedInstance setHosted:YES forIdentifier:app.bundleIdentifier completion:nil];
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+    if (IS_IPAD)
         [RAHostedAppView iPad_iOS83_fixHosting];
 
     [RARunningAppsProvider.sharedInstance addTarget:self];
@@ -151,7 +151,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
 {
     startTries = 0;
     disablePreload = NO;
-	[self preloadApp];
+	  [self preloadApp];
     if (!app)
         return;
 
@@ -255,7 +255,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
 
 -(void) verifyHostingAndRehostIfNecessary
 {
-    if (!isPreloading && _isCurrentlyHosting && (app.isRunning == NO || view.contextHosted == NO)) // && (app.pid == 0 || view == nil || view.manager == nil)) // || view._isReallyHosting == NO))
+    if (!isPreloading && _isCurrentlyHosting && (!app.isRunning || !view.contextHosted)) // && (app.pid == 0 || view == nil || view.manager == nil)) // || view._isReallyHosting == NO))
     {
         //[activityView startAnimating];
         [self unloadApp];
@@ -343,7 +343,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
 
     disablePreload = YES;
 
-    if (_isCurrentlyHosting == NO)
+    if (!_isCurrentlyHosting)
         return;
 
     _isCurrentlyHosting = NO;

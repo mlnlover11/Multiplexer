@@ -27,7 +27,7 @@
         [arg4 isEqualToString:@"Called by Filza_main, from -[AppDelegate applicationDidEnterBackground:]"] == NO && // Whitelist filza to prevent iOS hang (?!)
         !IN_SPRINGBOARD) // FIXME: this is a hack that prevents SpringBoard from not starting
     {
-        NSString *identifier = NSBundle.mainBundle.bundleIdentifier;
+        NSString *identifier = [NSBundle mainBundle].bundleIdentifier;
 
         if (!identifier)
             goto ORIGINAL;

@@ -12,6 +12,7 @@
 #import "RADesktopManager.h"
 #import "RAWindowSnapDataProvider.h"
 #import "RAHostManager.h"
+#import "Multiplexer.h"
 
 extern BOOL launchNextOpenIntoWindow;
 
@@ -34,8 +35,15 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(void) loadServer
 {
-    messagingCenter = [CPDistributedMessagingCenter centerNamed:@"com.efrederickson.reachapp.messaging.server"];
-    rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
+		messagingCenter = [objc_getClass("CPDistributedMessagingCenter") centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+
+		void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
+		if (handle)
+		{
+				void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
+				rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
+				dlclose(handle);
+		}
 
     [messagingCenter runServerOnCurrentThread];
 
@@ -143,27 +151,27 @@ extern BOOL launchNextOpenIntoWindow;
 {
 	if ([identifier isEqual:RAMessagingDetachCurrentAppMessageName])
 	{
-        SBApplication *topApp = [[UIApplication sharedApplication] _accessibilityFrontMostApplication];
+      SBApplication *topApp = [[UIApplication sharedApplication] _accessibilityFrontMostApplication];
 
-        if (topApp)
-        {
-	        [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
-	        [[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
+      if (topApp)
+      {
+        [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
+        [[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
 
-	        UIView *appView = [RAHostManager systemHostViewForApplication:topApp].superview;
+        UIView *appView = [RAHostManager systemHostViewForApplication:topApp].superview;
 
 		    [UIView animateWithDuration:0.2 animations:^{
 		        appView.transform = CGAffineTransformMakeScale(0.5, 0.5);
 		    } completion:^(BOOL _) {
 	       		[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];
 		        FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
-		            SBAppToAppWorkspaceTransaction *transaction = [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithAlertManager:nil exitedApp:UIApplication.sharedApplication._accessibilityFrontMostApplication];
+		            SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
 		            [transaction begin];
 		        }];
 		        [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
 		        [RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
 		    }];
-        }
+      }
 	}
 	else if ([identifier isEqual:RAMessagingGoToDesktopOnTheLeftMessageName])
 	{

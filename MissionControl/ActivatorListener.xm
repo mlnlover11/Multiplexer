@@ -26,7 +26,7 @@ static RAActivatorListener *sharedInstance;
 
 %ctor
 {
-    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
+    if (IN_SPRINGBOARD)
     {
         sharedInstance = [[RAActivatorListener alloc] init];
         [[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];

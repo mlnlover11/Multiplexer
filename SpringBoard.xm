@@ -144,7 +144,7 @@ extern BOOL overrideDisableForStatusBar;
 
     // can't hurt to check all devices - especially if it changes/has changed to include phones.
     // however this was presumably done in preparation for the iOS 9 multitasking
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		if (IS_IPAD)
 			[RAHostedAppView iPad_iOS83_fixHosting];
 }
 %end
