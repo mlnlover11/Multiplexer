@@ -37,6 +37,25 @@
 
 #define GET_STATUSBAR_ORIENTATION (UIApplication.sharedApplication._accessibilityFrontMostApplication == nil ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
 
+#if DEBUG
+#define LogDebug HBLogDebug
+#define LogInfo HBLogInfo
+#define LogWarn HBLogWarn
+#define LogError HBLogError
+#else
+#define LogDebug(...)
+#define LogInfo(...)
+#define LogWarn(...)
+#define LogError(...)
+#endif
+
+#if MULTIPLEXER_CORE
+extern BOOL $__IS_SPRINGBOARD;
+#define IS_SPRINGBOARD $__IS_SPRINGBOARD
+#else
+#define IS_SPRINGBOARD IN_SPRINGBOARD
+#endif
+
 #define ON_MAIN_THREAD(block) \
     { \
         dispatch_block_t _blk = block; \
@@ -46,8 +65,8 @@
             dispatch_sync(dispatch_get_main_queue(), _blk); \
     }
 
-#define IF_SPRINGBOARD if (IN_SPRINGBOARD)
-#define IF_NOT_SPRINGBOARD if (!IN_SPRINGBOARD)
+#define IF_SPRINGBOARD if (IS_SPRINGBOARD)
+#define IF_NOT_SPRINGBOARD if (!IS_SPRINGBOARD)
 #define IF_THIS_PROCESS(x) if ([[x objectForKey:@"bundleIdentifier"] isEqual:NSBundle.mainBundle.bundleIdentifier])
 
 // ugh, i got so tired of typing this in by hand, plus it expands method declarations by a LOT.
@@ -408,6 +427,9 @@ typedef struct {
 
 @interface SBNotificationCenterViewController : UIViewController
 -(void)_setContainerFrame:(CGRect)arg1 ;
+-(void)prepareLayoutForDefaultPresentation;
+-(void)_loadContainerView;
+-(void)_loadContentView;
 @end
 
 @interface SBNotificationCenterController : NSObject
@@ -1489,6 +1511,9 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @interface SBMainSwitcherViewController : UIViewController
 + (id)sharedInstance;
 - (BOOL)dismissSwitcherNoninteractively;
+- (BOOL)isVisible;
+- (BOOL)activateSwitcherNoninteractively;
+- (void)RA_dismissSwitcherUnanimated;
 @end
 
 @interface SBSwitcherContainerView : UIView

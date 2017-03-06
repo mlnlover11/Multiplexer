@@ -10,13 +10,13 @@
 - (void)doesNotRecognizeSelector:(SEL)selector
 {
 #if DEBUG
-	HBLogDebug(@"[ReachApp] doesNotRecognizeSelector: selector '%@' on class '%s' (image: %s)", NSStringFromSelector(selector), class_getName(self.class), class_getImageName(self.class));
+	LogDebug(@"[ReachApp] doesNotRecognizeSelector: selector '%@' on class '%s' (image: %s)", NSStringFromSelector(selector), class_getName(self.class), class_getImageName(self.class));
 
 	NSArray * symbols = [NSThread callStackSymbols];
-	HBLogDebug(@"[ReachApp] Obtained %zd stack frames:\n", symbols.count);
+	LogDebug(@"[ReachApp] Obtained %zd stack frames:\n", symbols.count);
 	for (NSString *symbol in symbols)
 	{
-		HBLogDebug(@"[ReachApp] %@\n", symbol);
+		LogDebug(@"[ReachApp] %@\n", symbol);
 	}
 #endif
 
@@ -30,7 +30,7 @@ Class hook$objc_getClass(const char *name)
 	Class cls = orig$objc_getClass(name);
 	if (!cls)
 	{
-		HBLogDebug(@"[ReachApp] something attempted to access nil class '%s'", name);
+		LogDebug(@"[ReachApp] something attempted to access nil class '%s'", name);
 	}
 	return cls;
 }*/
@@ -44,5 +44,5 @@ Class hook$objc_getClass(const char *name)
 
 		%init;
 	}
-	//HBLogDebug(@"[ReachApp] %s", class_getImageName(orig$objc_getClass("RAMissionControlManager")));
+	//LogDebug(@"[ReachApp] %s", class_getImageName(orig$objc_getClass("RAMissionControlManager")));
 }

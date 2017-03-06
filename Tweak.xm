@@ -18,13 +18,20 @@ Any code based off of or using parts of the above projects is documented.
 
 */
 
+// IS_SPRINGBOARD macro optimized from always comparing NSBundle - because it won't change in-process
+BOOL $__IS_SPRINGBOARD = NO;
+%ctor
+{
+	$__IS_SPRINGBOARD = [[NSBundle mainBundle].bundleIdentifier isEqual:@"com.apple.springboard"];
+}
+
 void SET_BACKGROUNDED(id settings, BOOL value)
 {
 #if __has_feature(objc_arc)
 	// stupid ARC...
 	ptrdiff_t bgOffset = ivar_getOffset(class_getInstanceVariable([settings class], "_backgrounded"));
 	CFTypeRef settingsRef = CFBridgingRetain(settings);
-	uint8_t *bgPtr = ((uint8_t *)(__bridge void *)settings) + bgOffset;
+	uint8_t *bgPtr = (uint8_t *)settingsRef + bgOffset;
 	memcpy(bgPtr, &value, sizeof(value));
 	CFBridgingRelease(settingsRef);
 #else

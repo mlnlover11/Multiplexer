@@ -31,7 +31,7 @@
 			break;
 	}
 	if (!translation)
-		HBLogWarn(@"Failed Translation loading English");
+		LogWarn(@"Failed Translation loading English");
 		[self attemptLoadForLanguageCode:@"en"];
 }
 

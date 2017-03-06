@@ -95,7 +95,7 @@ typedef struct {
             location.y = location.x;
             location.x = t;
         }
-        HBLogDebug(@"[ReachApp] _UIScreenEdgePanRecognizer location: %@", NSStringFromCGPoint(location));
+        LogDebug(@"[ReachApp] _UIScreenEdgePanRecognizer location: %@", NSStringFromCGPoint(location));
         if ([RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateBegan withPoint:location velocity:screenEdgePanRecognizer.RA_velocity forEdge:screenEdgePanRecognizer.targetEdges])
         {
             currentEdge9 = screenEdgePanRecognizer.targetEdges;
@@ -136,7 +136,7 @@ void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEvent
 
             CGPoint rotatedLocation = (CGPoint) { rotatedX, rotatedY };
 
-            HBLogInfo(@"[ReachApp] (%f, %d) %@ -> %@", density, isTracking, NSStringFromCGPoint(location), NSStringFromCGPoint(rotatedLocation));
+            LogInfo(@"[ReachApp] (%f, %d) %@ -> %@", density, isTracking, NSStringFromCGPoint(location), NSStringFromCGPoint(rotatedLocation));
 
             if (isTracking == NO)
             {
@@ -159,7 +159,7 @@ void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEvent
                 currentEdge9 = UIRectEdgeNone;
                 isTracking = NO;
 
-                HBLogInfo(@"[ReachApp] touch ended.");
+                LogInfo(@"[ReachApp] touch ended.");
             }
             else
             {

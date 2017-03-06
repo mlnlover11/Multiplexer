@@ -19,7 +19,7 @@ BOOL isShowing = NO;
 
 - (void)didShow:(NSNotification*)notif
 {
-    HBLogDebug(@"[ReachApp] keyboard didShow");
+    LogDebug(@"[ReachApp] keyboard didShow");
     _visible = YES;
     _size = [[notif.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
 
@@ -37,7 +37,7 @@ BOOL isShowing = NO;
 
 - (void)didHide
 {
-    HBLogDebug(@"[ReachApp] keyboard didHide");
+    LogDebug(@"[ReachApp] keyboard didHide");
     _visible = NO;
 
     IF_NOT_SPRINGBOARD {
@@ -73,7 +73,7 @@ void externalKeyboardDidShow(CFNotificationCenterRef center, void *observer, CFS
 
 void externalKeyboardDidHide(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    //HBLogDebug(@"[ReachApp] externalKeyboardDidHide");
+    //LogDebug(@"[ReachApp] externalKeyboardDidHide");
     [RAKeyboardStateListener.sharedInstance _setVisible:NO];
 }
 
@@ -97,7 +97,7 @@ void externalKeyboardDidHide(CFNotificationCenterRef center, void *observer, CFS
             assert(contextID == [[[UIKeyboard activeKeyboard] window] _contextId]);
     #endif
 
-            HBLogDebug(@"[ReachApp] c id %d", contextID);
+            LogDebug(@"[ReachApp] c id %d", contextID);
         }
     };
 

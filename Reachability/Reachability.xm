@@ -151,7 +151,7 @@ BOOL wasEnabled = NO;
 
 id SBWorkspace$sharedInstance;
 %hook SB_WORKSPACE_CLASS
-%new +(id) sharedInstance
+%new +(instancetype) sharedInstance
 {
     return SBWorkspace$sharedInstance;
 }
@@ -208,6 +208,8 @@ id SBWorkspace$sharedInstance;
         if ([viewController respondsToSelector:@selector(hostWillDismiss)]) {
           [viewController performSelector:@selector(hostWillDismiss)];
           [viewController performSelector:@selector(hostDidDismiss)];
+        } else {
+          [viewController performSelector:@selector(_loadContainerView)];
         }
         //[viewController.view removeFromSuperview];
     }
@@ -329,6 +331,8 @@ id SBWorkspace$sharedInstance;
         if ([ncViewController respondsToSelector:@selector(hostWillPresent)]) {
           [ncViewController performSelector:@selector(hostWillPresent)];
           [ncViewController performSelector:@selector(hostDidPresent)];
+        } else {
+          [ncViewController _loadContainerView];
         }
 
         if ([RASettings.sharedInstance enableRotation])
@@ -607,8 +611,10 @@ CGFloat startingY = -1;
 
     if ([RASettings.sharedInstance showNCInstead])
     {
-        if (ncViewController)
-            ncViewController.view.frame = CGRectMake(0, 0, topFrame.size.width, topFrame.size.height);
+        if (ncViewController) {
+          ncViewController.view.frame = (CGRect) { { 0, 0 }, topFrame.size };
+          [ncViewController viewDidLoad];
+        }
     }
     else if (lastBundleIdentifier != nil || [view isKindOfClass:[RAAppSliderProviderView class]])
     {
@@ -736,6 +742,8 @@ CGFloat startingY = -1;
     FBSMutableSceneSettings *settings = [[scene mutableSettings] mutableCopy];
     SET_BACKGROUNDED(settings, NO);
     [scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
+
+    [UIApplication.sharedApplication launchApplicationWithIdentifier:bundleIdentifier suspended:YES];
 
     [contextHostManager enableHostingForRequester:@"reachapp" orderFront:YES];
     view = [contextHostManager hostViewForRequester:@"reachapp" enableAndOrderFront:YES];

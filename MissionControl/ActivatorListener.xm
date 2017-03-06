@@ -17,7 +17,7 @@ static RAActivatorListener *sharedInstance;
 		if ([%c(SBUIController) respondsToSelector:@selector(_appSwitcherController)]) {
 			[[[%c(SBUIController) sharedInstance] _appSwitcherController] forceDismissAnimated:NO];
 		} else {
-			[[%c(SBMainSwitcherViewController) sharedInstance] dismissSwitcherNoninteractively];
+			[[%c(SBMainSwitcherViewController) sharedInstance] RA_dismissSwitcherUnanimated];
 		}
 	}
   [event setHandled:YES];
@@ -26,7 +26,7 @@ static RAActivatorListener *sharedInstance;
 
 %ctor
 {
-    if (IN_SPRINGBOARD)
+    IF_SPRINGBOARD
     {
         sharedInstance = [[RAActivatorListener alloc] init];
         [[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];

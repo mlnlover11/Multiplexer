@@ -27,16 +27,16 @@ CGRect adjustFrameForRotation()
     switch ([[UIApplication.sharedApplication _accessibilityFrontMostApplication] statusBarOrientation])
     {
         case UIInterfaceOrientationPortrait:
-            HBLogDebug(@"[ReachApp] portrait");
+            LogDebug(@"[ReachApp] portrait");
             return (CGRect){ { width - portraitWidth + 5, (height - portraitHeight) / 2 }, { portraitWidth, portraitHeight } };
         case UIInterfaceOrientationPortraitUpsideDown:
-            HBLogDebug(@"[ReachApp] portrait upside down");
+            LogDebug(@"[ReachApp] portrait upside down");
             return (CGRect){ { 0, 0}, { 50, 50 } };
         case UIInterfaceOrientationLandscapeLeft:
-            HBLogDebug(@"[ReachApp] landscape left");
+            LogDebug(@"[ReachApp] landscape left");
             return (CGRect){ { ((width - portraitWidth) / 2), -(portraitWidth / 2) }, { portraitWidth, portraitHeight } };
         case UIInterfaceOrientationLandscapeRight:
-            HBLogDebug(@"[ReachApp] landscape right");
+            LogDebug(@"[ReachApp] landscape right");
             return (CGRect){ { (height - portraitHeight) / 2, width - portraitWidth - 5 }, { portraitWidth, portraitHeight } };
     }
     return CGRectZero;

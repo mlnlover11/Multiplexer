@@ -8,7 +8,7 @@ GestureSupport: fixed
 Backgrounding: working
 KeyboardSupport: hackily fixed but it works now
 MissionControl: working (MC presents even when not dragging grabber)
-NCApp: working (not tested on ipad / app should be frozen but doesn't appear to be);
+NCApp: working (not tested on ipad);
 assertiond hooks: working
 backboardd hooks: unknown
 fake phone mode: working
@@ -22,15 +22,17 @@ fake phone mode: working
 Bugs:
 - Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
 - MC view invokes regardless if grabbing the grabber or not
-- Replace AppSwitcher with MC is broken
-- Invoking MC shows appswitcher dismissing (dont know if can fix)
-- Invoking keyboard in reachapp closes view
+- Invoking keyboard in reachapp closes view (I think reachability dismisses when using KB)
 - Showing NC with reachapp doesnt properly resize
-- Startup bug still isnt fixed
-- Some say it causes serious lag?
-- Launching MC from activator gesture black screen
-- Foregrounding through activator broken?
+- Launching MC from activator gesture in app black screen
+- Foregrounding through activator broken (override gets removed when launching another app)
 - CC inhibitor still broken?
+
+Minor Things to note:
+- MC works but causes jittery animations;
+- NCApp disappears on first load
+- Some say it causes serious lag (probably because logs werent disabled)?
+- Startup bug still isnt fixed (find cause / better fix);
 
 Features Intended:
 - Activator Gesture to launch window

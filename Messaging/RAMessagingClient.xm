@@ -33,7 +33,7 @@ extern BOOL allowClosingReachabilityNatively;
 			[NSBundle.mainBundle.executablePath hasPrefix:@"/var/mobile/Containers/Bundle/Application"] ||
 			[NSBundle.mainBundle.executablePath hasPrefix:@"/private/var/mobile/Containers/Bundle/Application"])
 		{
-			HBLogDebug(@"[ReachApp] valid process for RAMessagingClient");
+			LogDebug(@"[ReachApp] valid process for RAMessagingClient");
 			sharedInstance->allowedProcess = YES;
 		}
 	);
@@ -72,7 +72,7 @@ extern BOOL allowClosingReachabilityNatively;
 
 -(void) alertUser:(NSString*)description
 {
-		HBLogError(@"%@", description);
+		LogError(@"%@", description);
 }
 
 -(void) _requestUpdateFromServerWithTries:(int)tries

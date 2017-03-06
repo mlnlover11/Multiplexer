@@ -15,7 +15,7 @@
 -(void) invalidateCurrentThemeAndReload:(NSString*)currentIdentifier
 {
 #if DEBUG
-	HBLogDebug(@"[ReachApp] loading themes...");
+	LogDebug(@"[ReachApp] loading themes...");
 	NSDate *startTime = [NSDate date];
 #endif
 
@@ -34,7 +34,7 @@
 		RATheme *theme = [RAThemeLoader loadFromFile:themeName];
 		if (theme && theme.themeIdentifier)
 		{
-			//HBLogDebug(@"[ReachApp] adding %@", theme.themeIdentifier);
+			//LogDebug(@"[ReachApp] adding %@", theme.themeIdentifier);
 			allThemes[theme.themeIdentifier] = theme;
 
 			if ([theme.themeIdentifier isEqual:currentIdentifier])
@@ -52,7 +52,7 @@
 
 #if DEBUG
 	NSDate *endTime = [NSDate date];
-	HBLogDebug(@"[ReachApp] loaded %ld themes in %f seconds.", (long)allThemes.count, [endTime timeIntervalSinceDate:startTime]);
+	LogDebug(@"[ReachApp] loaded %ld themes in %f seconds.", (long)allThemes.count, [endTime timeIntervalSinceDate:startTime]);
 #endif
 }
 @end

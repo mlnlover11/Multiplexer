@@ -100,7 +100,7 @@ BOOL toggleOrActivate = NO;
 -(void)_showNotificationCenterGestureBeganWithGestureRecognizer:(id)arg1 {
 	CGPoint location = [arg1 locationInView:[[%c(SBMainSwitcherViewController) sharedInstance] view]];
 	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[%c(SBUIController) sharedInstance] isAppSwitcherShowing] && CGRectContainsPoint([[[[%c(SBMainSwitcherViewController) sharedInstance] valueForKey:@"_contentView"] contentView] viewWithTag:999].frame, location)) {
-		HBLogDebug(@"contains rect");
+		LogDebug(@"contains rect");
 		return;
 	}
 
@@ -565,7 +565,7 @@ BOOL toggleOrActivate = NO;
 				if ([%c(SBUIController) respondsToSelector:@selector(dismissSwitcherAnimated:)]) {
  					[[%c(SBUIController) sharedInstance] dismissSwitcherAnimated:NO];
  				} else {
- 					[[%c(SBMainSwitcherViewController) sharedInstance] dismissSwitcherNoninteractively];
+ 					[[%c(SBMainSwitcherViewController) sharedInstance] RA_dismissSwitcherUnanimated];
  				}
 				[[%c(SBUIController) sharedInstance] restoreContentUpdatingStatusBar:YES];
 				[RAMissionControlManager.sharedInstance showMissionControl:NO];
@@ -624,5 +624,64 @@ BOOL toggleOrActivate = NO;
 		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
 	}
 	%orig;
+}
+
+%new - (void)RA_dismissSwitcherUnanimated {
+	FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
+		SBWorkspaceApplicationTransitionContext *transitionContext = [[%c(SBWorkspaceApplicationTransitionContext) alloc] init];
+		[transitionContext setAnimationDisabled:YES];
+
+		//set layout role to 'side' (deactivating)
+		SBWorkspaceDeactivatingEntity *deactivatingEntity = [%c(SBWorkspaceDeactivatingEntity) entity];
+		[deactivatingEntity setLayoutRole:3];
+		[transitionContext setEntity:deactivatingEntity forLayoutRole:3];
+
+		//set layout role for 'primary' (activating)
+		SBWorkspaceHomeScreenEntity *homescreenEntity = [[%c(SBWorkspaceHomeScreenEntity) alloc] init];
+		[transitionContext setEntity:homescreenEntity forLayoutRole:2];
+
+		//create transititon request
+		SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[[UIScreen mainScreen] valueForKey:@"_fbsDisplay"]];
+		[transitionRequest setApplicationContext:transitionContext];
+
+		//create apptoapp transaction
+		SBAppToAppWorkspaceTransaction *transaction = [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithTransitionRequest:transitionRequest];
+
+		//start closing
+		[transaction begin];
+	}];
+	[(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
+}
+
+//Because I cant think of a better solution
+- (BOOL)toggleSwitcherNoninteractively {
+	if (![self isVisible]) {
+		return [self activateSwitcherNoninteractively];
+	} else {
+		return [self dismissSwitcherNoninteractively];
+	}
+}
+
+- (BOOL)activateSwitcherNoninteractively {
+	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled])
+	{
+		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl)
+		{
+			[RAMissionControlManager.sharedInstance showMissionControl:YES];
+			}
+			else
+				[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+
+		return YES;
+	}
+	else
+	{
+		if ([RAMissionControlManager.sharedInstance isShowingMissionControl])
+		{
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
+	}
+
+	return %orig;
 }
 %end

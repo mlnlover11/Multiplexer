@@ -56,7 +56,7 @@ CGSize forcePhoneModeSize = RA_6P_SIZE;
 	IF_SPRINGBOARD {
 		return [RAMessagingServer.sharedInstance getDataForIdentifier:identifier].forcePhoneMode;
 	}
-	HBLogWarn(@"[ReachApp] WARNING: +[RAFakePhoneMode shouldFakeForAppWithIdentifier:] called from outside SpringBoard!");
+	LogWarn(@"[ReachApp] WARNING: +[RAFakePhoneMode shouldFakeForAppWithIdentifier:] called from outside SpringBoard!");
 	return NO;
 }
 

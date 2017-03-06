@@ -80,7 +80,7 @@
 				}
 				@catch (NSException *ex)
 				{
-					HBLogError(@"[ReachApp] error generating snapshot: %@", ex);
+					LogError(@"[ReachApp] error generating snapshot: %@", ex);
 				}
 			}
 

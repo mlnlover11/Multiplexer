@@ -57,7 +57,7 @@ static RAActivatorBackgrounderToggleModeListener *sharedInstance$RAActivatorBack
 
 %ctor
 {
-    if (IN_SPRINGBOARD)
+    IF_SPRINGBOARD
     {
         sharedInstance$RAActivatorBackgrounderToggleModeListener = [[RAActivatorBackgrounderToggleModeListener alloc] init];
         [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorBackgrounderToggleModeListener forName:@"com.efrederickson.reachapp.backgrounder.togglemode"];

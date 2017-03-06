@@ -8,13 +8,13 @@ BOOL allowClosingReachabilityNatively = NO;
 {
     if (!allowClosingReachabilityNatively)
     {
-        HBLogDebug(@"[ReachApp] attempting to close reachability but not allowed to.");
+        LogDebug(@"[ReachApp] attempting to close reachability but not allowed to.");
         return;
     }
 
     if ([RAMessagingClient.sharedInstance isBeingHosted])
     {
-        HBLogDebug(@"[ReachApp] stopping reachability from closing because hosted");
+        LogDebug(@"[ReachApp] stopping reachability from closing because hosted");
         return;
     }
     %orig;

@@ -108,7 +108,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 		if (_settings == nil)
 		{
-			HBLogError(@"[ReachApp] could not load settings from CFPreferences or NSDictionary");
+			LogError(@"[ReachApp] could not load settings from CFPreferences or NSDictionary");
 		}
 
 		if ([previousNCAppSetting isEqual:self.NCApp] == NO)
@@ -138,7 +138,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 	}
 	else
 	{
-		HBLogError(@"[ReachApp] unable to get keyList to reset settings");
+		LogError(@"[ReachApp] unable to get keyList to reset settings");
 	}
 	CFPreferencesAppSynchronize(appID);
 	CFRelease(appID);
@@ -348,7 +348,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 -(BOOL) isFirstRun
 {
-	HBLogDebug(@"[ReachApp] %d", BOOL(@"isFirstRun", YES));
+	LogDebug(@"[ReachApp] %d", BOOL(@"isFirstRun", YES));
 	return BOOL(@"isFirstRun", YES);
 }
 

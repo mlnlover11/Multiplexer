@@ -11,7 +11,7 @@ int main(int argc, char **argv, char **envp) {
 		NSString *filePath = @"/var/mobile/Library/.reachapp.uiappexitsonsuspend.wantstochangerootapp";
     if ([NSFileManager.defaultManager fileExistsAtPath:filePath] == NO)
     {
-        HBLogError(@"[ReachApp] FS Daemon: plist does not exist");
+        LogError(@"[ReachApp] FS Daemon: plist does not exist");
         return 0;
     }
 
@@ -24,7 +24,7 @@ int main(int argc, char **argv, char **envp) {
     BOOL success = [infoPlist writeToURL:[NSURL URLWithString:path] atomically:YES];
 
     if (!success) {
-			HBLogError(@"[ReachApp] FS Daemon: error writing to plist: %@", path);
+			LogError(@"[ReachApp] FS Daemon: error writing to plist: %@", path);
 		} else {
 			[NSFileManager.defaultManager removeItemAtPath:filePath error:nil];
 		}

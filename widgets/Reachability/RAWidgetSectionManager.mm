@@ -108,7 +108,7 @@
 		}
 		@catch (NSException *ex)
 		{
-			HBLogError(@"[ReachApp] an error occurred creating the view for section '%@': %@", section.identifier, ex);
+			LogError(@"[ReachApp] an error occurred creating the view for section '%@': %@", section.identifier, ex);
 		}
 	}
 

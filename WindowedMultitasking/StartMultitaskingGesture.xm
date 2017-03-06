@@ -16,7 +16,7 @@ BOOL locationIsInValidArea(CGFloat x)
     switch ([RASettings.sharedInstance windowedMultitaskingGrabArea])
     {
         case RAGrabAreaBottomLeftThird:
-        HBLogDebug(@"[ReachApp] StartMultitaskingGesture: %f %f", x, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width);
+        LogDebug(@"[ReachApp] StartMultitaskingGesture: %f %f", x, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width);
             return x <= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 3.0;
         case RAGrabAreaBottomMiddleThird:
             return x >= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 3.0 && x <= (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 3.0) * 2;

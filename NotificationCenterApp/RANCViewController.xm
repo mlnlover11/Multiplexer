@@ -171,7 +171,7 @@ int rotationDegsForOrientation(int o)
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
 	// Override
-	HBLogDebug(@"[ReachApp] RANCViewController: ignoring invocation: %@", anInvocation);
+	LogDebug(@"[ReachApp] RANCViewController: ignoring invocation: %@", anInvocation);
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector

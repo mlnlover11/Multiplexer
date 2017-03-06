@@ -85,7 +85,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     if (startTries > 5)
     {
         isPreloading = NO;
-        HBLogDebug(@"[ReachApp] maxed out preload attempts for app %@", app.bundleIdentifier);
+        LogDebug(@"[ReachApp] maxed out preload attempts for app %@", app.bundleIdentifier);
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Zypen"
                                message:[NSString stringWithFormat:@"Unable to start app %@", app.displayName]
                                preferredStyle:UIAlertControllerStyleAlert];
@@ -435,7 +435,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
             FBWindowContextHostManager *manager = (FBWindowContextHostManager*)[RAHostManager hostManagerForApp:app_];
             if (manager)
             {
-                HBLogDebug(@"[ReachApp] rehosting for iPad: %@", bundleIdentifier);
+                LogDebug(@"[ReachApp] rehosting for iPad: %@", bundleIdentifier);
                 [manager enableHostingForRequester:@"reachapp" priority:1];
             }
         }
