@@ -25,11 +25,15 @@ Bugs:
 - Replace AppSwitcher with MC is broken
 - Invoking MC shows appswitcher dismissing (dont know if can fix)
 - Invoking keyboard in reachapp closes view
-- viewDidAppear is called when NC disappeared causing NCapp to not unload
 - Showing NC with reachapp doesnt properly resize
 - Startup bug still isnt fixed
-- Some say it causes serios lag?
+- Some say it causes serious lag?
 - Launching MC from activator gesture black screen
+- Foregrounding through activator broken?
+- CC inhibitor still broken?
+
+Features Intended:
+- Activator Gesture to launch window
 
 notes:
 use _referenceBounds instead of bounds on UIScreen to get physical bounds. Makes landscape support easier?

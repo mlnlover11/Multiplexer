@@ -414,6 +414,7 @@ typedef struct {
 +(id) sharedInstance;
 -(SBNotificationCenterViewController *)viewController;
 -(BOOL) isVisible;
+-(double)percentComplete;
 -(BOOL)isTransitioning;
 -(BOOL)isPresentingControllerTransitioning;
 @end

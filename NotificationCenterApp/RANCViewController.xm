@@ -12,6 +12,7 @@
 @end
 
 extern RANCViewController *ncAppViewController;
+extern BOOL shouldLoadView;
 
 @implementation RANCViewController
 +(instancetype) sharedViewController
@@ -67,7 +68,7 @@ int rotationDegsForOrientation(int o)
 {
 	[super viewDidAppear:animated];
 
-	if (![[%c(SBNotificationCenterController) sharedInstance] isVisible] && ![[%c(SBNotificationCenterController) sharedInstance] isTransitioning])
+	if (IS_IOS_OR_NEWER(iOS_10_0) && !shouldLoadView)
 	{
 		return;
 	}

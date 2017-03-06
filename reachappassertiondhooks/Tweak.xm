@@ -1,38 +1,42 @@
 #import <dlfcn.h>
-#import <substrate.h>
 #import <Foundation/Foundation.h>
 #import <version.h>
 
-extern const char *__progname;
+%group iOS8
+%hookf(int, BSAuditTokenTaskHasEntitlement, id connection, NSString *entitlement)
+{
+  if ([entitlement isEqualToString:@"com.apple.multitasking.unlimitedassertions"])
+  {
+    return true;
+  }
 
-static int (*orig_BSAuditTokenTaskHasEntitlement)(id connection, NSString *entitlement);
-static int hax_BSAuditTokenTaskHasEntitlement(__unsafe_unretained id connection, __unsafe_unretained NSString *entitlement) {
-    if ([entitlement isEqualToString:@"com.apple.multitasking.unlimitedassertions"]) {
-        return true;
-    }
-
-    return orig_BSAuditTokenTaskHasEntitlement(connection, entitlement);
+  return %orig;
 }
+%end
 
-static int (*orig_BSXPCConnectionHasEntitlement)(id connection, NSString *entitlement);
-static int hax_BSXPCConnectionHasEntitlement(__unsafe_unretained id connection, __unsafe_unretained NSString *entitlement) {
-    if ([entitlement isEqualToString:@"com.apple.multitasking.unlimitedassertions"]) {
-        return true;
-    }
+%group iOS9andUp
+%hookf(int, BSXPCConnectionHasEntitlement, id connection, NSString *entitlement)
+{
+  if ([entitlement isEqualToString:@"com.apple.multitasking.unlimitedassertions"])
+  {
+    return true;
+  }
 
-    return orig_BSXPCConnectionHasEntitlement(connection, entitlement);
+  return %orig;
 }
+%end
 
 %ctor {
-    // We can never be too sure
-	if (strcmp(__progname, "assertiond") == 0)  {
-        dlopen("/System/Library/PrivateFrameworks/XPCObjects.framework/XPCObjects", RTLD_LAZY);
-        if (IS_IOS_OR_OLDER(iOS_8_4)) {
-          void *xpcFunction = MSFindSymbol(NULL, "_BSAuditTokenTaskHasEntitlement");
-          MSHookFunction(xpcFunction, (void *)hax_BSAuditTokenTaskHasEntitlement, (void **)&orig_BSAuditTokenTaskHasEntitlement);
-        } else {
-          void *xpcFunction = MSFindSymbol(NULL, "_BSXPCConnectionHasEntitlement");
-          MSHookFunction(xpcFunction, (void *)hax_BSXPCConnectionHasEntitlement, (void **)&orig_BSXPCConnectionHasEntitlement);
-        }
-    }
+  // We can never be too sure (im pretty sure we can)
+  dlopen("/System/Library/PrivateFrameworks/XPCObjects.framework/XPCObjects", RTLD_LAZY);
+  if (IS_IOS_OR_NEWER(iOS_9_0))
+  {
+    void *BSXPCConnectionHasEntitlement = MSFindSymbol(NULL, "_BSXPCConnectionHasEntitlement");
+    %init(iOS9andUp);
+  }
+  else
+  {
+    void *BSAuditTokenTaskHasEntitlement = MSFindSymbol(NULL, "_BSAuditTokenTaskHasEntitlement");
+    %init(iOS8);
+  }
 }

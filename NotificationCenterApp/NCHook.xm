@@ -23,6 +23,7 @@ NSString *getAppName()
 }
 
 RANCViewController *ncAppViewController;
+BOOL shouldLoadView = NO;
 
 %group iOS8
 %hook SBNotificationCenterViewController
@@ -124,10 +125,20 @@ static BOOL hasEnteredPages = NO;
 %end
 
 %hook SBNotificationCenterViewController
+- (void)viewWillAppear:(BOOL)arg1
+{
+	%orig;
+
+	shouldLoadView = YES;
+	[ncAppViewController viewDidAppear:arg1];
+}
+
 - (void)viewDidDisappear:(BOOL)arg1
 {
 	%orig;
-	[ncAppViewController.hostedApp unloadApp];
+
+	shouldLoadView = NO;
+	[ncAppViewController viewDidDisappear:arg1];
 }
 
 - (UIPageControl*)pageControl
