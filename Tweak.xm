@@ -30,10 +30,8 @@ void SET_BACKGROUNDED(id settings, BOOL value)
 #if __has_feature(objc_arc)
 	// stupid ARC...
 	ptrdiff_t bgOffset = ivar_getOffset(class_getInstanceVariable([settings class], "_backgrounded"));
-	CFTypeRef settingsRef = CFBridgingRetain(settings);
-	uint8_t *bgPtr = (uint8_t *)settingsRef + bgOffset;
-	memcpy(bgPtr, &value, sizeof(value));
-	CFBridgingRelease(settingsRef);
+  char *bgPtr = ((char *)(__bridge void *)settings) + bgOffset;
+  memcpy(bgPtr, &value, sizeof(value));
 #else
 	// ARC is off, easy way
 	if (value)

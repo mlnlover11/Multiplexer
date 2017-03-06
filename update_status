@@ -32,7 +32,8 @@ Minor Things to note:
 - MC works but causes jittery animations;
 - NCApp disappears on first load
 - Some say it causes serious lag (probably because logs werent disabled)?
-- Startup bug still isnt fixed (find cause / better fix);
+- Startup bug still isnt fixed (find cause / better fix)
+- General Code Cleanup, feels to messy RN
 
 Features Intended:
 - Activator Gesture to launch window
