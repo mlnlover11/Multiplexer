@@ -611,10 +611,8 @@ CGFloat startingY = -1;
 
     if ([RASettings.sharedInstance showNCInstead])
     {
-        if (ncViewController) {
+        if (ncViewController)
           ncViewController.view.frame = (CGRect) { { 0, 0 }, topFrame.size };
-          [ncViewController viewDidLoad];
-        }
     }
     else if (lastBundleIdentifier != nil || [view isKindOfClass:[RAAppSliderProviderView class]])
     {

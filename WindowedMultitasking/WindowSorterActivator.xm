@@ -21,11 +21,9 @@ static RAActivatorSortWindowsListener *sharedInstance$RAActivatorSortWindowsList
 
 %ctor
 {
-    if([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
+    IF_SPRINGBOARD
     {
         sharedInstance$RAActivatorSortWindowsListener = [[RAActivatorSortWindowsListener alloc] init];
         [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorSortWindowsListener forName:@"com.efrederickson.reachapp.windowedmultitasking.sortWindows"];
     }
 }
-
-

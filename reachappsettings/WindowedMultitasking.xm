@@ -171,6 +171,12 @@
                 @"label": @"Easy-Tap-Mode Activation",
                 //@"enabled": objc_getClass("LAEventSettingsController") != nil,
              },
+             @{
+                @"cell": @"PSLinkCell",
+                @"action": @"showActivatorAction3",
+                @"label": @"Create App Window Activation",
+                //@"enabled": objc_getClass("LAEventSettingsController") != nil,
+             },
 
                  /*
              @{
@@ -213,6 +219,22 @@
     {
         LAListenerSettingsViewController *vc = [[objc_getClass("LAListenerSettingsViewController") alloc] init];
         vc.listenerName = @"com.efrederickson.reachapp.windowedmultitasking.toggleEditMode";
+        [self.rootController pushController:vc animate:YES];
+    }
+}
+
+-(void) showActivatorAction3
+{
+    id activator = objc_getClass("LAListenerSettingsViewController");
+    if (!activator)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    else
+    {
+        LAListenerSettingsViewController *vc = [[objc_getClass("LAListenerSettingsViewController") alloc] init];
+        vc.listenerName = @"com.efrederickson.reachapp.windowedmultitasking.createWindow";
         [self.rootController pushController:vc animate:YES];
     }
 }

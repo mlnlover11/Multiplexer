@@ -126,7 +126,7 @@ BOOL locationIsInValidArea(CGFloat x)
 
                         // Open in window
                         RAWindowBar *windowBar = [RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
-                        if (RADesktopManager.sharedInstance.lastUsedWindow == nil)
+                        if (!RADesktopManager.sharedInstance.lastUsedWindow)
                             RADesktopManager.sharedInstance.lastUsedWindow = windowBar;
                     }];
                     [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];

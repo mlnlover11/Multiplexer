@@ -426,10 +426,20 @@ typedef struct {
 @end
 
 @interface SBNotificationCenterViewController : UIViewController
+@property (nonatomic,readonly) CGRect contentFrame;
+-(CGRect)_containerFrame;
 -(void)_setContainerFrame:(CGRect)arg1 ;
 -(void)prepareLayoutForDefaultPresentation;
 -(void)_loadContainerView;
 -(void)_loadContentView;
+@end
+
+@interface SBSearchEtceteraLayoutContentView : UIView
+@end
+
+@interface SBSearchEtceteraLayoutView : UIView
+@property (getter=_visibleView,nonatomic,retain,readonly) SBSearchEtceteraLayoutContentView * visibleView;
+-(id)_visibleView;
 @end
 
 @interface SBNotificationCenterController : NSObject
@@ -439,6 +449,12 @@ typedef struct {
 -(double)percentComplete;
 -(BOOL)isTransitioning;
 -(BOOL)isPresentingControllerTransitioning;
+@end
+
+@interface SBSearchEtceteraIsolatedViewController : UIViewController
+@property (nonatomic,retain,readonly) SBSearchEtceteraLayoutView * contentView;
+-(SBSearchEtceteraLayoutView *)contentView;
++(id)sharedInstance;
 @end
 
 @interface UIStatusBarItem : NSObject

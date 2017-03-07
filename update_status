@@ -7,7 +7,7 @@ Reachability: working (show NC broken in 10.x)
 GestureSupport: fixed
 Backgrounding: working
 KeyboardSupport: hackily fixed but it works now
-MissionControl: working (MC presents even when not dragging grabber)
+MissionControl: working
 NCApp: working (not tested on ipad);
 assertiond hooks: working
 backboardd hooks: unknown
@@ -21,22 +21,20 @@ fake phone mode: working
 
 Bugs:
 - Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
-- MC view invokes regardless if grabbing the grabber or not
 - Invoking keyboard in reachapp closes view (I think reachability dismisses when using KB)
-- Showing NC with reachapp doesnt properly resize
+- Showing NC with reachapp doesnt properly resize (not even sure if possible)
 - Launching MC from activator gesture in app black screen
 - Foregrounding through activator broken (override gets removed when launching another app)
 - CC inhibitor still broken?
 
-Minor Things to note:
+Minor Things/Bugs to note:
+- RA favorites layout messed up
+- MC view invokes regardless if grabbing the grabber or not (was always like that?)
 - MC works but causes jittery animations;
 - NCApp disappears on first load
 - Some say it causes serious lag (probably because logs werent disabled)?
 - Startup bug still isnt fixed (find cause / better fix)
 - General Code Cleanup, feels to messy RN
-
-Features Intended:
-- Activator Gesture to launch window
 
 notes:
 use _referenceBounds instead of bounds on UIScreen to get physical bounds. Makes landscape support easier?

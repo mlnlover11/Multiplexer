@@ -29,7 +29,7 @@ static RAActivatorToggleEditModeListener *sharedInstance;
 
 %ctor
 {
-    if([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
+    IF_SPRINGBOARD
     {
         sharedInstance = [[RAActivatorToggleEditModeListener alloc] init];
         [[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.windowedmultitasking.toggleEditMode"];
