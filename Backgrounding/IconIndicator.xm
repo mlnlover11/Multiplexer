@@ -63,8 +63,8 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 
 		if (
 			[self RA_isIconIndicatorInhibited] ||
-			(text == nil || text.length == 0) || // OR info == RAIconIndicatorViewInfoNone
-			(self.icon == nil || self.icon.application == nil || self.icon.application.isRunning == NO || ![RABackgrounder.sharedInstance shouldShowIndicatorForIdentifier:self.icon.application.bundleIdentifier]) ||
+			(!text || text.length == 0) || // OR info == RAIconIndicatorViewInfoNone
+			(!self.icon || !self.icon.application || !self.icon.application.isRunning || ![RABackgrounder.sharedInstance shouldShowIndicatorForIdentifier:self.icon.application.bundleIdentifier]) ||
 			[[%c(RASettings) sharedInstance] backgrounderEnabled] == NO)
 		{
 			[[self viewWithTag:9962] removeFromSuperview];
@@ -174,7 +174,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 %new -(void) RA_setIsIconIndicatorInhibited:(BOOL)value showAgainImmediately:(BOOL)value2
 {
     objc_setAssociatedObject(self, @selector(RA_isIconIndicatorInhibited), value ? (id)kCFBooleanTrue : (id)kCFBooleanFalse, OBJC_ASSOCIATION_ASSIGN);
-    if (value2 || value == YES)
+    if (value2 || value)
 	    [self RA_updateIndicatorViewWithExistingInfo];
 }
 
@@ -274,12 +274,12 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 */
 %new -(void) RA_addStatusBarIconForSelfIfOneDoesNotExist
 {
-	if (objc_getClass("LSStatusBarItem") && [lsbitems objectForKey:self.bundleIdentifier] == nil && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {
+	if (objc_getClass("LSStatusBarItem") && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {
 		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
 			if ([[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier]) {
 				RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
 				BOOL native = (info & RAIconIndicatorViewInfoNative);
-				if ((info & RAIconIndicatorViewInfoNone) == 0 && (native == NO || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
+				if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
 		    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
 		    	if ([item customViewClass] == nil) {
 						item.customViewClass = @"RAAppIconStatusBarIconView";
@@ -292,7 +292,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 			if ([[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier]) {
 				RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
 				BOOL native = (info & RAIconIndicatorViewInfoNative);
-				if ((info & RAIconIndicatorViewInfoNone) == 0 && (native == NO || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
+				if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
 			    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
 			    	if ([item customViewClass] == nil) {
 							item.customViewClass = @"RAAppIconStatusBarIconView";
@@ -309,7 +309,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 {
     %orig;
 
-    if (self.isRunning == NO)
+    if (!self.isRunning)
     {
     	[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:RAIconIndicatorViewInfoNone];
     	//SET_INFO_(self.bundleIdentifier, RAIconIndicatorViewInfoNone);

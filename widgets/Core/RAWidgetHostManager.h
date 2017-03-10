@@ -4,7 +4,7 @@
 @interface RAWidgetHostManager : NSObject {
 	NSMutableArray *widgets;
 }
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(void) addWidget:(RAWidgetBase*)widget;
 -(void) removeWidget:(RAWidgetBase*)widget;

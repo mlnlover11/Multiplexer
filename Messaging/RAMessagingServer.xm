@@ -89,7 +89,7 @@ extern BOOL launchNextOpenIntoWindow;
 		NSString *identifier = info[@"bundleIdentifier"];
 		RAMessageAppData data = [self getDataForIdentifier:identifier];
 
-		if ([waitingCompletions objectForKey:identifier] != nil)
+		if ([waitingCompletions objectForKey:identifier])
 		{
 			RAMessageCompletionCallback callback = (RAMessageCompletionCallback)waitingCompletions[identifier];
 			[waitingCompletions removeObjectForKey:identifier];
@@ -97,7 +97,7 @@ extern BOOL launchNextOpenIntoWindow;
 		}
 
 		// Got the message, cancel the re-sender
-		if ([asyncHandles objectForKey:identifier] != nil)
+		if ([asyncHandles objectForKey:identifier])
 		{
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
 			dispatch_after_cancel(handle);
@@ -165,6 +165,11 @@ extern BOOL launchNextOpenIntoWindow;
 		    } completion:^(BOOL _) {
 	       		[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];
 		        FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
+								SBDeactivationSettings *deactiveSets = [[%c(SBDeactivationSettings) alloc] init];
+                [deactiveSets setFlag:YES forDeactivationSetting:20];
+                [deactiveSets setFlag:NO forDeactivationSetting:2];
+              	[topApp _setDeactivationSettings:deactiveSets];
+
 		            SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
 		            [transaction begin];
 		        }];
@@ -259,10 +264,10 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(void) checkIfCompletionStillExitsForIdentifierAndFailIt:(NSString*)identifier
 {
-	if ([waitingCompletions objectForKey:identifier] != nil)
+	if ([waitingCompletions objectForKey:identifier])
 	{
 		// We timed out, remove the re-sender
-		if ([asyncHandles objectForKey:identifier] != nil)
+		if ([asyncHandles objectForKey:identifier])
 		{
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
 			dispatch_after_cancel(handle);
@@ -281,7 +286,7 @@ extern BOOL launchNextOpenIntoWindow;
 -(void) sendDataWithCurrentTries:(int)tries toAppWithBundleIdentifier:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
 {
 	SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
-	if (!app.isRunning || [app mainScene] == nil)
+	if (!app.isRunning || ![app mainScene])
 	{
 		if (tries > 4)
 		{
@@ -291,7 +296,7 @@ extern BOOL launchNextOpenIntoWindow;
 			return;
 		}
 
-		if ([asyncHandles objectForKey:identifier] != nil)
+		if ([asyncHandles objectForKey:identifier])
 		{
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
 			dispatch_after_cancel(handle);
@@ -309,7 +314,7 @@ extern BOOL launchNextOpenIntoWindow;
 
 	if (tries <= 4)
 	{
-		if ([asyncHandles objectForKey:identifier] != nil)
+		if ([asyncHandles objectForKey:identifier])
 		{
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
 			dispatch_after_cancel(handle);
@@ -321,7 +326,7 @@ extern BOOL launchNextOpenIntoWindow;
 		});
 		asyncHandles[identifier] = [NSValue valueWithPointer:handle];
 
-		if ([waitingCompletions objectForKey:identifier] == nil)
+		if (![waitingCompletions objectForKey:identifier])
 		{
 			//if (callback == nil)
 			//	callback = ^(BOOL _) { };
@@ -501,7 +506,7 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(unsigned int) getStoredKeyboardContextIdForApp:(NSString*)identifier
 {
-	return [contextIds objectForKey:identifier] != nil ? [contextIds[identifier] unsignedIntValue] : 0;
+	return [contextIds objectForKey:identifier] ? [contextIds[identifier] unsignedIntValue] : 0;
 }
 @end
 

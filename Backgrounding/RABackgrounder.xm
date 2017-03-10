@@ -36,7 +36,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"enabled"] ? [dict[@"enabled"] boolValue] : NO;
-	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"autoLaunch"] == nil ? NO : [dict[@"autoLaunch"] boolValue]);
+	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && (![dict objectForKey:@"autoLaunch"] ? NO : [dict[@"autoLaunch"] boolValue]);
 }
 
 -(BOOL) shouldAutoRelaunchApplication:(NSString*)identifier
@@ -45,7 +45,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"enabled"] ? [dict[@"enabled"] boolValue] : NO;
-	return [self killProcessOnExit:identifier] == NO && [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"autoRelaunch"] == nil ? NO : [dict[@"autoRelaunch"] boolValue]);
+	return ![self killProcessOnExit:identifier] && [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && (![dict objectForKey:@"autoRelaunch"] ? NO : [dict[@"autoRelaunch"] boolValue]);
 }
 
 -(NSInteger) popTemporaryOverrideForApplication:(NSString*)identifier
@@ -103,7 +103,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"enabled"] ? [dict[@"enabled"] boolValue] : NO;
-	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"preventDeath"] == nil ? NO : [dict[@"preventDeath"] boolValue]);
+	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && (![dict objectForKey:@"preventDeath"] ? NO : [dict[@"preventDeath"] boolValue]);
 }
 
 -(BOOL) shouldRemoveFromSwitcherWhenKilledOnExit:(NSString*)identifier
@@ -112,7 +112,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 
 	NSDictionary *dict = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL enabled = [dict objectForKey:@"removeFromSwitcher"] ? [dict[@"removeFromSwitcher"] boolValue] : NO;
-	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && ([dict objectForKey:@"removeFromSwitcher"] == nil ? NO : [dict[@"removeFromSwitcher"] boolValue]);
+	return [[%c(RASettings) sharedInstance] backgrounderEnabled] && enabled && (![dict objectForKey:@"removeFromSwitcher"] ? NO : [dict[@"removeFromSwitcher"] boolValue]);
 }
 
 -(NSInteger) backgroundModeForIdentifier:(NSString*)identifier
@@ -223,13 +223,13 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 {
 	NSDictionary *dct = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL globalSetting = [[%c(RASettings) sharedInstance] shouldShowIconIndicatorsGlobally];
-	return globalSetting ? ([dct objectForKey:@"showIndicatorOnIcon"] == nil ? YES : [dct[@"showIndicatorOnIcon"] boolValue]) : NO;
+	return globalSetting ? (![dct objectForKey:@"showIndicatorOnIcon"] ? YES : [dct[@"showIndicatorOnIcon"] boolValue]) : NO;
 }
 
 -(BOOL) shouldShowStatusBarIconForIdentifier:(NSString*)identifier
 {
 	NSDictionary *dct = [[%c(RASettings) sharedInstance] rawCompiledBackgrounderSettingsForIdentifier:identifier];
 	BOOL globalSetting = [[%c(RASettings) sharedInstance] shouldShowStatusBarIcons];
-	return globalSetting ? ([dct objectForKey:@"showStatusBarIcon"] == nil ? YES : [dct[@"showStatusBarIcon"] boolValue]) : NO;
+	return globalSetting ? (![dct objectForKey:@"showStatusBarIcon"] ? YES : [dct[@"showStatusBarIcon"] boolValue]) : NO;
 }
 @end

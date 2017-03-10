@@ -9,7 +9,7 @@
 @implementation RAAppSliderProvider
 @synthesize currentIndex, availableIdentifiers;
 
--(id) init
+-(instancetype) init
 {
 	if (self = [super init])
 	{
@@ -33,7 +33,7 @@
 	if (self.canGoLeft)
 	{
 		NSString *ident = [availableIdentifiers objectAtIndex:currentIndex - 1];
-		
+
 		if (!ident) return nil;
 		if ([cachedViews objectForKey:ident]) return cachedViews[ident];
 
@@ -50,7 +50,7 @@
 	if (self.canGoRight)
 	{
 		NSString *ident = [availableIdentifiers objectAtIndex:currentIndex + 1];
-		
+
 		if (!ident) return nil;
 		if ([cachedViews objectForKey:ident]) return cachedViews[ident];
 
@@ -65,7 +65,7 @@
 -(RAHostedAppView*) viewAtCurrentIndex
 {
 	NSString *ident = [availableIdentifiers objectAtIndex:currentIndex];
-	
+
 	if (!ident) return nil;
 	if ([cachedViews objectForKey:ident]) return cachedViews[ident];
 

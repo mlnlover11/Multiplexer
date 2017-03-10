@@ -11,7 +11,7 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 @implementation RAAppKiller : NSObject
 +(instancetype) sharedInstance
 {
-	SHARED_INSTANCE2(RAAppKiller, 
+	SHARED_INSTANCE2(RAAppKiller,
 		[sharedInstance initialize];
 	);
 }
@@ -47,7 +47,7 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 			handler();
 		}
 	}
-	else 
+	else
 	{
 		if (tries == 0)
 		{
@@ -86,7 +86,7 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 
 -(void) appDidDie:(__unsafe_unretained SBApplication*)app
 {
-	if (completionDictionary && [completionDictionary objectForKey:app.bundleIdentifier] != nil)
+	if (completionDictionary && [completionDictionary objectForKey:app.bundleIdentifier])
 	{
 		dispatch_block_t block = completionDictionary[app.bundleIdentifier];
 		block();

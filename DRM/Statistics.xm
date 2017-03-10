@@ -20,7 +20,7 @@
 			    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 			    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
 					int code = [httpResponse statusCode];
-			        if (error == nil && (code == 0 || code == 200))
+			        if (!error && (code == 0 || code == 200))
 			        {
 			        	[NSFileManager.defaultManager createFileAtPath:statsPath contents:[NSData new] attributes:nil];
 			        }

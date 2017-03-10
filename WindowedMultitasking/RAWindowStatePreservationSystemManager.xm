@@ -5,7 +5,7 @@
 #define FILE_PATH @"/User/Library/Preferences/com.efrederickson.empoleon.windowstates.plist"
 
 @implementation RAWindowStatePreservationSystemManager
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
 	SHARED_INSTANCE2(RAWindowStatePreservationSystemManager, [sharedInstance loadInfo]);
 }

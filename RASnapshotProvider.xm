@@ -3,7 +3,7 @@
 #import "RAWindowBar.h"
 
 @implementation RASnapshotProvider
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
 	SHARED_INSTANCE2(RASnapshotProvider, sharedInstance->imageCache = [NSCache new]);
 }
@@ -23,7 +23,7 @@
 
 	@autoreleasepool {
 
-		if ([imageCache objectForKey:identifier] != nil) return [imageCache objectForKey:identifier];
+		if ([imageCache objectForKey:identifier]) return [imageCache objectForKey:identifier];
 
 		UIImage *image = nil;
 

@@ -10,7 +10,7 @@ extern BOOL overrideDisableForStatusBar;
 RAKeyboardWindow *keyboardWindow;
 
 @implementation RASpringBoardKeyboardActivation
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
     SHARED_INSTANCE2(RASpringBoardKeyboardActivation,
         [RARunningAppsProvider.sharedInstance addTarget:self]

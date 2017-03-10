@@ -36,5 +36,8 @@ Minor Things/Bugs to note:
 - Startup bug still isnt fixed (find cause / better fix)
 - General Code Cleanup, feels to messy RN
 
+Features to Add:
+- 3D Touch actions?
+
 notes:
 use _referenceBounds instead of bounds on UIScreen to get physical bounds. Makes landscape support easier?

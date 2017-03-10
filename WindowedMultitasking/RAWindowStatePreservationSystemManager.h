@@ -2,20 +2,20 @@
 #import "RADesktopWindow.h"
 #import "RAWindowBar.h"
 
-struct RAPreservedWindowInformation {
+typedef struct {
 	CGPoint center;
 	CGAffineTransform transform;
-};
+} RAPreservedWindowInformation;
 
-struct RAPreservedDesktopInformation {
+typedef struct {
 	NSUInteger index;
 	NSArray *openApps; //NSArray<NSString>
-};
+} RAPreservedDesktopInformation;
 
 @interface RAWindowStatePreservationSystemManager : NSObject {
 	NSMutableDictionary *dict;
 }
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(void) loadInfo;
 -(void) saveInfo;

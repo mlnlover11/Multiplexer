@@ -102,7 +102,7 @@ void SET_BACKGROUNDED(id settings, BOOL val);
 
 #define SHARED_INSTANCE2(cls, extracode) \
 static cls *sharedInstance = nil; \
-static dispatch_once_t onceToken = 0; \
+static dispatch_once_t onceToken; \
 dispatch_once(&onceToken, ^{ \
     sharedInstance = [[cls alloc] init]; \
     extracode; \
@@ -746,6 +746,11 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface FBSceneManager : NSObject
+@end
+
+@interface FBDisplayManager : NSObject
++(id)sharedInstance;
++(id)mainDisplay;
 @end
 
 @interface SBWorkspaceApplicationTransitionContext : NSObject

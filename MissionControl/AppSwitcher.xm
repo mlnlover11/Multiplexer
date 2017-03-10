@@ -641,7 +641,7 @@ BOOL toggleOrActivate = NO;
 		[transitionContext setEntity:homescreenEntity forLayoutRole:2];
 
 		//create transititon request
-		SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[[UIScreen mainScreen] valueForKey:@"_fbsDisplay"]];
+		SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[%c(FBDisplayManager) mainDisplay]];
 		[transitionRequest setApplicationContext:transitionContext];
 
 		//create apptoapp transaction

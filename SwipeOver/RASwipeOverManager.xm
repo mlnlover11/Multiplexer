@@ -25,7 +25,7 @@ extern int rotationDegsForOrientation(int o);
 @end
 
 @implementation RASwipeOverManager
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
 	SHARED_INSTANCE(RASwipeOverManager);
 }
@@ -131,7 +131,7 @@ extern int rotationDegsForOrientation(int o);
  		   	[[%c(SBAppSwitcherModel) sharedInstance] addToFront:layout];
     }
 
-    if (identifier == nil || identifier.length == 0)
+    if (!identifier || identifier.length == 0)
         return;
 
     RAHostedAppView *view = [[%c(RAHostedAppView) alloc] initWithBundleIdentifier:identifier];
@@ -157,7 +157,7 @@ extern int rotationDegsForOrientation(int o);
     detachView.tag = 9903553;
     [view addSubview:detachView];
 
-    if (overlayWindow.isHidingUnderlyingApp == NO) // side-by-side
+    if (!overlayWindow.isHidingUnderlyingApp) // side-by-side
 	    view.frame = CGRectMake(10, 0, view.frame.size.width, view.frame.size.height);
 		else // overlay
 		{
@@ -186,7 +186,7 @@ extern int rotationDegsForOrientation(int o);
 
 -(void) convertSwipeOverViewToSideBySide
 {
-	if (currentAppIdentifier == nil || [[%c(SBReachabilityManager) sharedInstance] reachabilityModeActive])
+	if (!currentAppIdentifier || [[%c(SBReachabilityManager) sharedInstance] reachabilityModeActive])
 	{
 		[self stopUsingSwipeOver];
 		return;
@@ -222,7 +222,7 @@ extern int rotationDegsForOrientation(int o);
 
 -(void) updateClientSizes:(BOOL)reloadAppSelectorSizeNow
 {
-	if (currentAppIdentifier && overlayWindow.isHidingUnderlyingApp == NO)
+	if (currentAppIdentifier && !overlayWindow.isHidingUnderlyingApp)
 	{
 		CGFloat underWidth = [overlayWindow isHidingUnderlyingApp] ? -1 : overlayWindow.frame.origin.x;
 		[[%c(RAMessagingServer) sharedInstance] resizeApp:currentAppIdentifier toSize:CGSizeMake(underWidth, -1) completion:nil];
@@ -230,7 +230,7 @@ extern int rotationDegsForOrientation(int o);
 
 	if (overlayWindow.isShowingAppSelector && reloadAppSelectorSizeNow)
 		[self showAppSelector];
-	else if (overlayWindow.isHidingUnderlyingApp == NO) // Update swiped-over app in side-by-side mode. RAHostedAppView takes care of the app sizing if we resize the RAHostedAppView.
+	else if (!overlayWindow.isHidingUnderlyingApp) // Update swiped-over app in side-by-side mode. RAHostedAppView takes care of the app sizing if we resize the RAHostedAppView.
 	{
 		overlayWindow.currentView.frame = CGRectMake(10, 0, SCREEN_WIDTH - overlayWindow.frame.origin.x - 10, overlayWindow.currentView.frame.size.height);
 	}
@@ -267,7 +267,7 @@ extern int rotationDegsForOrientation(int o);
 
 		if (overlayWindow.isHidingUnderlyingApp)
 		{
-			if ([[overlayWindow currentView] isKindOfClass:[%c(RAAppSelectorView) class]] == NO)
+			if (![[overlayWindow currentView] isKindOfClass:[%c(RAAppSelectorView) class]])
 			{
 				if (lastX == -1)
 					lastX = translation.x;

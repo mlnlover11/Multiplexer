@@ -5,7 +5,7 @@
 #import "RAMessagingServer.h"
 
 @implementation RAReachabilityManager
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
 	SHARED_INSTANCE(RAReachabilityManager);
 }

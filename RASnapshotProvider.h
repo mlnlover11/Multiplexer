@@ -3,7 +3,7 @@
 @interface RASnapshotProvider : NSObject {
 	NSCache *imageCache;
 }
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(UIImage*) snapshotForDesktop:(RADesktopWindow*)desktop;
 -(void) forceReloadSnapshotOfDesktop:(RADesktopWindow*)desktop;

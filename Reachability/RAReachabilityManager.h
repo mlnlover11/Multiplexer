@@ -3,7 +3,7 @@
 @class RAAppSliderProviderView;
 
 @interface RAReachabilityManager : NSObject
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(void) launchTopAppWithIdentifier:(NSString*)identifier;
 -(void) launchWidget:(RAWidget*)widget;

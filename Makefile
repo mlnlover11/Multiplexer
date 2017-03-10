@@ -1,6 +1,6 @@
 ARCHS = armv7 armv7s arm64
-CFLAGS = -I./ -Iwidgets/ -Iwidgets/Core/ -Iwidgets/Reachability/ -ISwipeOver/ -IReachability/ -IGestureSupport/ -IKeyboardSupport/ -IMissionControl/ -IWindowedMultitasking/ -INotificationCenterApp/ -IBackgrounding/ -IIntroTutorial/ -IMessaging/ -ITheming/ -Wno-deprecated-declarations
-CFLAGS += -fobjc-arc -O2
+CFLAGS = -I./ -Iwidgets/ -Iwidgets/Core/ -Iwidgets/Reachability/ -ISwipeOver/ -IReachability/ -IGestureSupport/ -IKeyboardSupport/ -IMissionControl/ -IWindowedMultitasking/ -INotificationCenterApp/ -IBackgrounding/ -IIntroTutorial/ -IMessaging/ -ITheming/ -Wno-deprecated-declarations -O2
+CFLAGS += -fobjc-arc
 TARGET = iphone:9.2
 
 include $(THEOS)/makefiles/common.mk

@@ -85,7 +85,7 @@ extern BOOL allowClosingReachabilityNatively;
 		IS_PROCESS("backboardd") // Backboardd uses its own messaging center for what it does.
 		)*/
 
-	if (allowedProcess == NO)
+	if (!allowedProcess)
 	{
 		// Anything that's not a UIApp (system app or user app) doesn't need this messaging client
 		// Attempting to reach out will either:
@@ -98,7 +98,7 @@ extern BOOL allowClosingReachabilityNatively;
 
 	NSDictionary *dict = @{ @"bundleIdentifier": NSBundle.mainBundle.bundleIdentifier };
 	NSDictionary *data = [serverCenter sendMessageAndReceiveReplyName:RAMessagingUpdateAppInfoMessageName userInfo:dict];
-	if (data && [data objectForKey:@"data"] != nil)
+	if (data && [data objectForKey:@"data"])
 	{
 		RAMessageAppData actualData;
 		[data[@"data"] getBytes:&actualData length:sizeof(actualData)];
@@ -130,17 +130,17 @@ extern BOOL allowClosingReachabilityNatively;
 	/* THE REAL IMPORTANT BIT */
 	_currentData = data;
 
-	if (didStatusBarVisibilityChange && data.shouldForceStatusBar == NO)
+	if (didStatusBarVisibilityChange && !data.shouldForceStatusBar)
    		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:YES];
    	else if (data.shouldForceStatusBar)
    		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:NO];
 
-	if (didSizingChange && data.shouldForceSize == NO)
+	if (didSizingChange && !data.shouldForceSize)
 	   	[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:YES];
 	else if (data.shouldForceSize)
 	   	[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:NO];
 
-	if (didOrientationChange && data.shouldForceOrientation == NO)
+	if (didOrientationChange && !data.shouldForceOrientation)
 		[UIApplication.sharedApplication RA_forceRotationToInterfaceOrientation:data.forcedOrientation isReverting:YES];
 	else if (data.shouldForceOrientation)
 		[UIApplication.sharedApplication RA_forceRotationToInterfaceOrientation:data.forcedOrientation isReverting:NO];
@@ -186,15 +186,15 @@ extern BOOL allowClosingReachabilityNatively;
 	if (!ident)
 		return;
 
-	if ([self isBeingHosted] && (self.knownFrontmostApp == nil || [self.knownFrontmostApp isEqual:ident] == NO))
+	if ([self isBeingHosted] && (!self.knownFrontmostApp || ![self.knownFrontmostApp isEqual:ident]))
 		[serverCenter sendMessageName:RAMessagingChangeFrontMostAppMessageName userInfo:@{ @"bundleIdentifier": ident }];
 }
 
 -(BOOL) shouldUseExternalKeyboard { return _currentData.shouldUseExternalKeyboard; }
 -(BOOL) shouldResize { return _currentData.shouldForceSize; }
 -(CGSize) resizeSize { return CGSizeMake(_currentData.wantedClientWidth, _currentData.wantedClientHeight); }
--(BOOL) shouldHideStatusBar { return _currentData.shouldForceStatusBar && _currentData.statusBarVisibility == NO; }
--(BOOL) shouldShowStatusBar { return _currentData.shouldForceStatusBar && _currentData.statusBarVisibility == YES; }
+-(BOOL) shouldHideStatusBar { return _currentData.shouldForceStatusBar && !_currentData.statusBarVisibility; }
+-(BOOL) shouldShowStatusBar { return _currentData.shouldForceStatusBar && _currentData.statusBarVisibility; }
 -(UIInterfaceOrientation) forcedOrientation { return _currentData.forcedOrientation; }
 -(BOOL) shouldForceOrientation { return _currentData.shouldForceOrientation; }
 -(BOOL) isBeingHosted { return _currentData.isBeingHosted; }

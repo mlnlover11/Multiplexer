@@ -50,7 +50,7 @@
     [transitionContext setAnimationDisabled:YES];
 
     //create transititon request
-    SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[UIScreen.mainScreen valueForKey:@"_fbsDisplay"]];
+    SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[%c(FBDisplayManager) mainDisplay]];
     [transitionRequest setApplicationContext:transitionContext];
 
     return [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithTransitionRequest:transitionRequest];

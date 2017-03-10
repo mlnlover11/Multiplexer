@@ -18,9 +18,9 @@ static Class $memorized$UITextEffectsWindow$class;
 %hook UIWindow
 -(void) setFrame:(CGRect)frame
 {
-    if ([self.class isEqual:$memorized$UITextEffectsWindow$class] == NO && [RAMessagingClient.sharedInstance shouldResize])
+    if (![self.class isEqual:$memorized$UITextEffectsWindow$class] && [RAMessagingClient.sharedInstance shouldResize])
     {
-        if ([oldFrames objectForKey:@(self.hash)] == nil)
+        if (![oldFrames objectForKey:@(self.hash)])
             [oldFrames setObject:[NSValue valueWithCGRect:frame] forKey:@(self.hash)];
 
         frame.origin.x = RAMessagingClient.sharedInstance.currentData.wantedClientOriginX == -1 ? 0 : RAMessagingClient.sharedInstance.currentData.wantedClientOriginX;
@@ -118,7 +118,7 @@ static Class $memorized$UITextEffectsWindow$class;
 {
     if (!reverting)
     {
-        if (setPreviousOrientation == NO)
+        if (!setPreviousOrientation)
         {
             setPreviousOrientation = YES;
             prevousOrientation = UIApplication.sharedApplication.statusBarOrientation;
@@ -168,7 +168,7 @@ static Class $memorized$UITextEffectsWindow$class;
         for (UIWindow *window in [[UIApplication sharedApplication] windows])
         {
             CGRect frame = window.frame;
-            if ([oldFrames objectForKey:@(window.hash)] != nil)
+            if ([oldFrames objectForKey:@(window.hash)])
             {
                 frame = [[oldFrames objectForKey:@(window.hash)] CGRectValue];
                 [oldFrames removeObjectForKey:@(window.hash)];
@@ -179,7 +179,7 @@ static Class $memorized$UITextEffectsWindow$class;
             }];
         }
 
-        if ([oldFrames objectForKey:@"statusBar"] != nil)
+        if ([oldFrames objectForKey:@"statusBar"])
             UIApplication.sharedApplication.statusBar.frame = [oldFrames[@"statusBar"] CGRectValue];
 
         return;
@@ -187,7 +187,7 @@ static Class $memorized$UITextEffectsWindow$class;
 
     if (size.width != -1)
     {
-        if ([oldFrames objectForKey:@"statusBar"] == nil)
+        if (![oldFrames objectForKey:@"statusBar"])
             [oldFrames setObject:[NSValue valueWithCGRect:UIApplication.sharedApplication.statusBar.frame] forKey:@"statusBar"];
         UIApplication.sharedApplication.statusBar.frame = CGRectMake(0, 0, size.width, UIApplication.sharedApplication.statusBar.frame.size.height);
     }

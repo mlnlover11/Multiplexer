@@ -1,7 +1,7 @@
 #import "RAWidgetHostManager.h"
 
 @implementation RAWidgetHostManager
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
 	SHARED_INSTANCE2(RAWidgetHostManager, sharedInstance->widgets = [NSMutableArray array]);
 }

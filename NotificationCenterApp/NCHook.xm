@@ -36,7 +36,7 @@ BOOL shouldLoadView = NO;
    	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
    	{
 		SBModeViewController* modeVC = MSHookIvar<id>(self, "_modeController");
-		if (ncAppViewController == nil)
+		if (!ncAppViewController)
 			ncAppViewController = [self _newBulletinObserverViewControllerOfClass:[RANCViewController class]];
 		[modeVC _addBulletinObserverViewController:ncAppViewController];
 	}
@@ -68,7 +68,7 @@ BOOL shouldLoadView = NO;
    	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
    	{
 		SBModeViewController* modeVC = MSHookIvar<id>(self, "_modeViewController");
-		if (ncAppViewController == nil)
+		if (!ncAppViewController)
 			ncAppViewController = [[RANCViewController alloc] init];
 		[modeVC _addBulletinObserverViewController:ncAppViewController];
 	}

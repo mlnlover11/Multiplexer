@@ -4,7 +4,7 @@
 	NSString *currentAppIdentifier;
 	BOOL isUsingSwipeOver;
 }
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(void) startUsingSwipeOver;
 -(void) stopUsingSwipeOver;

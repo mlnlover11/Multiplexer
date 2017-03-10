@@ -225,7 +225,7 @@ id SBWorkspace$sharedInstance;
         // Give them a little time to receive the notifications...
         if (view)
         {
-            if ([view superview] != nil)
+            if ([view superview])
                 [view removeFromSuperview];
         }
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
@@ -264,7 +264,7 @@ id SBWorkspace$sharedInstance;
 
     %orig;
 
-    if (![RASettings.sharedInstance reachabilityEnabled] && wasEnabled == NO)
+    if (![RASettings.sharedInstance reachabilityEnabled] && !wasEnabled)
     {
         return;
     }
@@ -355,7 +355,7 @@ id SBWorkspace$sharedInstance;
             SBApplication *app = nil;
             FBScene *scene = nil;
             NSMutableArray *bundleIdentifiers = [[RAAppSwitcherModelWrapper appSwitcherAppIdentiferList] mutableCopy];
-            while (scene == nil && bundleIdentifiers.count > 0)
+            while (!scene && bundleIdentifiers.count > 0)
             {
                 lastBundleIdentifier = bundleIdentifiers[0];
 
@@ -371,7 +371,7 @@ id SBWorkspace$sharedInstance;
                     if (bundleIdentifiers.count > 0)
                         [bundleIdentifiers removeObjectAtIndex:0];
             }
-            if (lastBundleIdentifier == nil || lastBundleIdentifier.length == 0)
+            if (!lastBundleIdentifier || lastBundleIdentifier.length == 0)
                 return;
 
             [self RA_launchTopAppWithIdentifier:lastBundleIdentifier];
@@ -614,7 +614,7 @@ CGFloat startingY = -1;
         if (ncViewController)
           ncViewController.view.frame = (CGRect) { { 0, 0 }, topFrame.size };
     }
-    else if (lastBundleIdentifier != nil || [view isKindOfClass:[RAAppSliderProviderView class]])
+    else if (lastBundleIdentifier || [view isKindOfClass:[RAAppSliderProviderView class]])
     {
         // Notify clients
 
@@ -712,7 +712,7 @@ CGFloat startingY = -1;
     UIWindow *w = MSHookIvar<UIWindow*>(self, "_reachabilityEffectWindow");
     SBApplication *app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:lastBundleIdentifier];
     FBScene *scene = [app mainScene];
-    if (app == nil)
+    if (!app)
         return;
 
     [RAMessagingServer.sharedInstance setHosted:YES forIdentifier:app.bundleIdentifier completion:nil];
@@ -720,7 +720,7 @@ CGFloat startingY = -1;
     [RAMessagingServer.sharedInstance rotateApp:app.bundleIdentifier toOrientation:[UIApplication sharedApplication].statusBarOrientation completion:nil];
     [RAMessagingServer.sharedInstance forceStatusBarVisibility:YES forApp:app.bundleIdentifier completion:nil];
 
-    if (![app pid] || [app mainScene] == nil)
+    if (![app pid] || ![app mainScene])
     {
         overrideDisableForStatusBar = YES;
         [UIApplication.sharedApplication launchApplicationWithIdentifier:bundleIdentifier suspended:YES];

@@ -4,10 +4,10 @@
 #import "RAGestureCallback.h"
 
 @implementation RAGestureManager
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
-	SHARED_INSTANCE2(RAGestureManager, 
-		sharedInstance->gestures = [NSMutableArray array]; 
+	SHARED_INSTANCE2(RAGestureManager,
+		sharedInstance->gestures = [NSMutableArray array];
 		sharedInstance->ignoredAreas = [NSMutableDictionary dictionary];
 	);
 }
@@ -41,7 +41,7 @@
 	if (!found)
 	{
 		[gestures addObject:callback];
-		[self sortGestureRecognizers];	
+		[self sortGestureRecognizers];
 	}
 }
 
@@ -119,7 +119,7 @@
 -(BOOL) handleMovementOrStateUpdate:(UIGestureRecognizerState)state withPoint:(CGPoint)point velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge
 {
 	// If we don't do this check here, but in canHandleMovementWithPoint:forEdge:, the recognizer hooks will not begin tracking the swipe
-	// This is an issue if someone calls stopIgnoringSwipesForIdentifier: while a swipe is going on. 
+	// This is an issue if someone calls stopIgnoringSwipesForIdentifier: while a swipe is going on.
 	/*for (NSString *key in ignoredAreas.allKeys)
 	{
 		NSValue *value = ignoredAreas[key];
@@ -154,7 +154,7 @@
 					isThisCallbackCapable = YES;
 
 			if (isThisCallbackCapable)
-			{	
+			{
 				if (callback.callbackBlock)
 				{
 					RAGestureCallbackResult result = callback.callbackBlock(state, point, velocity);

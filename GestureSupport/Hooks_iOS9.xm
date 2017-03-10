@@ -65,7 +65,7 @@ typedef struct {
 @end
 
 @implementation Hooks9$SBHandMotionExtractorReplacementByMultiplexer
--(id) init
+-(instancetype) init
 {
     if (self = [super init])
     {

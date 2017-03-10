@@ -53,7 +53,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 	SHARED_INSTANCE(RASettings);
 }
 
--(id) init
+-(instancetype) init
 {
 	if (self = [super init])
 	{
@@ -106,7 +106,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 			//NSLog(@"[ReachApp] settings sandbox load: %@", _settings == nil ? @"failed" : @"succeed");
 		}
 
-		if (_settings == nil)
+		if (!_settings)
 		{
 			LogError(@"[ReachApp] could not load settings from CFPreferences or NSDictionary");
 		}

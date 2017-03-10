@@ -7,7 +7,7 @@
 #import "RAFakePhoneMode.h"
 
 @implementation RADesktopWindow
--(id) initWithFrame:(CGRect)frame
+-(instancetype) initWithFrame:(CGRect)frame
 {
 	if (self = [super initWithFrame:frame])
 	{
@@ -314,7 +314,7 @@
 
 -(void) loadInfo:(NSInteger)index
 {
-	if ([RAWindowStatePreservationSystemManager.sharedInstance hasDesktopInformationAtIndex:index] == NO)
+	if (![RAWindowStatePreservationSystemManager.sharedInstance hasDesktopInformationAtIndex:index])
 		return;
 	RAPreservedDesktopInformation info = [RAWindowStatePreservationSystemManager.sharedInstance desktopInformationForIndex:index];
 	for (NSString *bundleIdentifier in info.openApps)

@@ -103,7 +103,7 @@ BOOL swipeOverLocationIsInValidArea(CGFloat y)
 
         if ([%c(Multiplexer) shouldShowControlCenterGrabberOnFirstSwipe] || [[%c(RASettings) sharedInstance] alwaysShowSOGrabber])
         {
-            if (isShowingGrabber == NO && isPastGrabber == NO)
+            if (!isShowingGrabber && !isPastGrabber)
             {
                 firstSwipe = YES;
                 isShowingGrabber = YES;

@@ -2,7 +2,7 @@
 #import "headers.h"
 
 @implementation RALocalizer
-+(id) sharedInstance
++(instancetype) sharedInstance
 {
 	SHARED_INSTANCE2(RALocalizer, [sharedInstance loadTranslation]);
 }

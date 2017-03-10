@@ -1,7 +1,7 @@
 @interface RALocalizer : NSObject {
 	NSDictionary *translation;
 }
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(NSString*) localizedStringForKey:(NSString*)key;
 @end

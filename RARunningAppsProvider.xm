@@ -3,8 +3,8 @@
 @implementation RARunningAppsProvider
 +(instancetype) sharedInstance
 {
-	SHARED_INSTANCE2(RARunningAppsProvider, 
-		sharedInstance->apps = [NSMutableArray array]; 
+	SHARED_INSTANCE2(RARunningAppsProvider,
+		sharedInstance->apps = [NSMutableArray array];
 		sharedInstance->targets = [NSMutableArray array];
 		sharedInstance->lock = [[NSLock alloc] init];
 	);
@@ -43,7 +43,7 @@
 {
 	[lock lock];
 
-	if ([targets containsObject:target] == NO)
+	if (![targets containsObject:target])
 		[targets addObject:target];
 
 	[lock unlock];
@@ -67,7 +67,7 @@
 {
 	%orig;
 
-	if (self.isRunning && [RARunningAppsProvider.sharedInstance.mutableRunningApplications containsObject:self] == NO)
+	if (self.isRunning && ![RARunningAppsProvider.sharedInstance.mutableRunningApplications containsObject:self])
 		[RARunningAppsProvider.sharedInstance addRunningApp:self];
 	else if (!self.isRunning && [RARunningAppsProvider.sharedInstance.mutableRunningApplications containsObject:self])
 		[RARunningAppsProvider.sharedInstance removeRunningApp:self];

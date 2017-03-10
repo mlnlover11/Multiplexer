@@ -9,7 +9,6 @@
 %hook NSObject
 - (void)doesNotRecognizeSelector:(SEL)selector
 {
-#if DEBUG
 	LogDebug(@"[ReachApp] doesNotRecognizeSelector: selector '%@' on class '%s' (image: %s)", NSStringFromSelector(selector), class_getName(self.class), class_getImageName(self.class));
 
 	NSArray * symbols = [NSThread callStackSymbols];
@@ -18,7 +17,6 @@
 	{
 		LogDebug(@"[ReachApp] %@\n", symbol);
 	}
-#endif
 
 	%orig;
 }

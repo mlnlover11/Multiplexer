@@ -26,7 +26,7 @@ const NSUInteger RAGesturePriorityDefault = RAGesturePriorityLow;
 	NSMutableArray *gestures;
 	NSMutableDictionary *ignoredAreas;
 }
-+(id) sharedInstance;
++(instancetype) sharedInstance;
 
 -(void) addGestureRecognizer:(RAGestureCallbackBlock)callbackBlock withCondition:(RAGestureConditionBlock)conditionBlock forEdge:(UIRectEdge)screenEdge identifier:(NSString*)identifier priority:(NSUInteger)priority;
 -(void) addGestureRecognizer:(RAGestureCallbackBlock)callbackBlock withCondition:(RAGestureConditionBlock)conditionBlock forEdge:(UIRectEdge)screenEdge identifier:(NSString*)identifier;

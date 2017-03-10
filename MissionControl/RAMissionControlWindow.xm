@@ -30,7 +30,7 @@
 @end
 
 @implementation RAMissionControlWindow
--(id) initWithFrame:(CGRect)frame
+-(instancetype) initWithFrame:(CGRect)frame
 {
 	if (self = [super initWithFrame:frame])
 	{
@@ -178,7 +178,7 @@
 
 	for (SBApplication *app in runningApplications)
 	{
-		if ([visibleIcons containsObject:app.bundleIdentifier] == NO)// || [RAMissionControlManager.sharedInstance.inhibitedApplications containsObject:app.bundleIdentifier])
+		if (![visibleIcons containsObject:app.bundleIdentifier])// || [RAMissionControlManager.sharedInstance.inhibitedApplications containsObject:app.bundleIdentifier])
 			[appsWithoutWindows removeObject:app];
 	}
 

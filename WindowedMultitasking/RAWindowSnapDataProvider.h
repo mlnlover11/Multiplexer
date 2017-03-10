@@ -1,13 +1,13 @@
 #import "RAWindowBar.h"
 #import "RADesktopWindow.h"
 
-enum RAWindowSnapLocation {
+typedef NS_ENUM(NSInteger, RAWindowSnapLocation) {
 	RAWindowSnapLocationInvalid = 0,
 
 	RAWindowSnapLocationLeftTop,
 	RAWindowSnapLocationLeftMiddle,
 	RAWindowSnapLocationLeftBottom,
-	
+
 	RAWindowSnapLocationRightTop,
 	RAWindowSnapLocationRightMiddle,
 	RAWindowSnapLocationRightBottom,

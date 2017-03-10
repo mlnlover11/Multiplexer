@@ -11,7 +11,7 @@
 	SHARED_INSTANCE(RAWidgetSectionManager);
 }
 
--(id) init
+-(instancetype) init
 {
 	if (self = [super init])
 	{
@@ -73,7 +73,7 @@
 
 	for (RAWidgetSection* section in [self enabledSections])
 	{
-		if (section.enabled == NO)
+		if (!section.enabled)
 			continue;
 		@try
 		{

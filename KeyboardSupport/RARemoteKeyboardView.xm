@@ -26,7 +26,7 @@
     self.layerHost.contextId = value;
 
     LogDebug(@"[ReachApp] loaded keyboard view with %d", value);
-    if (value == 0 && cancelFetchingContextId == NO)
+    if (value == 0 && !cancelFetchingContextId)
     {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             [self connectToKeyboardWindowForApp:identifier];
@@ -34,7 +34,7 @@
     }
 }
 
--(id)initWithFrame:(CGRect)frame
+-(instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self)
