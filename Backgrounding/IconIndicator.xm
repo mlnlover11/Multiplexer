@@ -142,7 +142,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 			UIImageView *textImageView = (UIImageView*)[badge viewWithTag:42];
 			if (!textImageView)
 			{
-				CGFloat padding = [objc_getClass("SBIconBadgeView") _textPadding];
+				CGFloat padding = [%c(SBIconBadgeView) _textPadding];
 
 				textImageView = [[UIImageView alloc] initWithFrame:CGRectMake(padding, padding, badge.frame.size.width - (padding * 2.0), badge.frame.size.height - (padding * 2.0))];
 				textImageView.center = CGPointMake((badge.frame.size.width / 2.0) + [%c(SBIconBadgeView) _textOffset].x, (badge.frame.size.height / 2.0) + [%c(SBIconBadgeView) _textOffset].y);
@@ -274,7 +274,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 */
 %new -(void) RA_addStatusBarIconForSelfIfOneDoesNotExist
 {
-	if (objc_getClass("LSStatusBarItem") && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {
+	if (%c(LSStatusBarItem) && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {
 		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
 			if ([[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier]) {
 				RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];

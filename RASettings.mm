@@ -111,10 +111,10 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 			LogError(@"[ReachApp] could not load settings from CFPreferences or NSDictionary");
 		}
 
-		if ([previousNCAppSetting isEqual:self.NCApp] == NO)
+		if (![previousNCAppSetting isEqual:self.NCApp])
 			[[objc_getClass("RANCViewController") sharedViewController] forceReloadAppLikelyBecauseTheSettingChanged]; // using objc_getClass allows RASettings to be used in reachappsettings and other places
 
-		if ([self shouldShowStatusBarIcons] == NO && [objc_getClass("SBApplication") respondsToSelector:@selector(RA_clearAllStatusBarIcons)])
+		if (![self shouldShowStatusBarIcons] && [objc_getClass("SBApplication") respondsToSelector:@selector(RA_clearAllStatusBarIcons)])
 			[objc_getClass("SBApplication") performSelector:@selector(RA_clearAllStatusBarIcons)];
 
 		[RAThemeManager.sharedInstance invalidateCurrentThemeAndReload:[self currentThemeIdentifier]];
@@ -246,7 +246,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 -(NSString*) NCApp
 {
-	return [_settings objectForKey:@"NCApp"] == nil ? @"com.apple.Preferences" : _settings[@"NCApp"];
+	return ![_settings objectForKey:@"NCApp"] ? @"com.apple.Preferences" : _settings[@"NCApp"];
 }
 
 -(BOOL) alwaysEnableGestures
@@ -300,12 +300,12 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 -(NSInteger) globalBackgroundMode
 {
-	return [_settings objectForKey:@"globalBackgroundMode"] == nil ? RABackgroundModeNative : [_settings[@"globalBackgroundMode"] intValue];
+	return ![_settings objectForKey:@"globalBackgroundMode"] ? RABackgroundModeNative : [_settings[@"globalBackgroundMode"] intValue];
 }
 
 -(NSInteger) windowRotationLockMode
 {
-	return [_settings objectForKey:@"windowRotationLockMode"] == nil ? 0 : [_settings[@"windowRotationLockMode"] intValue];
+	return ![_settings objectForKey:@"windowRotationLockMode"] ? 0 : [_settings[@"windowRotationLockMode"] intValue];
 }
 
 -(BOOL) shouldShowStatusBarIcons { return BOOL(@"shouldShowStatusBarIcons", YES); }
@@ -376,11 +376,11 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 
 -(RAGrabArea) windowedMultitaskingGrabArea
 {
-	return [_settings objectForKey:@"windowedMultitaskingGrabArea"] == nil ? RAGrabAreaBottomLeftThird : (RAGrabArea)[_settings[@"windowedMultitaskingGrabArea"] intValue];
+	return ![_settings objectForKey:@"windowedMultitaskingGrabArea"] ? RAGrabAreaBottomLeftThird : (RAGrabArea)[_settings[@"windowedMultitaskingGrabArea"] intValue];
 }
 
 -(RAGrabArea) swipeOverGrabArea
 {
-	return [_settings objectForKey:@"swipeOverGrabArea"] == nil ? RAGrabAreaSideAnywhere : (RAGrabArea)[_settings[@"swipeOverGrabArea"] intValue];
+	return ![_settings objectForKey:@"swipeOverGrabArea"] ? RAGrabAreaSideAnywhere : (RAGrabArea)[_settings[@"swipeOverGrabArea"] intValue];
 }
 @end

@@ -1,7 +1,7 @@
 ARCHS = armv7 armv7s arm64
 
-CFLAGS = -I../ -I../Theming/ -I../GestureSupport/ -I../WindowedMultitasking/
-CFLAGS += -fobjc-arc -O2
+CFLAGS = -I../ -I../Theming/ -I../GestureSupport/ -I../WindowedMultitasking/ -O2
+CFLAGS += -fobjc-arc
 
 include $(THEOS)/makefiles/common.mk
 

@@ -113,7 +113,7 @@ void handle_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEven
 		NSString *clientId = response[@"bundleIdentifier"];
 
 		if (pid && clientId)
-			return [[[objc_getClass("BKEventDestination") alloc] initWithPid:pid clientID:clientId] autorelease];
+			return [[[%c(BKEventDestination) alloc] initWithPid:pid clientID:clientId] autorelease];
 	}
 	return %orig;
 }
@@ -155,7 +155,7 @@ void handle_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEven
 
 %ctor
 {
-	center = [objc_getClass("CPDistributedMessagingCenter") centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+	center = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
 	void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
 	if(handle)

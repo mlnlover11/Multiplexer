@@ -35,7 +35,7 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(void) loadServer
 {
-		messagingCenter = [objc_getClass("CPDistributedMessagingCenter") centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+		messagingCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
 		void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
 		if (handle)

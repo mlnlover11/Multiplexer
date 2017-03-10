@@ -29,5 +29,5 @@ Class SBWorkspace_class_implementation_class = nil;
 {
 	// SBMainWorkspace: iOS 9
 	// SBWorkspace: iOS 8
-	SBWorkspace_class_implementation_class = objc_getClass("SBMainWorkspace") ?: objc_getClass("SBWorkspace");
+	SBWorkspace_class_implementation_class = %c(SBMainWorkspace) ?: %c(SBWorkspace);
 }

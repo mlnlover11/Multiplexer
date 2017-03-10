@@ -152,7 +152,7 @@ typedef struct {
         if (IS_IOS_OR_NEWER(iOS_9_0))
             return;
 
-        class_addProtocol(objc_getClass("SBHandMotionExtractor"), @protocol(_UIScreenEdgePanRecognizerDelegate));
+        class_addProtocol(%c(SBHandMotionExtractor), @protocol(_UIScreenEdgePanRecognizerDelegate));
 
         UIRectEdge edgesToWatch[] = { UIRectEdgeBottom, UIRectEdgeLeft, UIRectEdgeRight, UIRectEdgeTop };
         int edgeCount = sizeof(edgesToWatch) / sizeof(UIRectEdge);

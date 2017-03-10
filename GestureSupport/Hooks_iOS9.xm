@@ -196,7 +196,7 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
         IOHIDEventSystemClientScheduleWithRunLoop(hidEventSystem, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
         IOHIDEventSystemClientRegisterEventCallback(hidEventSystem, (IOHIDEventSystemClientEventCallback)touch_event, NULL, NULL);
 
-        class_addProtocol(objc_getClass("Hooks9$SBHandMotionExtractorReplacementByMultiplexer"), @protocol(_UIScreenEdgePanRecognizerDelegate));
+        class_addProtocol(%c(Hooks9$SBHandMotionExtractorReplacementByMultiplexer), @protocol(_UIScreenEdgePanRecognizerDelegate));
 
         UIRectEdge edgesToWatch[] = { UIRectEdgeBottom, UIRectEdgeLeft, UIRectEdgeRight, UIRectEdgeTop };
         int edgeCount = sizeof(edgesToWatch) / sizeof(UIRectEdge);

@@ -1,7 +1,7 @@
 ARCHS = armv7 armv7s arm64
 
-CFLAGS = -I../ -I../Theming/ -I../GestureSupport/ -I../WindowedMultitasking/ -I../Messaging/ -I../KeyboardSupport -I../MissionControl -Wno-deprecated-declarations
-CFLAGS += -fobjc-arc -O2
+CFLAGS = -I../ -I../Theming/ -I../GestureSupport/ -I../WindowedMultitasking/ -I../Messaging/ -I../KeyboardSupport -I../MissionControl -Wno-deprecated-declarations -O2
+CFLAGS += -fobjc-arc
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = ReachAppSwipeOver

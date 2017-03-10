@@ -878,7 +878,7 @@ CGFloat startingY = -1;
 
 - (void)applicationDidFinishLaunching:(id)arg1
 {
-  Class c = objc_getClass("SBMainWorkspace") ?: objc_getClass("SBWorkspace");
+  Class c = %c(SBMainWorkspace) ?: %c(SBWorkspace);
   %init(SBWorkspace, SB_WORKSPACE_CLASS=c);
   %orig;
 }
