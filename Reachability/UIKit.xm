@@ -7,13 +7,6 @@ BOOL allowClosingReachabilityNatively = NO;
 %hook UIApplication
 - (void)_deactivateReachability
 {
-    LogDebug(@"_deactivateReachability");
-
-    if ([RAKeyboardStateListener sharedInstance].visible) {
-        LogDebug(@"stopping reachability from closing due to keyboard");
-        return;
-    }
-
     if (!allowClosingReachabilityNatively)
     {
         LogDebug(@"[ReachApp] attempting to close reachability but not allowed to.");

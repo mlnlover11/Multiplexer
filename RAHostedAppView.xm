@@ -125,6 +125,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
 
     if (_isCurrentlyHosting)
         return;
+
     _isCurrentlyHosting = YES;
 
     appsBeingHosted[app.bundleIdentifier] = [appsBeingHosted objectForKey:app.bundleIdentifier] ? @([appsBeingHosted[app.bundleIdentifier] intValue] + 1) : @1;
@@ -225,7 +226,9 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
             }, failedBlock);
     }
     else
-        [self _actualLoadApp];
+    {
+      [self _actualLoadApp];
+    }
 
     if (self.showSplashscreenInsteadOfSpinner)
     {

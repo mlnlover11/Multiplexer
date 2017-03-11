@@ -31,11 +31,12 @@
 	    if (!settings)
 	        return nil;
 
-			[settings setBackgrounded:NO];
+			SET_BACKGROUNDED(settings, NO);
 	    [scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
 
 	    [contextHostManager enableHostingForRequester:@"reachapp" orderFront:YES];
-	    return [contextHostManager hostViewForRequester:@"reachapp" enableAndOrderFront:YES];
+	    UIView *hostView = [contextHostManager hostViewForRequester:@"reachapp" enableAndOrderFront:YES];
+			return hostView;
 	}
 
 	[RACompatibilitySystem showWarning:@"Unable to find valid method for accessing context host views"];

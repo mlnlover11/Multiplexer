@@ -23,7 +23,6 @@ Bugs:
 - Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
 - Invoking keyboard in reachapp closes view (I think reachability dismisses when using KB)
 - Showing NC with reachapp doesnt properly resize (not even sure if possible)
-- Launching MC from activator gesture in app black screen
 - Foregrounding through activator broken (override gets removed when launching another app)
 - CC inhibitor still broken?
 
@@ -31,7 +30,7 @@ Minor Things/Bugs to note:
 - RA favorites layout messed up
 - MC view invokes regardless if grabbing the grabber or not (was always like that?)
 - MC works but causes jittery animations;
-- NCApp disappears on first load
+- NCApp disappears on first load (see last issue)
 - Some say it causes serious lag (probably because logs werent disabled)?
 - Startup bug still isnt fixed (find cause / better fix)
 - General Code Cleanup, feels to messy RN
