@@ -106,6 +106,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
 	  FBScene *scene = [app mainScene];
     if (![app pid] || !scene)
     {
+        LogDebug(@"has no pid or scene, createApplicationProcessForBundleID");
         [UIApplication.sharedApplication launchApplicationWithIdentifier:self.bundleIdentifier suspended:YES];
         [[%c(FBProcessManager) sharedInstance] createApplicationProcessForBundleID:self.bundleIdentifier]; // ummm...?
     }

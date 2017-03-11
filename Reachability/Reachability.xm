@@ -746,6 +746,8 @@ CGFloat startingY = -1;
     [contextHostManager enableHostingForRequester:@"reachapp" orderFront:YES];
     view = [contextHostManager hostViewForRequester:@"reachapp" enableAndOrderFront:YES];
 
+    view.accessibilityHint = bundleIdentifier;
+
     if (draggerView && draggerView.superview == w)
         [w insertSubview:view belowSubview:draggerView];
     else

@@ -30,7 +30,7 @@
 	        return nil;
 
 			[[UIApplication sharedApplication] launchApplicationWithIdentifier:app.bundleIdentifier suspended:YES];
-	    SET_BACKGROUNDED(settings, NO);
+			SET_BACKGROUNDED(settings, NO);
 	    [scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
 
 	    [contextHostManager enableHostingForRequester:@"reachapp" orderFront:YES];
