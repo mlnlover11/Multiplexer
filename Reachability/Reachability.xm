@@ -722,6 +722,7 @@ CGFloat startingY = -1;
 
     if (![app pid] || ![app mainScene])
     {
+        LogDebug(@"no pid or scene; trying again");
         overrideDisableForStatusBar = YES;
         [UIApplication.sharedApplication launchApplicationWithIdentifier:bundleIdentifier suspended:YES];
         [[%c(FBProcessManager) sharedInstance] createApplicationProcessForBundleID:bundleIdentifier];

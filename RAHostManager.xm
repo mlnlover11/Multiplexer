@@ -22,6 +22,8 @@
 
 	if ([app respondsToSelector:@selector(mainScene)])
 	{
+			[[UIApplication sharedApplication] launchApplicationWithIdentifier:app.bundleIdentifier suspended:YES];
+
 	    FBScene *scene = [app mainScene];
 	    FBWindowContextHostManager *contextHostManager = [scene contextHostManager];
 
@@ -29,8 +31,7 @@
 	    if (!settings)
 	        return nil;
 
-			[[UIApplication sharedApplication] launchApplicationWithIdentifier:app.bundleIdentifier suspended:YES];
-			SET_BACKGROUNDED(settings, NO);
+			[settings setBackgrounded:NO];
 	    [scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
 
 	    [contextHostManager enableHostingForRequester:@"reachapp" orderFront:YES];

@@ -10,7 +10,7 @@
 
 @property (nonatomic, readonly) RAMessageAppData currentData;
 @property (nonatomic) BOOL hasRecievedData;
-@property (nonatomic, retain) NSString *knownFrontmostApp;
+@property (nonatomic, copy) NSString *knownFrontmostApp;
 
 -(void) requestUpdateFromServer;
 

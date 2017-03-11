@@ -35,15 +35,8 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(void) loadServer
 {
-		messagingCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
-
-		void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-		if (handle)
-		{
-				void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-				rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
-				dlclose(handle);
-		}
+		messagingCenter = [CPDistributedMessagingCenter centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+		rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
 
     [messagingCenter runServerOnCurrentThread];
 

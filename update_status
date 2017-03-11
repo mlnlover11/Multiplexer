@@ -35,6 +35,8 @@ Minor Things/Bugs to note:
 - Some say it causes serious lag (probably because logs werent disabled)?
 - Startup bug still isnt fixed (find cause / better fix)
 - General Code Cleanup, feels to messy RN
+- Calling launchapplication:suspended in host manager fixes issues with multiple windows but causes ReachApp and NCApp to not properly load apps when they are suspended
+  (although doesnt happen always)
 
 Features to Add:
 - 3D Touch actions?

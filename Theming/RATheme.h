@@ -2,8 +2,8 @@
 
 @interface RATheme : NSObject
 
-@property (nonatomic, retain) NSString *themeIdentifier;
-@property (nonatomic, retain) NSString *themeName;
+@property (nonatomic, copy) NSString *themeIdentifier;
+@property (nonatomic, copy) NSString *themeName;
 
 // Backgrounder
 @property (nonatomic, retain) UIColor *backgroundingIndicatorBackgroundColor;

@@ -1,8 +1,8 @@
 @class SBApplication;
 
 @interface MultiplexerExtension : NSObject
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *multiplexerVersion;
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *multiplexerVersion;
 @end
 
 @interface Multiplexer : NSObject {

@@ -318,21 +318,20 @@
     [_tableView reloadData];
 }
 
--(id)init
+-(instancetype)init
 {
-    if (!(self = [super init])) return nil;
+    if (self = [super init]) {
+      CGRect bounds = [[UIScreen mainScreen] bounds];
 
-    CGRect bounds = [[UIScreen mainScreen] bounds];
+      _dataSource = [[RAApplicationTableDataSource alloc] init];
 
-    _dataSource = [[RAApplicationTableDataSource alloc] init];
-
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
-    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _tableView.delegate = self;
-    _tableView.dataSource = _dataSource;
-    _dataSource.tableView = _tableView;
-    [self updateDataSource:nil];
-
+      _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
+      _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+      _tableView.delegate = self;
+      _tableView.dataSource = _dataSource;
+      _dataSource.tableView = _tableView;
+      [self updateDataSource:nil];
+    }
     return self;
 }
 

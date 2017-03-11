@@ -59,15 +59,8 @@ extern BOOL allowClosingReachabilityNatively;
 
 	_currentData = data; // Initialize data
 
-	serverCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
-
-  void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-  if (handle)
-  {
-      void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-      rocketbootstrap_distributedmessagingcenter_apply(serverCenter);
-      dlclose(handle);
-  }
+	serverCenter = [CPDistributedMessagingCenter centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+  rocketbootstrap_distributedmessagingcenter_apply(serverCenter);
 }
 
 -(void) alertUser:(NSString*)description

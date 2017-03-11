@@ -9,6 +9,6 @@
 
 @property (nonatomic) UIRectEdge screenEdge;
 @property (nonatomic) NSUInteger priority;
-@property (nonatomic, retain) NSString *identifier;
+@property (nonatomic, copy) NSString *identifier;
 
 @end
