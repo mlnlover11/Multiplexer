@@ -3,7 +3,7 @@
 #import <libstatusbar/LSStatusBarItem.h>
 #import <applist/ALApplicationList.h>
 #import "ColorBadges.h"
-#import "Anemone.h"
+#import <Anemone/ANEMSettingsManager.h>
 
 NSMutableDictionary *indicatorStateDict = [[[NSMutableDictionary alloc] init] retain];
 #define SET_INFO_(x, y)    indicatorStateDict[x] = [NSNumber numberWithInt:y]
@@ -124,7 +124,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 				badge.textColor = THEMED(backgroundingIndicatorTextColor);
 			}
 			UIImage *bgImage = [%c(SBIconBadgeView) _checkoutBackgroundImage];
-			if (HAS_ANEMONE && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"])
+			if (%c(ANEMSettingsManager) && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"])
 			{
 				badge.backgroundColor = [UIColor colorWithPatternImage:bgImage];
 			}
@@ -137,7 +137,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 			badge.layer.cornerRadius = MAX(badge.frame.size.width, badge.frame.size.height) / 2.0;
 		}
 
-		if (HAS_ANEMONE && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"])
+		if (%c(ANEMSettingsManager) && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"])
 		{
 			UIImageView *textImageView = (UIImageView*)[badge viewWithTag:42];
 			if (!textImageView)
