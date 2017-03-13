@@ -73,6 +73,7 @@ static Class $memorized$UITextEffectsWindow$class;
 %end
 
 %hook UIApplication
+%property (nonatomic, assign) BOOL RA_networkActivity;
 -(void) applicationDidResume
 {
     %orig;
@@ -205,7 +206,7 @@ static Class $memorized$UITextEffectsWindow$class;
 -(BOOL) isNetworkActivityIndicatorVisible
 {
     if ([RAMessagingClient.sharedInstance isBeingHosted])
-        return [objc_getAssociatedObject(self, @selector(RA_networkActivity)) boolValue];
+        return self.RA_networkActivity;
     else
         return %orig;
 }
@@ -215,7 +216,7 @@ static Class $memorized$UITextEffectsWindow$class;
     %orig(arg1);
     if ([RAMessagingClient.sharedInstance isBeingHosted])
     {
-        objc_setAssociatedObject(self, @selector(RA_networkActivity), @(arg1), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        self.RA_networkActivity = arg1;
 
         StatusBarData *data = [UIStatusBarServer getStatusBarData];
         data->itemIsEnabled[26] = arg1; // 26 = activity indicator

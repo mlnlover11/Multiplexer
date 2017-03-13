@@ -41,6 +41,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 }
 
 %hook SBIconView
+%property (nonatomic, assign) BOOL RA_isIconIndicatorInhibited;
 %new -(void) RA_updateIndicatorView:(RAIconIndicatorViewInfo)info
 {
 	@autoreleasepool {
@@ -173,7 +174,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 
 %new -(void) RA_setIsIconIndicatorInhibited:(BOOL)value showAgainImmediately:(BOOL)value2
 {
-    objc_setAssociatedObject(self, @selector(RA_isIconIndicatorInhibited), value ? (id)kCFBooleanTrue : (id)kCFBooleanFalse, OBJC_ASSOCIATION_ASSIGN);
+		self.RA_isIconIndicatorInhibited = value;
     if (value2 || value)
 	    [self RA_updateIndicatorViewWithExistingInfo];
 }
@@ -190,11 +191,6 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 	}
 
 	%orig;
-}
-
-%new -(BOOL) RA_isIconIndicatorInhibited
-{
-    return [objc_getAssociatedObject(self, @selector(RA_isIconIndicatorInhibited)) boolValue];
 }
 
 -(void) layoutSubviews
@@ -281,7 +277,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 				BOOL native = (info & RAIconIndicatorViewInfoNative);
 				if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
 		    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-		    	if ([item customViewClass] == nil) {
+		    	if (![item customViewClass] {
 						item.customViewClass = @"RAAppIconStatusBarIconView";
 					}
 	        item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
@@ -294,7 +290,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 				BOOL native = (info & RAIconIndicatorViewInfoNative);
 				if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
 			    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-			    	if ([item customViewClass] == nil) {
+			    	if (![item customViewClass]) {
 							item.customViewClass = @"RAAppIconStatusBarIconView";
 						}
 		        item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];

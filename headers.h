@@ -40,7 +40,7 @@
 #import "RASBWorkspaceFetcher.h"
 #define GET_SBWORKSPACE [RASBWorkspaceFetcher getCurrentSBWorkspaceImplementationInstanceForThisOS]
 
-#define GET_STATUSBAR_ORIENTATION (!UIApplication.sharedApplication._accessibilityFrontMostApplications ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
+#define GET_STATUSBAR_ORIENTATION (UIApplication.sharedApplication._accessibilityFrontMostApplication == nil ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
 
 #if DEBUG
 #define LogDebug HBLogDebug
@@ -1059,6 +1059,7 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface UIApplication ()
+@property (nonatomic) BOOL RA_networkActivity;
 - (void)_handleKeyUIEvent:(id)arg1;
 -(UIStatusBar*) statusBar;
 - (id)_mainScene;
@@ -1347,6 +1348,10 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 - (void)iconLaunchEnabledDidChange:(id)iconLaunchEnabled;
 - (SBIconImageView*)_iconImageView;
 
+@end
+
+@interface SBIconView ()
+@property (nonatomic, assign) BOOL RA_isIconIndicatorInhibited;
 @end
 
 @class NSMapTable;

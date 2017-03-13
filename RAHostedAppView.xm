@@ -43,6 +43,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     self.renderWallpaper = NO;
     self.backgroundColor = [UIColor clearColor];
 	}
+  
 	return self;
 }
 
