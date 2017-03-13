@@ -1,6 +1,5 @@
 #import "headers.h"
 #import "RAMessagingClient.h"
-#import "RAKeyboardStateListener.h"
 
 BOOL allowClosingReachabilityNatively = NO;
 

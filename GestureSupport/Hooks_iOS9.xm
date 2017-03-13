@@ -138,7 +138,7 @@ void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEvent
 
             LogInfo(@"[ReachApp] (%f, %d) %@ -> %@", density, isTracking, NSStringFromCGPoint(location), NSStringFromCGPoint(rotatedLocation));
 
-            if (isTracking == NO)
+            if (!isTracking)
             {
                 for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers)
                     [recognizer incorporateTouchSampleAtLocation:location timestamp:CACurrentMediaTime() modifier:1 interfaceOrientation:interfaceOrientation forceState:0];
@@ -189,6 +189,8 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
         if (IS_IOS_OR_OLDER(iOS_8_4))
             return;
 
+        LogDebug(@"start of ctor");
+
         clientCreatePointer clientCreate;
         void *handle = dlopen(0, 9);
         *(void**)(&clientCreate) = dlsym(handle,"IOHIDEventSystemClientCreate");
@@ -196,7 +198,11 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
         IOHIDEventSystemClientScheduleWithRunLoop(hidEventSystem, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
         IOHIDEventSystemClientRegisterEventCallback(hidEventSystem, (IOHIDEventSystemClientEventCallback)touch_event, NULL, NULL);
 
+        LogDebug(@"did iokit stuff")
+
         class_addProtocol(%c(Hooks9$SBHandMotionExtractorReplacementByMultiplexer), @protocol(_UIScreenEdgePanRecognizerDelegate));
+
+        LogDebug(@"added protocol");
 
         UIRectEdge edgesToWatch[] = { UIRectEdgeBottom, UIRectEdgeLeft, UIRectEdgeRight, UIRectEdgeTop };
         int edgeCount = sizeof(edgesToWatch) / sizeof(UIRectEdge);
@@ -209,7 +215,11 @@ __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
             [gestureRecognizers addObject:recognizer];
         }
 
+        LogDebug(@"added gestureRecognizers")
+
         %init;
+
+        LogDebug(@"inited ctor");
 
         __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer = [[Hooks9$SBHandMotionExtractorReplacementByMultiplexer alloc] init];
     }

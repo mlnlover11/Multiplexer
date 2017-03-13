@@ -22,7 +22,7 @@
 %hook BKSProcessAssertion
 - (id)initWithPID:(int)arg1 flags:(unsigned int)arg2 reason:(unsigned int)arg3 name:(unsafe_id)arg4 withHandler:(unsafe_id)arg5
 {
-    if (!(arg3 == kProcessAssertionReasonViewServices) && // whitelist this to allow share menu to work
+    if (!(arg3 == BKSProcessAssertionReasonViewServices) && // whitelist this to allow share menu to work
         ![arg4 isEqualToString:@"Called by iOS6_iCleaner, from unknown method"] && // whitelist iCleaner to prevent crash on open
         ![arg4 isEqualToString:@"Called by Filza_main, from -[AppDelegate applicationDidEnterBackground:]"] && // Whitelist filza to prevent iOS hang (?!)
         !IS_SPRINGBOARD) // FIXME: this is a hack that prevents SpringBoard from not starting
@@ -36,7 +36,7 @@
 
         if ([RABackgrounder.sharedInstance shouldSuspendImmediately:identifier])
         {
-            if ((arg3 >= kProcessAssertionReasonAudio && arg3 <= kProcessAssertionReasonVOiP)) // In most cases arg3 == 4 (finish task)
+            if ((arg3 >= BKSProcessAssertionReasonAudio && arg3 <= BKSProcessAssertionReasonVOiP)) // In most cases arg3 == 4 (finish task)
             {
                 //NSLog(@"[ReachApp] blocking BKSProcessAssertion");
 

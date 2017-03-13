@@ -13,8 +13,8 @@ BKSProcessAssertion *keepAlive$temp;
     	SBApplication *app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:arg1.identifier];
 
 		keepAlive$temp = [[%c(BKSProcessAssertion) alloc] initWithPID:[app pid]
-			flags:(ProcessAssertionFlagPreventSuspend | ProcessAssertionFlagAllowIdleSleep | ProcessAssertionFlagPreventThrottleDownCPU | ProcessAssertionFlagWantsForegroundResourcePriority)
-            reason:kProcessAssertionReasonBackgroundUI
+			flags:(BKSProcessAssertionFlagPreventSuspend | BKSProcessAssertionFlagAllowIdleSleep | BKSProcessAssertionFlagPreventThrottleDownCPU | BKSProcessAssertionFlagWantsForegroundResourcePriority)
+            reason:BKSProcessAssertionReasonBackgroundUI
             name:@"reachapp"
 			withHandler:^{
 				LogInfo(@"ReachApp: %d kept alive: %@", [app pid], [keepAlive$temp valid] ? @"TRUE" : @"FALSE");

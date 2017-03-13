@@ -15,7 +15,7 @@ void open_settings(CFNotificationCenterRef a, void *b, CFStringRef c, const void
 
 %ctor
 {
-	if ([NSBundle.mainBundle.bundleIdentifier isEqual:@"com.apple.springboard"])
+	if (IN_SPRINGBOARD)
         CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, open_settings, CFSTR("com.elijahandandrew.multiplexer.tutorial.open_settings"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
     else
     	%init;

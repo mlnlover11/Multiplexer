@@ -18,8 +18,13 @@
 #include <sys/sysctl.h>
 #import <notify.h>
 #import <IOKit/hid/IOHIDEvent.h>
+#import <AssertionServices/BKSProcessAssertion.h>
 #import <GraphicsServices/GraphicsServices.h>
 #import <SpringBoardServices/SBSRestartRenderServerAction.h>
+#import <FrontBoard/FBProcess.h>
+#import <FrontBoard/FBProcessManager.h>
+#import <FrontBoard/FBScene.h>
+#import <FrontBoard/FBSceneManager.h>
 #import <FrontBoardServices/FBSSystemService.h>
 #import <version.h>
 
@@ -35,7 +40,7 @@
 #import "RASBWorkspaceFetcher.h"
 #define GET_SBWORKSPACE [RASBWorkspaceFetcher getCurrentSBWorkspaceImplementationInstanceForThisOS]
 
-#define GET_STATUSBAR_ORIENTATION (UIApplication.sharedApplication._accessibilityFrontMostApplication == nil ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
+#define GET_STATUSBAR_ORIENTATION (!UIApplication.sharedApplication._accessibilityFrontMostApplications ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
 
 #if DEBUG
 #define LogDebug HBLogDebug
@@ -71,18 +76,6 @@ extern BOOL $__IS_SPRINGBOARD;
 
 // ugh, i got so tired of typing this in by hand, plus it expands method declarations by a LOT.
 #define unsafe_id __unsafe_unretained id
-
-#define kBGModeUnboundedTaskCompletion @"unboundedTaskCompletion"
-#define kBGModeContinuous              @"continuous"
-#define kBGModeFetch                   @"fetch"
-#define kBGModeRemoteNotification      @"remote-notification"
-#define kBGModeExternalAccessory       @"external-accessory"
-#define kBGModeVoIP                    @"voip"
-#define kBGModeLocation                @"location"
-#define kBGModeAudio                   @"audio"
-#define kBGModeBluetoothCentral        @"bluetooth-central"
-#define kBGModeBluetoothPeripheral     @"bluetooth-peripheral"
-// newsstand-content
 
 #ifdef __cplusplus
 extern "C" {
@@ -745,9 +738,6 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 + (instancetype)eventWithName:(NSString *)label handler:(id)handler;
 @end
 
-@interface FBSceneManager : NSObject
-@end
-
 @interface FBDisplayManager : NSObject
 +(id)sharedInstance;
 +(id)mainDisplay;
@@ -835,8 +825,7 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 -(id)initWithLayoutSize:(int)layoutSize displayItems:(id)items;
 @end
 
-@interface FBProcessManager : NSObject
-+ (id)sharedInstance;
+@interface FBProcessManager ()
 - (void)_updateWorkspaceLockedState;
 - (void)applicationProcessWillLaunch:(id)arg1;
 - (void)noteProcess:(id)arg1 didUpdateState:(id)arg2;
@@ -848,7 +837,6 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 - (id)createApplicationProcessForBundleID:(id)arg1 withExecutionContext:(id)arg2;
 - (id)createApplicationProcessForBundleID:(id)arg1;
 - (id)applicationProcessForPID:(int)arg1;
-- (id)processForPID:(int)arg1;
 - (id)applicationProcessesForBundleIdentifier:(id)arg1;
 - (id)processesForBundleIdentifier:(id)arg1;
 - (id)allApplicationProcesses;
@@ -859,51 +847,6 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 	id _target;
 }
 @end
-
-typedef NS_ENUM(NSUInteger, BKSProcessAssertionReason)
-{
-    kProcessAssertionReasonNone = 0,
-    kProcessAssertionReasonAudio = 1,
-    kProcessAssertionReasonLocation = 2,
-    kProcessAssertionReasonExternalAccessory = 3,
-    kProcessAssertionReasonFinishTask = 4,
-    kProcessAssertionReasonBluetooth = 5,
-    kProcessAssertionReasonNetworkAuthentication = 6,
-    kProcessAssertionReasonBackgroundUI = 7,
-    kProcessAssertionReasonInterAppAudioStreaming = 8,
-    kProcessAssertionReasonViewServices = 9,
-    kProcessAssertionReasonNewsstandDownload = 10,
-    kProcessAssertionReasonBackgroundDownload = 11,
-    kProcessAssertionReasonVOiP = 12,
-    kProcessAssertionReasonExtension = 13,
-    kProcessAssertionReasonContinuityStreams = 14,
-    // 15-9999 unknown
-    kProcessAssertionReasonActivation = 10000,
-    kProcessAssertionReasonSuspend = 10001,
-    kProcessAssertionReasonTransientWakeup = 10002,
-    kProcessAssertionReasonVOiP_PreiOS8 = 10003,
-    kProcessAssertionReasonPeriodicTask_iOS8 = kProcessAssertionReasonVOiP_PreiOS8,
-    kProcessAssertionReasonFinishTaskUnbounded = 10004,
-    kProcessAssertionReasonContinuous = 10005,
-    kProcessAssertionReasonBackgroundContentFetching = 10006,
-    kProcessAssertionReasonNotificationAction = 10007,
-    // 10008-49999 unknown
-    kProcessAssertionReasonFinishTaskAfterBackgroundContentFetching = 50000,
-    kProcessAssertionReasonFinishTaskAfterBackgroundDownload = 50001,
-    kProcessAssertionReasonFinishTaskAfterPeriodicTask = 50002,
-    kProcessAssertionReasonAFterNoficationAction = 50003,
-    // 50004+ unknown
-};
-
-typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
-{
-    ProcessAssertionFlagNone = 0,
-    ProcessAssertionFlagPreventSuspend         = 1 << 0,
-    ProcessAssertionFlagPreventThrottleDownCPU = 1 << 1,
-    ProcessAssertionFlagAllowIdleSleep         = 1 << 2,
-    ProcessAssertionFlagWantsForegroundResourcePriority  = 1 << 3
-};
-
 
 @interface FBWindowContextHostManager
 - (id)hostViewForRequester:(id)arg1 enableAndOrderFront:(BOOL)arg2;
@@ -984,17 +927,9 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @interface UIMutableApplicationSceneSettings : FBSMutableSceneSettings
 @end
 
-
-@interface FBProcess : NSObject
-@end
-
-@interface FBScene
+@interface FBScene ()
 -(FBWindowContextHostManager*) contextHostManager;
-@property(readonly, retain, nonatomic) FBSMutableSceneSettings *mutableSettings; // @synthesize mutableSettings=_mutableSettings;
 - (void)updateSettings:(id)arg1 withTransitionContext:(id)arg2;
-- (void)_applyMutableSettings:(id)arg1 withTransitionContext:(id)arg2 completion:(id)arg3;
-@property (nonatomic, readonly) NSString *identifier;
-@property (nonatomic, readonly, retain) FBProcess *clientProcess;
 @end
 
 @interface SBApplication ()
@@ -1052,8 +987,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (void)minimize;
 @end
 
-@interface BKSProcessAssertion
-- (id)initWithPID:(int)arg1 flags:(unsigned int)arg2 reason:(unsigned int)arg3 name:(id)arg4 withHandler:(id)arg5;
+@interface BKSProcessAssertion ()
 - (id)initWithBundleIdentifier:(id)arg1 flags:(unsigned int)arg2 reason:(unsigned int)arg3 name:(id)arg4 withHandler:(id)arg5;
 - (void)invalidate;
 @property(readonly, nonatomic) BOOL valid;

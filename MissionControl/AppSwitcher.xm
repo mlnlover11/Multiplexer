@@ -546,7 +546,7 @@ BOOL toggleOrActivate = NO;
 	}
 
 	if (state == UIGestureRecognizerStateChanged)
-		fakeView.center = (CGPoint) { fakeView.center.x, origY + location.y };
+		fakeView.center = CGPointMake(fakeView.center.x, origY + location.y);
 
 	if (state == UIGestureRecognizerStateEnded) {
 		//NSLog(@"[ReachApp] %@ + %@ = %@ > %@", NSStringFromCGPoint(fakeView.frame.origin), NSStringFromCGPoint(velocity), @(fakeView.frame.origin.y + velocity.y), @(-(UIScreen.mainScreen.bounds.size.height / 2)));

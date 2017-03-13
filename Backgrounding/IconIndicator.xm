@@ -65,7 +65,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 			[self RA_isIconIndicatorInhibited] ||
 			(!text || text.length == 0) || // OR info == RAIconIndicatorViewInfoNone
 			(!self.icon || !self.icon.application || !self.icon.application.isRunning || ![RABackgrounder.sharedInstance shouldShowIndicatorForIdentifier:self.icon.application.bundleIdentifier]) ||
-			[[%c(RASettings) sharedInstance] backgrounderEnabled] == NO)
+			![[%c(RASettings) sharedInstance] backgrounderEnabled])
 		{
 			[[self viewWithTag:9962] removeFromSuperview];
 			return;

@@ -16,6 +16,7 @@
 #import "RADesktopWindow.h"
 #import "RAMessagingServer.h"
 #import "RAAppSwitcherModelWrapper.h"
+#import "RAKeyboardStateListener.h"
 
 /*FBWindowContextHostWrapperView*/ UIView *view = nil;
 NSString *lastBundleIdentifier = @"";
@@ -36,7 +37,7 @@ CGFloat old_grabberCenterY = -1;
 
 BOOL wasEnabled = NO;
 
-%group SBReachability
+%group hooks
 
 %hook SBReachabilityManager
 +(BOOL)reachabilitySupported
@@ -81,7 +82,7 @@ BOOL wasEnabled = NO;
 
 - (void)deactivateReachabilityModeForObserver:(unsafe_id)arg1
 {
-    if (overrideDisableForStatusBar)
+    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
         return;
     %orig;
 
@@ -114,7 +115,7 @@ BOOL wasEnabled = NO;
 
 - (void)_handleReachabilityDeactivated
 {
-    if (overrideDisableForStatusBar)
+    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
         return;
 
     %orig;
@@ -122,7 +123,7 @@ BOOL wasEnabled = NO;
 
 - (void)_updateReachabilityModeActive:(_Bool)arg1 withRequestingObserver:(unsafe_id)arg2
 {
-    if (overrideDisableForStatusBar)
+    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
         return;
     %orig;
 }
@@ -145,10 +146,6 @@ BOOL wasEnabled = NO;
 
 %end
 
-%end
-
-%group SBWorkspace
-
 id SBWorkspace$sharedInstance;
 %hook SB_WORKSPACE_CLASS
 %new +(instancetype) sharedInstance
@@ -169,7 +166,7 @@ id SBWorkspace$sharedInstance;
 
 - (void)_exitReachabilityModeWithCompletion:(unsafe_id)arg1
 {
-    if (overrideDisableForStatusBar)
+    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
         return;
 
     %orig;
@@ -177,7 +174,7 @@ id SBWorkspace$sharedInstance;
 
 - (void)handleReachabilityModeDeactivated
 {
-    if (overrideDisableForStatusBar)
+    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
         return;
 
     %orig;
@@ -259,7 +256,7 @@ id SBWorkspace$sharedInstance;
 
 - (void)_disableReachabilityImmediately:(_Bool)arg1
 {
-    if (overrideDisableForStatusBar)
+    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
         return;
 
     %orig;
@@ -672,10 +669,13 @@ CGFloat startingY = -1;
 
         [RAMessagingServer.sharedInstance resizeApp:targetIdentifier toSize:CGSizeMake(width, height) completion:nil];
     }
-    /*
-    if ([view isKindOfClass:[%c(FBWindowContextHostWrapperView) class]] == NO && [view isKindOfClass:[RAAppSliderProviderView class]] == NO)
+
+    if (![view isKindOfClass:[%c(FBWindowContextHostWrapperView) class]] && ![view isKindOfClass:[RAAppSliderProviderView class]] && IS_IOS_OR_OLDER(iOS_8_4))
         return; // only resize when the app is being shown. That way it's more like native Reachability
-    */
+
+    if (![view isKindOfClass:[%c(FBSceneHostWrapperView) class]] && ![view isKindOfClass:[RAAppSliderProviderView class]] && IS_IOS_OR_NEWER(iOS_9_0))
+        return; // iOS 9
+
     [RAMessagingServer.sharedInstance setHosted:YES forIdentifier:currentBundleIdentifier completion:nil];
 
     [RAMessagingServer.sharedInstance rotateApp:lastBundleIdentifier toOrientation:[UIApplication sharedApplication].statusBarOrientation completion:nil];
@@ -869,21 +869,10 @@ CGFloat startingY = -1;
 }
 %end
 
-%end
-
-%group SpringBoard
-
 %hook SpringBoard
 - (UIInterfaceOrientation)activeInterfaceOrientation
 {
     return overrideOrientation ? UIInterfaceOrientationPortrait : %orig;
-}
-
-- (void)applicationDidFinishLaunching:(id)arg1
-{
-  Class c = %c(SBMainWorkspace) ?: %c(SBWorkspace);
-  %init(SBWorkspace, SB_WORKSPACE_CLASS=c);
-  %orig;
 }
 %end
 
@@ -893,7 +882,7 @@ CGFloat startingY = -1;
 {
     IF_SPRINGBOARD
     {
-        %init(SBReachability);
-        %init(SpringBoard);
+      Class c = %c(SBMainWorkspace) ?: %c(SBWorkspace);
+      %init(hooks, SB_WORKSPACE_CLASS=c);
     }
 }

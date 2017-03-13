@@ -59,7 +59,7 @@ extern BOOL allowClosingReachabilityNatively;
 
 	_currentData = data; // Initialize data
 
-	serverCenter = [objc_getClass("CPDistributedMessagingCenter") centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+	serverCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
   void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
   if (handle)

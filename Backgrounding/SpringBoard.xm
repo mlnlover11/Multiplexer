@@ -82,8 +82,9 @@
 %hook FBUIApplicationWorkspaceScene
 -(void) host:(__unsafe_unretained FBScene*)arg1 didUpdateSettings:(__unsafe_unretained FBSSceneSettings*)arg2 withDiff:(unsafe_id)arg3 transitionContext:(unsafe_id)arg4 completion:(unsafe_id)arg5
 {
-    LogDebug(@"running host thing for: %@", arg1.identifier);
     [RABackgrounder.sharedInstance removeTemporaryOverrideForIdentifier:arg1.identifier];
+    LogDebug(@"removeTemporaryOverrideForIdentifier: %@", arg1.identifier);
+
     if (arg1 && arg1.identifier && arg2 && arg1.clientProcess) // FIX: sanity check to prevent NC App crash. untested/not working.
     {
         if (arg2.backgrounded)
