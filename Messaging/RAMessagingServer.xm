@@ -13,6 +13,7 @@
 #import "RAWindowSnapDataProvider.h"
 #import "RAHostManager.h"
 #import "Multiplexer.h"
+#import "UIAlertController+Window.h"
 
 extern BOOL launchNextOpenIntoWindow;
 
@@ -223,9 +224,10 @@ extern BOOL launchNextOpenIntoWindow;
 #if DEBUG
 	if ([RASettings.sharedInstance debug_showIPCMessages])
 	{
-	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:LOCALIZE(@"MULTIPLEXER") message:description delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    	[alert show];
-    }
+		UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"MULTIPLEXER") message:description preferredStyle:UIAlertControllerStyleAlert];
+		[alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+		[alert show];
+  }
 #endif
 }
 

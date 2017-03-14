@@ -3,6 +3,8 @@
 
 @class SBApplication;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 __attribute__((visibility("hidden")))
 @interface BioLockdownController : NSObject
 
@@ -18,7 +20,7 @@ __attribute__((visibility("hidden")))
 - (BOOL)authenticateForRecord:(ABRecordRef)record actionText:(NSString *)actionText completion:(dispatch_block_t)completion failure:(dispatch_block_t)failure;
 
 @end
-
+#pragma GCC diagnostic pop
 
 #define HAS_BIOLOCKDOWN (objc_getClass("BioLockdownController") != nil)
 #define IF_BIOLOCKDOWN  if (HAS_BIOLOCKDOWN)

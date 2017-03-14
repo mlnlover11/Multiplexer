@@ -33,7 +33,6 @@ Minor Things/Bugs to note:
 - General Code Cleanup, feels to messy RN
 
 Things to do/Features to add:
-- Remove as many deprecations as can (subclassing UIAlertController?)
 - 3D Touch actions?
 - (Real distant future) split all 6 features into seperate tweaks
 

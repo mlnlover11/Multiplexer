@@ -9,6 +9,7 @@
 #import "RAAppSelectorView.h"
 #import "RAAppSwitcherModelWrapper.h"
 #import "RAOrientationLocker.h"
+#import "UIAlertController+Window.h"
 
 extern int rotationDegsForOrientation(int o);
 
@@ -194,8 +195,9 @@ extern int rotationDegsForOrientation(int o);
 
 	if (UIApplication.sharedApplication.statusBarOrientation != UIInterfaceOrientationPortrait)
 	{
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:LOCALIZE(@"MULTIPLEXER") message:@"Sorry, SwipeOver's side-by-side mode is not currently compatible with landscape." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-		[alert show];
+		UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"MULTIPLEXER") message:@"Sorry, SwipeOver's side-by-side mode is not currently compatible with landscape." preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+    [alert show];
 		return;
 	}
 

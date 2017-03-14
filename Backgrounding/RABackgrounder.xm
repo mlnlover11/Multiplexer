@@ -191,6 +191,8 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 	return (RAIconIndicatorViewInfo)info;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 -(void) updateIconIndicatorForIdentifier:(NSString*)identifier withInfo:(RAIconIndicatorViewInfo)info
 {
 	@autoreleasepool {
@@ -218,6 +220,8 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
     [ret RA_updateIndicatorView:info];
 	}
 }
+#pragma GCC diagnostic pop
+
 
 -(BOOL) shouldShowIndicatorForIdentifier:(NSString*)identifier
 {
