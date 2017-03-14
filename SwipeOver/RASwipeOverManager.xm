@@ -109,7 +109,7 @@ extern int rotationDegsForOrientation(int o);
     else
     {
 	    NSMutableArray *bundleIdentifiers = [[%c(RAAppSwitcherModelWrapper) appSwitcherAppIdentiferList] mutableCopy];
-	    while (scene == nil && bundleIdentifiers.count > 0)
+	    while (!scene && bundleIdentifiers.count > 0)
 	    {
 	        identifier = bundleIdentifiers[0];
 
@@ -136,7 +136,7 @@ extern int rotationDegsForOrientation(int o);
 
     RAHostedAppView *view = [[%c(RAHostedAppView) alloc] initWithBundleIdentifier:identifier];
     view.autosizesApp = NO;
-		if (overlayWindow.isHidingUnderlyingApp == NO)
+		if (!overlayWindow.isHidingUnderlyingApp)
 			view.autosizesApp = YES;
     view.shouldUseExternalKeyboard = YES;
     view.allowHidingStatusBar = NO;

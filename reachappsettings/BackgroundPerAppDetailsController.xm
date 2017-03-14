@@ -6,7 +6,7 @@
 extern void RA_BGAppsControllerNeedsToReload();
 
 @implementation RABGPerAppDetailsController
--(id)initWithAppName:(NSString*)appName identifier:(NSString*)identifier
+-(instancetype)initWithAppName:(NSString*)appName identifier:(NSString*)identifier
 {
 	_appName = appName;
 	_identifier = identifier;
@@ -97,72 +97,72 @@ extern void RA_BGAppsControllerNeedsToReload();
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Unbounded Task Completion",
-                @"key": kBGModeUnboundedTaskCompletion,
+                @"key": kBKSBackgroundModeUnboundedTaskCompletion,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeUnboundedTaskCompletion withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeUnboundedTaskCompletion withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Continuous",
-                @"key": kBGModeContinuous,
+                @"key": kBKSBackgroundModeContinuous,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeContinuous withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeContinuous withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Fetch",
-                @"key": kBGModeFetch,
+                @"key": kBKSBackgroundModeFetch,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeFetch withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeFetch withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Remote Notification",
-                @"key": kBGModeRemoteNotification,
+                @"key": kBKSBackgroundModeRemoteNotification,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeRemoteNotification withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeRemoteNotification withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"External Accessory",
-                @"key": kBGModeExternalAccessory,
+                @"key": kBKSBackgroundModeExternalAccessory,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeExternalAccessory withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeExternalAccessory withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"VoIP",
-                @"key": kBGModeVoIP,
+                @"key": kBKSBackgroundModeVoIP,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeVoIP withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeVoIP withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Location",
-                @"key": kBGModeLocation,
+                @"key": kBKSBackgroundModeLocation,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeLocation withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeLocation withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Audio",
-                @"key": kBGModeAudio,
+                @"key": kBKSBackgroundModeAudio,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeAudio withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeAudio withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Bluetooth (Central)",
-                @"key": kBGModeBluetoothCentral,
+                @"key": kBKSBackgroundModeBluetoothCentral,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeBluetoothCentral withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeBluetoothCentral withAppInfo:bgModes],
             },
             @{
                 @"cell": @"PSSwitchCell",
                 @"label": @"Bluetooth (Peripheral)",
-                @"key": kBGModeBluetoothPeripheral,
+                @"key": kBKSBackgroundModeBluetoothPeripheral,
                 @"prefix": @"backgroundmodes",
-                @"default": [self isBackgroundModeActive:kBGModeBluetoothPeripheral withAppInfo:bgModes],
+                @"default": [self isBackgroundModeActive:kBKSBackgroundModeBluetoothPeripheral withAppInfo:bgModes],
             },
 
          	@{ @"footerText": @"Description of icon letters: \n\
@@ -254,6 +254,6 @@ The status bar icon is simply the app icon.", },
     }
 
     NSString *key = [specifier propertyForKey:@"prefix"] ? [NSString stringWithFormat:@"backgrounder-%@-%@-%@",_identifier,[specifier propertyForKey:@"prefix"],[specifier propertyForKey:@"key"]] : [NSString stringWithFormat:@"backgrounder-%@-%@",_identifier,[specifier propertyForKey:@"key"]];
-    return [_settings objectForKey:key] == nil ? [specifier propertyForKey:@"default"] : _settings[key];
+    return ![_settings objectForKey:key] ? [specifier propertyForKey:@"default"] : _settings[key];
 }
 @end

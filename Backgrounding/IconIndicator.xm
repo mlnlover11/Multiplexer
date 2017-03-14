@@ -268,6 +268,7 @@ Tue Sep  8 12:44:19 2015: SpringBoard (com.apple.springboard): *** Terminating a
 FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 
 */
+//really need to optimize
 %new -(void) RA_addStatusBarIconForSelfIfOneDoesNotExist
 {
 	if (%c(LSStatusBarItem) && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {

@@ -27,14 +27,10 @@ Bugs:
 - CC inhibitor not reliable on 9.x+?
 
 Minor Things/Bugs to note:
-- MC view invokes regardless if grabbing the grabber or not (was always like that?)
-- MC works but causes jittery animations;
-- NCApp disappears on first load (see last issue)
-- Some say it causes serious lag (probably because logs werent disabled)?
+- MC works but causes jittery animations (not as much as before)
+- Some say it causes serious lag (probably because logs werent disabled/due to MC)?
 - Startup bug still isnt fixed (apparently caused by gesture support?)
 - General Code Cleanup, feels to messy RN
-- Calling launchapplication:suspended in host manager fixes issues with multiple windows but causes ReachApp and NCApp to not properly load apps when they are suspended
-  (doesnt seem to be an issue anymore)
 
 Features to Add:
 - 3D Touch actions?

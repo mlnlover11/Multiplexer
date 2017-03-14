@@ -62,7 +62,7 @@
     [super tableView:arg1 didSelectRowAtIndexPath:arg2];
 
     PSTableCell *cell = [self tableView:arg1 cellForRowAtIndexPath:arg2];
-    if ([cell.specifier propertyForKey:@"isTheming"] != nil)
+    if ([cell.specifier propertyForKey:@"isTheming"])
     {
         [self openThemingDocumentation];
     }

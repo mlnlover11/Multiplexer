@@ -29,7 +29,7 @@
 - (void)sectionRequestedSectionReload:(id)section animated:(BOOL)animated;
 @end
 
-@interface ReachAppNCAppSettingsListController: SKTintedListController<SKListControllerProtocol, UIAlertViewDelegate>
+@interface ReachAppNCAppSettingsListController: SKTintedListController<SKListControllerProtocol>
 @end
 
 @implementation ReachAppNCAppSettingsListController
@@ -164,7 +164,7 @@
     [_tableView reloadData];
 }
 
--(id)init
+-(instancetype)init
 {
     if (!(self = [super init])) return nil;
 
@@ -208,15 +208,20 @@
       CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.settings/reloadSettings"), nil, nil, YES);
     });
 
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Quick Access" message:@"A respring is required to apply changes. Would you like to respring now?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes",nil];
-    [alert show];
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 1)
-    {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Quick Access"
+                               message:@"A respring is required to apply changes. Would you like to respring now?"
+                               preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *respringAction = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault
+      handler:^(UIAlertAction *action) {
         CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.respring"), nil, nil, YES);
-    }
+    }];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel
+    	handler:^(UIAlertAction *action) {
+    }];
+
+    [alert addAction:respringAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 @end

@@ -202,17 +202,21 @@
 
 -(void) resetData
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Multiplexer" message:@"Please confirm your choice to reset all settings & respring." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
-    [alert addButtonWithTitle:@"Yes"];
-    [alert show];
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 1)
-    {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer")
+                               message:@"Please confirm your choice to reset all settings & respring.."
+                               preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *resetAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+      handler:^(UIAlertAction *action) {
         CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.resetSettings"), nil, nil, YES);
-    }
+    }];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+    	handler:^(UIAlertAction *action) {
+    }];
+
+    [alert addAction:resetAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 -(void) openThemingDocumentation
@@ -278,7 +282,7 @@
         return YES;
     }
 
-    return [_settings objectForKey:@"enabled"] == nil ? YES : [_settings[@"enabled"] boolValue];
+    return ![_settings objectForKey:@"enabled"] ? YES : [_settings[@"enabled"] boolValue];
 }
 
 -(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error{

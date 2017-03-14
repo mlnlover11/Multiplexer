@@ -11,7 +11,7 @@
 {
 	LogDebug(@"[ReachApp] doesNotRecognizeSelector: selector '%@' on class '%s' (image: %s)", NSStringFromSelector(selector), class_getName(self.class), class_getImageName(self.class));
 
-	NSArray * symbols = [NSThread callStackSymbols];
+	NSArray *symbols = [NSThread callStackSymbols];
 	LogDebug(@"[ReachApp] Obtained %zd stack frames:\n", symbols.count);
 	for (NSString *symbol in symbols)
 	{

@@ -20,12 +20,12 @@
 @end
 
 @implementation RAHeaderView
-+ (Class)layerClass 
++ (Class)layerClass
 {
 	return [CAGradientLayer class];
 }
 
--(id) initWithFrame:(CGRect)frame
+-(instancetype) initWithFrame:(CGRect)frame
 {
 	if (self = [super initWithFrame:frame])
 	{

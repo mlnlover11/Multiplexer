@@ -122,15 +122,23 @@
 }
 -(void) showActivatorAction
 {
-    id activator = objc_getClass("LAListenerSettingsViewController");
+    id activator = %c(LAListenerSettingsViewController);
     if (!activator)
     {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer")
+                                   message:@"Activator must be installed to use this feature."
+                                   preferredStyle:UIAlertControllerStyleAlert];
+
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+          handler:^(UIAlertAction *action) {
+        }];
+
+        [alert addAction:cancelAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }
     else
     {
-        LAListenerSettingsViewController *vc = [[objc_getClass("LAListenerSettingsViewController") alloc] init];
+        LAListenerSettingsViewController *vc = [[%c(LAListenerSettingsViewController) alloc] init];
         vc.listenerName = @"com.efrederickson.reachapp.missioncontrol.activatorlistener";
         [self.rootController pushController:vc animate:YES];
     }
