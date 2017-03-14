@@ -139,8 +139,8 @@ CGRect swappedForOrientation2(CGRect in)
 	{
 		if (originalAppView)
 			originalAppView.frame = originalAppFrame;
-		window.hidden = YES;
-		window = nil;
+			window.hidden = YES;
+			window = nil;
 	}
 
 	window = [[RAMissionControlWindow alloc] initWithFrame:UIScreen.mainScreen.RA_interfaceOrientedBounds];

@@ -277,7 +277,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 				BOOL native = (info & RAIconIndicatorViewInfoNative);
 				if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
 		    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-		    	if (![item customViewClass] {
+		    	if (![item customViewClass]) {
 						item.customViewClass = @"RAAppIconStatusBarIconView";
 					}
 	        item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];

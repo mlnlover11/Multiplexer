@@ -78,7 +78,7 @@
 	else
 	{
 		desktopLabel = [[UILabel alloc] initWithFrame:CGRectMake(panePadding, y, self.frame.size.width - 20, 25)];
-		desktopLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+		desktopLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 		desktopLabel.textColor = UIColor.whiteColor;
 		desktopLabel.text = LOCALIZE(@"DESKTOPS");
 		[self addSubview:desktopLabel];
@@ -192,7 +192,7 @@
 	else
 	{
 		windowedLabel = [[UILabel alloc] initWithFrame:CGRectMake(panePadding, y, self.frame.size.width - 20, 25)];
-		windowedLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+		windowedLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 		windowedLabel.textColor = UIColor.whiteColor;
 		windowedLabel.text = LOCALIZE(@"ON_THIS_DESKTOP");
 		[self addSubview:windowedLabel];
@@ -232,7 +232,7 @@
 	{
 		UILabel *emptyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, (windowedAppScrollView.frame.size.height - 30) / 2, windowedAppScrollView.frame.size.width, 30)];
 		emptyLabel.textAlignment = NSTextAlignmentCenter;
-		emptyLabel.font = [UIFont fontWithName:@"Helvetica" size:25];
+		emptyLabel.font = [UIFont systemFontOfSize:25];
 		emptyLabel.text = LOCALIZE(@"NO_APPS");
 		emptyLabel.textColor = [UIColor whiteColor];
 		emptyLabel.alpha = 0.7;
@@ -250,7 +250,7 @@
 		{
 			windowedKillAllButton = [UIButton buttonWithType:UIButtonTypeCustom];
 			[windowedKillAllButton setTitle:LOCALIZE(@"KILL_ALL") forState:UIControlStateNormal];
-			windowedKillAllButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+			windowedKillAllButton.titleLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 			windowedKillAllButton.titleLabel.textColor = [UIColor whiteColor];
 			[windowedKillAllButton sizeToFit];
 			windowedKillAllButton.frame = CGRectMake(self.frame.size.width - panePadding - windowedKillAllButton.frame.size.width, y, windowedKillAllButton.frame.size.width, windowedKillAllButton.frame.size.height);
@@ -273,7 +273,7 @@
 	else
 	{
 		otherLabel = [[UILabel alloc] initWithFrame:CGRectMake(panePadding, y, self.frame.size.width - 20, 25)];
-		otherLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+		otherLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 		otherLabel.textColor = UIColor.whiteColor;
 		otherLabel.text = LOCALIZE(@"RUNNING_ELSEWHERE");
 		[self addSubview:otherLabel];
@@ -311,7 +311,7 @@
 	{
 		UILabel *emptyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, (windowedAppScrollView.frame.size.height - 30) / 2, windowedAppScrollView.frame.size.width, 30)];
 		emptyLabel.textAlignment = NSTextAlignmentCenter;
-		emptyLabel.font = [UIFont fontWithName:@"Helvetica" size:25];
+		emptyLabel.font = [UIFont systemFontOfSize:25];
 		emptyLabel.text = LOCALIZE(@"NO_APPS");
 		emptyLabel.textColor = [UIColor whiteColor];
 		emptyLabel.alpha = 0.7;
@@ -329,7 +329,7 @@
 		{
 			otherKillAllButton = [UIButton buttonWithType:UIButtonTypeCustom];
 			[otherKillAllButton setTitle:LOCALIZE(@"KILL_ALL") forState:UIControlStateNormal];
-			otherKillAllButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14];
+			otherKillAllButton.titleLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 			otherKillAllButton.titleLabel.textColor = [UIColor whiteColor];
 			[otherKillAllButton sizeToFit];
 			otherKillAllButton.frame = CGRectMake(self.frame.size.width - panePadding - otherKillAllButton.frame.size.width, y, otherKillAllButton.frame.size.width, otherKillAllButton.frame.size.height);
@@ -458,9 +458,9 @@
 		//CGPoint center = [gesture translationInView:draggedView];
 		//center.x += initialCenter.x;
 		//center.y += initialCenter.y;
-        CGPoint center = draggedView.center;
-        center.x += point.x - lastPoint.x;
-        center.y += point.y - lastPoint.y;
+    CGPoint center = draggedView.center;
+    center.x += point.x - lastPoint.x;
+    center.y += point.y - lastPoint.y;
 
 		BOOL didKill = NO;
 
