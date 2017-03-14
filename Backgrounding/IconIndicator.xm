@@ -268,37 +268,34 @@ Tue Sep  8 12:44:19 2015: SpringBoard (com.apple.springboard): *** Terminating a
 FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 
 */
-//really need to optimize
 %new -(void) RA_addStatusBarIconForSelfIfOneDoesNotExist
 {
-	if (%c(LSStatusBarItem) && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {
-		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
-			if ([[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier]) {
-				RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
-				BOOL native = (info & RAIconIndicatorViewInfoNative);
-				if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
+#if DEBUG
+	if (![lsbitems respondsToSelector:@selector(objectForKey:)])
+	{
+		LogError(@"ERROR: lsbitems is not NSDictionary it is %s", class_getName(lsbitems.class));
+		//@throw [NSException exceptionWithName:@"OH POOP" reason:@"Expected NSDictionary" userInfo:nil];
+	}
+#endif
+
+	BOOL homescreenMapCheck = [%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)] && [[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier];
+	BOOL homescreenIconViewMapCheck = [[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier];
+
+	if (%c(LSStatusBarItem) && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier])
+	{
+		if (homescreenMapCheck || homescreenIconViewMapCheck)
+		{
+			RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
+			BOOL native = (info & RAIconIndicatorViewInfoNative);
+			if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons]))
+			{
 		    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-		    	if (![item customViewClass]) {
-						item.customViewClass = @"RAAppIconStatusBarIconView";
-					}
-	        item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
+		    	if (![item customViewClass])
+		    		item.customViewClass = @"RAAppIconStatusBarIconView";
+	        	item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
 	    		lsbitems[self.bundleIdentifier] = item;
 	    	}
-			}
-		} else {
-			if ([[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier]) {
-				RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
-				BOOL native = (info & RAIconIndicatorViewInfoNative);
-				if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
-			    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-			    	if (![item customViewClass]) {
-							item.customViewClass = @"RAAppIconStatusBarIconView";
-						}
-		        item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
-		    		lsbitems[self.bundleIdentifier] = item;
-		    }
-	    }
-		}
+    	}
 	}
 }
 

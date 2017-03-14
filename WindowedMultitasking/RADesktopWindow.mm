@@ -227,7 +227,7 @@
 -(void) loadInfo
 {
 	NSInteger index = [RADesktopManager.sharedInstance.availableDesktops indexOfObject:self];
-	if ([RAWindowStatePreservationSystemManager.sharedInstance hasDesktopInformationAtIndex:index] == NO)
+	if (![RAWindowStatePreservationSystemManager.sharedInstance hasDesktopInformationAtIndex:index])
 		return;
 	RAPreservedDesktopInformation info = [RAWindowStatePreservationSystemManager.sharedInstance desktopInformationForIndex:index];
 	for (NSString *bundleIdentifier in info.openApps)

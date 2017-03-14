@@ -64,7 +64,7 @@
 	ret.swipeOverDetachBarColor = COLOR(@"swipeOverDetachBarColor");
 	ret.swipeOverDetachImageColor = COLOR(@"swipeOverDetachImageColor") ?: [UIColor RA_colorWithHexString:@"737273"];
 
-	ret.quickAccessUseGenericTabLabel = [dict objectForKey:@"quickAccessUseGenericTabLabel"] == nil ? NO : [dict[@"quickAccessUseGenericTabLabel"] boolValue];
+	ret.quickAccessUseGenericTabLabel = ![dict objectForKey:@"quickAccessUseGenericTabLabel"] ? NO : [dict[@"quickAccessUseGenericTabLabel"] boolValue];
 
 	return ret;
 }

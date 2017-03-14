@@ -28,7 +28,7 @@
 
 	for (NSString *themeName in themeFileNames)
 	{
-		if ([themeName hasSuffix:@"plist"] == NO)
+		if (![themeName hasSuffix:@"plist"])
 			continue;
 
 		RATheme *theme = [RAThemeLoader loadFromFile:themeName];

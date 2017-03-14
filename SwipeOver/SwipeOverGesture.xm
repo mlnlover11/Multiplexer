@@ -158,7 +158,7 @@ BOOL swipeOverLocationIsInValidArea(CGFloat y)
                 isShowingGrabber = NO;
                 isPastGrabber = YES;
             }
-            else if (isPastGrabber == NO)
+            else if (!isPastGrabber)
             {
                 if (state == UIGestureRecognizerStateEnded)
                     firstSwipe = NO;

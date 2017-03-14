@@ -455,6 +455,7 @@ typedef struct {
 @end
 
 @interface UIScreen (ohBoy)
+- (CGRect)_gkBounds;
 -(CGRect) _referenceBounds;
 - (CGPoint)convertPoint:(CGPoint)arg1 toCoordinateSpace:(id)arg2;
 + (CGPoint)convertPoint:(CGPoint)arg1 toView:(id)arg2;

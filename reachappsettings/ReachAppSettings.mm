@@ -202,18 +202,12 @@
 
 -(void) resetData
 {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer")
-                               message:@"Please confirm your choice to reset all settings & respring.."
-                               preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *resetAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-      handler:^(UIAlertAction *action) {
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.resetSettings"), nil, nil, YES);
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer") message:@"Please confirm your choice to reset all settings & respring.." preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *resetAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+      CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.resetSettings"), nil, nil, YES);
     }];
-
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-    	handler:^(UIAlertAction *action) {
-    }];
-
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
     [alert addAction:resetAction];
     [alert addAction:cancelAction];
     [self presentViewController:alert animated:YES completion:nil];

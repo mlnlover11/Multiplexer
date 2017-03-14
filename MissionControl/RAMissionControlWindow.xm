@@ -403,7 +403,7 @@
 
 	if (gesture.state == UIGestureRecognizerStateBegan)
 	{
-		if (!trashImageView || trashImageView.superview == nil /* new window perhaps */)
+		if (!trashImageView || !trashImageView.superview /* new window perhaps */)
 		{
 			trashImageView = [[UIImageView alloc] initWithFrame:CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height + 75, 75, 75)];
 			trashImageView.image = trashIcon;
@@ -424,7 +424,7 @@
 			trashImageView.frame = CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - (75+45), 75, 75);
 		}];
 
-		if (draggedView == nil)
+		if (!draggedView)
 		{
 			draggedView = [gesture.view snapshotViewAfterScreenUpdates:YES];
 			draggedView.frame = gesture.view.frame;

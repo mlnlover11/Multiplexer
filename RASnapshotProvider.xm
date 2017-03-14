@@ -142,7 +142,7 @@
 -(UIImage*) snapshotForDesktop:(RADesktopWindow*)desktop
 {
 	NSString *key = [self createKeyForDesktop:desktop];
-	if ([imageCache objectForKey:key] != nil) return [imageCache objectForKey:key];
+	if ([imageCache objectForKey:key]) return [imageCache objectForKey:key];
 
 	UIImage *img = [self renderPreviewForDesktop:desktop];
 	if (img)

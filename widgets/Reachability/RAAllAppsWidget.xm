@@ -70,7 +70,7 @@
 			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
 			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
 		}
-        if (!iconView || [icon isKindOfClass:[%c(SBApplicationIcon) class]] == NO)
+        if (!iconView || ![icon isKindOfClass:[%c(SBApplicationIcon) class]])
         	continue;
 
     if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)

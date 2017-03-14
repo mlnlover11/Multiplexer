@@ -32,8 +32,10 @@ Minor Things/Bugs to note:
 - Startup bug still isnt fixed (apparently caused by gesture support?)
 - General Code Cleanup, feels to messy RN
 
-Features to Add:
+Things to do/Features to add:
+- Remove as many deprecations as can (subclassing UIAlertController?)
 - 3D Touch actions?
+- (Real distant future) split all 6 features into seperate tweaks
 
 notes:
 use _referenceBounds instead of bounds on UIScreen to get physical bounds. Makes landscape support easier?

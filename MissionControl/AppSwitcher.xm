@@ -30,7 +30,7 @@ BOOL toggleOrActivate = NO;
 
 	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled])
 	{
-		if (RAMissionControlManager.sharedInstance.isShowingMissionControl == NO)
+		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl)
 		{
 			[RAMissionControlManager.sharedInstance showMissionControl:YES];
 	    }
@@ -48,7 +48,7 @@ BOOL toggleOrActivate = NO;
 	}
 
 	BOOL s = %orig;
-	if (s && [[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999] != nil)
+	if (s && [[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999])
 	{
 		[UIView animateWithDuration:0.3 animations:^{
 			[[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].alpha = 1;
@@ -112,7 +112,7 @@ BOOL toggleOrActivate = NO;
 // iOS 8
 - (void)switcherWillBeDismissed:(_Bool)arg1
 {
-	if (willShowMissionControl == NO)
+	if (!willShowMissionControl)
 	{
 		[[%c(RADesktopManager) sharedInstance] reshowDesktop];
 		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
@@ -150,7 +150,7 @@ BOOL toggleOrActivate = NO;
 
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
 
-	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
+	if (![view viewWithTag:999] && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
 	{
 		CGFloat width = 50, height = 30;
 		if (IS_IPAD)
@@ -188,7 +188,7 @@ BOOL toggleOrActivate = NO;
 	%orig;
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
 
-	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
+	if (![view viewWithTag:999] && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
 	{
 		CGFloat width = 50, height = 30;
 		if (IS_IPAD)
@@ -388,7 +388,7 @@ BOOL toggleOrActivate = NO;
 
 	UIView *view = self.contentView;
 
-	if ([view viewWithTag:999] == nil && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
+	if (![view viewWithTag:999] && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
 		CGFloat width = 50, height = 30;
 		if (IS_IPAD) {
 			width = 60;
@@ -484,17 +484,17 @@ BOOL toggleOrActivate = NO;
 			UIScrollView *desktopScrollView, *windowedAppScrollView, *otherRunningAppsScrollView;
 
 			CGFloat x = 15;
-			CGFloat y = 25;
+			CGFloat y = 20;
 
-			desktopLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, y, fakeView.frame.size.width - 20, 20)];
+			desktopLabel = [[UILabel alloc] initWithFrame:CGRectMake(9.37, y, fakeView.frame.size.width - 20, 25)];
 			desktopLabel.font = [UIFont fontWithName:@"SFUIText-Medium" size:14];
 			desktopLabel.textColor = UIColor.whiteColor;
 			desktopLabel.text = @"Desktops";
 			[fakeView addSubview:desktopLabel];
 
-			y = y + desktopLabel.frame.size.height + 3;
+			y = y + desktopLabel.frame.size.height;
 
-			desktopScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y, fakeView.frame.size.width, height * 1.2)];
+			desktopScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y, fakeView.frame.size.width, height * 1.15)];
 			desktopScrollView.backgroundColor = [UIColor.whiteColor colorWithAlphaComponent:0.3];
 
 			[fakeView addSubview:desktopScrollView];
@@ -507,29 +507,29 @@ BOOL toggleOrActivate = NO;
 			[desktopScrollView addSubview:newDesktopButton];
 
 			x = 15;
-			y = desktopScrollView.frame.origin.y + desktopScrollView.frame.size.height + 5;
+			y = desktopScrollView.frame.origin.y + desktopScrollView.frame.size.height + 7;
 
-			windowedLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, y, fakeView.frame.size.width - 20, 20)];
+			windowedLabel = [[UILabel alloc] initWithFrame:CGRectMake(9.37, y, fakeView.frame.size.width - 20, 25)];
 			windowedLabel.font = [UIFont fontWithName:@"SFUIText-Medium" size:14];
 			windowedLabel.textColor = UIColor.whiteColor;
 			windowedLabel.text = @"On This Desktop";
 			[fakeView addSubview:windowedLabel];
 
-			windowedAppScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y + windowedLabel.frame.size.height + 3, fakeView.frame.size.width, height * 1.2)];
+			windowedAppScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y + windowedLabel.frame.size.height, fakeView.frame.size.width, height * 1.15)];
 			windowedAppScrollView.backgroundColor = [UIColor.whiteColor colorWithAlphaComponent:0.3];
 
 			[fakeView addSubview:windowedAppScrollView];
 
 			x = 15;
-			y = windowedAppScrollView.frame.origin.y + windowedAppScrollView.frame.size.height + 5;
+			y = windowedAppScrollView.frame.origin.y + windowedAppScrollView.frame.size.height + 7;
 
-			otherLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, y, fakeView.frame.size.width - 20, 20)];
+			otherLabel = [[UILabel alloc] initWithFrame:CGRectMake(9.37, y, fakeView.frame.size.width - 20, 25)];
 			otherLabel.font = [UIFont fontWithName:@"SFUIText-Medium" size:14];
 			otherLabel.textColor = UIColor.whiteColor;
 			otherLabel.text = @"Running Elsewhere";
 			[fakeView addSubview:otherLabel];
 
-			otherRunningAppsScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y + otherLabel.frame.size.height + 3, fakeView.frame.size.width, height * 1.2)];
+			otherRunningAppsScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, y + otherLabel.frame.size.height, fakeView.frame.size.width, height * 1.15)];
 			otherRunningAppsScrollView.backgroundColor = [UIColor.whiteColor colorWithAlphaComponent:0.3];
 
 			[fakeView addSubview:otherRunningAppsScrollView];

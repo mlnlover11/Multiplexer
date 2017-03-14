@@ -8,7 +8,7 @@
 
 -(void) addWidget:(RAWidgetBase*)widget
 {
-	if ([widgets containsObject:widget] == NO)
+	if (![widgets containsObject:widget])
 		[widgets addObject:widget];
 }
 

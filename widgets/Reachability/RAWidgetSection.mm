@@ -3,7 +3,7 @@
 
 @implementation RAWidgetSection
 
--(id) init
+-(instancetype) init
 {
 	if (self = [super init])
 	{
@@ -17,13 +17,13 @@
 
 -(NSInteger) sortOrder { return 10; }
 
--(NSString*) displayName 
+-(NSString*) displayName
 {
-	@throw @"This is an abstract method and should be overriden."; 
+	@throw @"This is an abstract method and should be overriden.";
 }
 
--(NSString*) identifier 
-{ 
+-(NSString*) identifier
+{
 	@throw @"This is an abstract method and should be overriden.";
 }
 
@@ -33,7 +33,7 @@
 }
 
 -(UIView*) viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing
-{ 
+{
 	UIView *view = [[UIView alloc] initWithFrame:frame];
 	view.userInteractionEnabled = YES;
 	CGPoint origin = CGPointMake(10, 10);

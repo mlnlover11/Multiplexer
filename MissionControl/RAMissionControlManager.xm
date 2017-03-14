@@ -246,7 +246,7 @@ CGRect swappedForOrientation2(CGRect in)
 
 -(BOOL) RAGestureCallback_canHandle:(CGPoint)point velocity:(CGPoint)velocity
 {
-	return self.isShowingMissionControl && self.inhibitDismissalGesture == NO;
+	return self.isShowingMissionControl && !self.inhibitDismissalGesture;
 }
 
 -(RAGestureCallbackResult) RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge

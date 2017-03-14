@@ -82,7 +82,8 @@ BOOL wasEnabled = NO;
 
 - (void)deactivateReachabilityModeForObserver:(unsafe_id)arg1
 {
-    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
+    //Disable for keyboard here
+    if (overrideDisableForStatusBar)
         return;
     %orig;
 
@@ -115,7 +116,7 @@ BOOL wasEnabled = NO;
 
 - (void)_handleReachabilityDeactivated
 {
-    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
+    if (overrideDisableForStatusBar)
         return;
 
     %orig;
@@ -123,7 +124,7 @@ BOOL wasEnabled = NO;
 
 - (void)_updateReachabilityModeActive:(_Bool)arg1 withRequestingObserver:(unsafe_id)arg2
 {
-    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
+    if (overrideDisableForStatusBar)
         return;
     %orig;
 }
@@ -166,7 +167,7 @@ id SBWorkspace$sharedInstance;
 
 - (void)_exitReachabilityModeWithCompletion:(unsafe_id)arg1
 {
-    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
+    if (overrideDisableForStatusBar)
         return;
 
     %orig;
@@ -174,7 +175,7 @@ id SBWorkspace$sharedInstance;
 
 - (void)handleReachabilityModeDeactivated
 {
-    if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
+    if (overrideDisableForStatusBar)
         return;
 
     %orig;
@@ -256,6 +257,7 @@ id SBWorkspace$sharedInstance;
 
 - (void)_disableReachabilityImmediately:(_Bool)arg1
 {
+    //Disable for keyboard here
     if (overrideDisableForStatusBar || [UIKeyboard isOnScreen])
         return;
 
@@ -722,7 +724,6 @@ CGFloat startingY = -1;
 
     if (![app pid] || ![app mainScene])
     {
-        LogDebug(@"no pid or scene; trying again");
         overrideDisableForStatusBar = YES;
         [UIApplication.sharedApplication launchApplicationWithIdentifier:bundleIdentifier suspended:YES];
         [[%c(FBProcessManager) sharedInstance] createApplicationProcessForBundleID:bundleIdentifier];

@@ -6,56 +6,67 @@
 	SHARED_INSTANCE2(RARunningAppsProvider,
 		sharedInstance->apps = [NSMutableArray array];
 		sharedInstance->targets = [NSMutableArray array];
-		sharedInstance->lock = [[NSLock alloc] init];
 	);
+}
+
+- (instancetype)init {
+	self = [super init];
+	if (self) {
+		pthread_mutex_init(&mutex, NULL);
+	}
+	return self;
 }
 
 -(void) addRunningApp:(__unsafe_unretained SBApplication*)app
 {
-	[lock lock];
+	pthread_mutex_lock(&mutex);
 
 	[apps addObject:app];
 	for (NSObject<RARunningAppsProviderDelegate>* target in targets)
 		if ([target respondsToSelector:@selector(appDidStart:)])
-    		dispatch_async(dispatch_get_main_queue(), ^{
+    	dispatch_async(dispatch_get_main_queue(), ^{
 				[target appDidStart:app];
 			});
 
-	[lock unlock];
+	pthread_mutex_unlock(&mutex);
 }
 
 -(void) removeRunningApp:(__unsafe_unretained SBApplication*)app
 {
-	[lock lock];
+	pthread_mutex_lock(&mutex);
 
 	[apps removeObject:app];
 
 	for (NSObject<RARunningAppsProviderDelegate>* target in targets)
 		if ([target respondsToSelector:@selector(appDidDie:)])
- 	   		dispatch_async(dispatch_get_main_queue(), ^{
+ 	   	dispatch_async(dispatch_get_main_queue(), ^{
 				[target appDidDie:app];
 			});
 
-	[lock unlock];
+	pthread_mutex_unlock(&mutex);
 }
 
 -(void) addTarget:(__weak NSObject<RARunningAppsProviderDelegate>*)target
 {
-	[lock lock];
+	pthread_mutex_lock(&mutex);
 
 	if (![targets containsObject:target])
 		[targets addObject:target];
 
-	[lock unlock];
+	pthread_mutex_unlock(&mutex);
 }
 
 -(void) removeTarget:(__weak NSObject<RARunningAppsProviderDelegate>*)target
 {
-	[lock lock];
+	pthread_mutex_lock(&mutex);
 
 	[targets removeObject:target];
 
-	[lock unlock];
+	pthread_mutex_unlock(&mutex);
+}
+
+- (void)dealloc {
+	pthread_mutex_destroy(&mutex);
 }
 
 -(NSArray*) runningApplications { return apps; }

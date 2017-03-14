@@ -196,14 +196,8 @@
     id activator = %c(LAListenerSettingsViewController);
     if (!activator)
     {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer")
-                                   message:@"Activator must be installed to use this feature."
-                                   preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-        	handler:^(UIAlertAction *action) {
-        }];
-
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:cancelAction];
         [self presentViewController:alert animated:YES completion:nil];
     }
@@ -220,14 +214,8 @@
     id activator = %c(LAListenerSettingsViewController);
     if (!activator)
     {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer")
-                                   message:@"Activator must be installed to use this feature."
-                                   preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-          handler:^(UIAlertAction *action) {
-        }];
-
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:cancelAction];
         [self presentViewController:alert animated:YES completion:nil];
     }
@@ -244,14 +232,8 @@
     id activator = %c(LAListenerSettingsViewController);
     if (!activator)
     {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer")
-                                   message:@"Activator must be installed to use this feature."
-                                   preferredStyle:UIAlertControllerStyleAlert];
-
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-          handler:^(UIAlertAction *action) {
-        }];
-
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:cancelAction];
         [self presentViewController:alert animated:YES completion:nil];
     }

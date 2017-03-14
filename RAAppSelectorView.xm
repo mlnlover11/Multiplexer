@@ -58,7 +58,7 @@
 			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
 			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
 		}
-        if (!iconView || [icon isKindOfClass:[%c(SBApplicationIcon) class]] == NO)
+        if (!iconView || ![icon isKindOfClass:[%c(SBApplicationIcon) class]])
         	continue;
 
         iconView.frame = CGRectMake(contentSize.width, contentSize.height, iconView.frame.size.width, iconView.frame.size.height);

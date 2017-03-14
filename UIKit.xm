@@ -194,7 +194,7 @@ static Class $memorized$UITextEffectsWindow$class;
     }
 
     for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
-        if ([oldFrames objectForKey:@(window.hash)] == nil)
+        if (![oldFrames objectForKey:@(window.hash)])
             [oldFrames setObject:[NSValue valueWithCGRect:window.frame] forKey:@(window.hash)];
 
         [UIView animateWithDuration:0.3 animations:^{

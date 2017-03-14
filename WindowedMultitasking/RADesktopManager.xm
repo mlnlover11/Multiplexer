@@ -70,7 +70,7 @@ BOOL overrideUIWindow = NO;
 	overrideUIWindow = NO;
 	[newDesktop makeKeyAndVisible];
 	overrideUIWindow = YES;
-	if (show == NO)
+	if (!show)
 		newDesktop.hidden = YES;
 
 	currentDesktopIndex = index;

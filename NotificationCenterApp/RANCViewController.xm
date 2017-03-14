@@ -75,7 +75,7 @@ int rotationDegsForOrientation(int o)
 
 	if ([[%c(SBLockScreenManager) sharedInstance] isUILocked])
 	{
-		if (isLockedLabel == nil)
+		if (!isLockedLabel)
 		{
 			isLockedLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 400)];
 			isLockedLabel.numberOfLines = 2;
@@ -177,7 +177,7 @@ int rotationDegsForOrientation(int o)
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
 	NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
-	if (signature == nil && class_respondsToSelector(%c(SBBulletinObserverViewController), aSelector))
+	if (!signature && class_respondsToSelector(%c(SBBulletinObserverViewController), aSelector))
 		signature = [%c(SBBulletinObserverViewController) instanceMethodSignatureForSelector:aSelector];
 	return signature;
 }

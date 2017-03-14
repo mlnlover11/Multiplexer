@@ -1,4 +1,5 @@
 #import "headers.h"
+#import <pthread.h>
 
 @protocol RARunningAppsProviderDelegate
 @optional
@@ -9,7 +10,7 @@
 @interface RARunningAppsProvider : NSObject {
 	NSMutableArray *apps;
 	NSMutableArray *targets;
-	NSLock *lock;
+	pthread_mutex_t mutex;
 }
 +(instancetype) sharedInstance;
 
