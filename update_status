@@ -31,6 +31,7 @@ Minor Things/Bugs to note:
 - Some say it causes serious lag (probably because logs werent disabled/due to MC)?
 - Startup bug still isnt fixed (apparently caused by gesture support?)
 - General Code Cleanup, feels to messy RN
+- Check iPad support/lower iOS versions
 
 Things to do/Features to add:
 - 3D Touch actions?

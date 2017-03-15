@@ -10,13 +10,13 @@
 {
 	NSMutableString *ret = [[NSMutableString alloc] init];
 
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSString *sysInfo = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+	struct utsname systemInfo;
+	uname(&systemInfo);
+	NSString *sysInfo = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
 
-    [ret appendString:[NSString stringWithFormat:@"%@, %@ %@\n", sysInfo, UIDevice.currentDevice.systemName, UIDevice.currentDevice.systemVersion]];
+	[ret appendString:[NSString stringWithFormat:@"%@, %@ %@\n", sysInfo, UIDevice.currentDevice.systemName, UIDevice.currentDevice.systemVersion]];
 
-    return ret;
+	return ret;
 }
 
 +(void) showWarning:(NSString*)info
@@ -24,8 +24,8 @@
 	NSString *message = [NSString stringWithFormat:@"System info: %@\n\nWARNING: POTENTIAL INCOMPATIBILITY DETECTED\n%@", [self aggregateSystemInfo], info];
 
 	UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Multiplexer Compatibility" message:message preferredStyle:UIAlertControllerStyleAlert];
-  [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-  [alert show];
+	[alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+	[alert show];
 }
 
 +(void) showError:(NSString*)info
@@ -33,7 +33,7 @@
 	NSString *message = [NSString stringWithFormat:@"System info: %@\n\n***ERROR***: POTENTIAL INCOMPATIBILITY DETECTED\n%@", [self aggregateSystemInfo], info];
 
 	UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Multiplexer Compatibility" message:message preferredStyle:UIAlertControllerStyleAlert];
-  [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-  [alert show];
+	[alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+	[alert show];
 }
 @end

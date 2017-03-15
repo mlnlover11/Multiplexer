@@ -800,9 +800,9 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface SBDisplayLayout : NSObject {
-	int _layoutSize;
-	NSMutableArray* _displayItems;
-	NSString* _uniqueStringRepresentation;
+  int _layoutSize;
+  NSMutableArray* _displayItems;
+  NSString* _uniqueStringRepresentation;
 }
 @property(readonly, assign, nonatomic) NSArray* displayItems;
 @property(readonly, assign, nonatomic) int layoutSize;
@@ -845,7 +845,7 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface UIGestureRecognizerTarget : NSObject {
-	id _target;
+  id _target;
 }
 @end
 
@@ -1179,49 +1179,49 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface SBIconView : UIView {
-	SBIcon *_icon;
-	id<SBIconViewDelegate> _delegate;
-	id<SBIconViewLocker> _locker;
-	SBIconImageContainerView *_iconImageContainer;
-	SBIconImageView *_iconImageView;
-	UIImageView *_iconDarkeningOverlay;
-	UIImageView *_ghostlyImageView;
-	UIImageView *_reflection;
-	UIImageView *_shadow;
-	SBIconBadgeImage *_badgeImage;
-	UIImageView *_badgeView;
-	SBIconLabel *_label;
-	BOOL _labelHidden;
-	BOOL _labelOnWallpaper;
-	UIView *_closeBox;
-	int _closeBoxType;
-	UIImageView *_dropGlow;
-	unsigned _drawsLabel : 1;
-	unsigned _isHidden : 1;
-	unsigned _isGrabbed : 1;
-	unsigned _isOverlapping : 1;
-	unsigned _refusesRecipientStatus : 1;
-	unsigned _highlighted : 1;
-	unsigned _launchDisabled : 1;
-	unsigned _isJittering : 1;
-	unsigned _allowJitter : 1;
-	unsigned _touchDownInIcon : 1;
-	unsigned _hideShadow : 1;
-	NSTimer *_delayedUnhighlightTimer;
-	unsigned _onWallpaper : 1;
-	unsigned _ghostlyRequesters;
-	int _iconLocation;
-	float _iconImageAlpha;
-	float _iconImageBrightness;
-	float _iconLabelAlpha;
-	float _accessoryAlpha;
-	CGPoint _unjitterPoint;
-	CGPoint _grabPoint;
-	NSTimer *_longPressTimer;
-	unsigned _ghostlyTag;
-	UIImage *_ghostlyImage;
-	BOOL _ghostlyPending;
-}
+  SBIcon *_icon;
+  id<SBIconViewDelegate> _delegate;
+  id<SBIconViewLocker> _locker;
+  SBIconImageContainerView *_iconImageContainer;
+  SBIconImageView *_iconImageView;
+  UIImageView *_iconDarkeningOverlay;
+  UIImageView *_ghostlyImageView;
+  UIImageView *_reflection;
+  UIImageView *_shadow;
+  SBIconBadgeImage *_badgeImage;
+  UIImageView *_badgeView;
+  SBIconLabel *_label;
+  BOOL _labelHidden;
+  BOOL _labelOnWallpaper;
+  UIView *_closeBox;
+  int _closeBoxType;
+  UIImageView *_dropGlow;
+  unsigned _drawsLabel : 1;
+  unsigned _isHidden : 1;
+  unsigned _isGrabbed : 1;
+  unsigned _isOverlapping : 1;
+  unsigned _refusesRecipientStatus : 1;
+  unsigned _highlighted : 1;
+  unsigned _launchDisabled : 1;
+  unsigned _isJittering : 1;
+  unsigned _allowJitter : 1;
+  unsigned _touchDownInIcon : 1;
+  unsigned _hideShadow : 1;
+  NSTimer *_delayedUnhighlightTimer;
+  unsigned _onWallpaper : 1;
+  unsigned _ghostlyRequesters;
+  int _iconLocation;
+  float _iconImageAlpha;
+  float _iconImageBrightness;
+  float _iconLabelAlpha;
+  float _accessoryAlpha;
+  CGPoint _unjitterPoint;
+  CGPoint _grabPoint;
+  NSTimer *_longPressTimer;
+  unsigned _ghostlyTag;
+  UIImage *_ghostlyImage;
+  BOOL _ghostlyPending;
+  }
 
 
 -(void) RA_updateIndicatorView:(NSInteger)info;
@@ -1358,11 +1358,11 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @class NSMapTable;
 
 @interface SBIconViewMap : NSObject {
-	NSMapTable* _iconViewsForIcons;
-	id<SBIconViewDelegate> _iconViewdelegate;
-	NSMapTable* _recycledIconViewsByType;
-	NSMapTable* _labels;
-	NSMapTable* _badges;
+  NSMapTable* _iconViewsForIcons;
+  id<SBIconViewDelegate> _iconViewdelegate;
+  NSMapTable* _recycledIconViewsByType;
+  NSMapTable* _labels;
+  NSMapTable* _badges;
 }
 + (SBIconViewMap *)switcherMap;
 +(SBIconViewMap *)homescreenMap;
@@ -1460,7 +1460,7 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface _SBAppSwitcherSnapshotContext : NSObject {
-	SBSwitcherSnapshotImageView* _snapshotImageView;
+  SBSwitcherSnapshotImageView* _snapshotImageView;
 }
 @property (nonatomic,retain) SBSwitcherSnapshotImageView * snapshotImageView;              //@synthesize snapshotImageView=_snapshotImageView - In the implementation block
 - (SBSwitcherSnapshotImageView *)snapshotImageView;

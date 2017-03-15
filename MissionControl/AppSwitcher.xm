@@ -563,10 +563,10 @@ BOOL toggleOrActivate = NO;
 			} completion:^(BOOL _) {
 				//((UIWindow*)[[%c(SBUIController) sharedInstance] switcherWindow]).alpha = 0;
 				if ([%c(SBUIController) respondsToSelector:@selector(dismissSwitcherAnimated:)]) {
- 					[[%c(SBUIController) sharedInstance] dismissSwitcherAnimated:NO];
- 				} else {
- 					[[%c(SBMainSwitcherViewController) sharedInstance] RA_dismissSwitcherUnanimated];
- 				}
+					[[%c(SBUIController) sharedInstance] dismissSwitcherAnimated:NO];
+				} else {
+					[[%c(SBMainSwitcherViewController) sharedInstance] RA_dismissSwitcherUnanimated];
+				}
 				[[%c(SBUIController) sharedInstance] restoreContentUpdatingStatusBar:YES];
 				[RAMissionControlManager.sharedInstance showMissionControl:NO];
 				[fakeView removeFromSuperview];

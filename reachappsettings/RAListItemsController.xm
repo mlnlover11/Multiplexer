@@ -19,53 +19,53 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
+  [super viewWillAppear:animated];
 
-    self.navigationController.navigationBar.tintColor = self.navigationTintColor;
-    [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
+  self.navigationController.navigationBar.tintColor = self.navigationTintColor;
+  [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	[super viewWillDisappear:animated];
+  [super viewWillDisappear:animated];
 
-    [[UIApplication sharedApplication] keyWindow].tintColor = nil;
-    self.navigationController.navigationBar.tintColor = nil;
+  [[UIApplication sharedApplication] keyWindow].tintColor = nil;
+  self.navigationController.navigationBar.tintColor = nil;
 }
 
 -(NSArray*) specifiers
 {
-    if (!_specifiers) {
-        PSSpecifier* themeSpecifier = [PSSpecifier preferenceSpecifierNamed:@"Documentation"
-                                        target:self
-                                           set:NULL
-                                           get:NULL
-                                        detail:Nil
-                                          cell:PSButtonCell
-                                          edit:Nil];
-        [themeSpecifier setProperty:SK_RSIMG(@"tutorial.png") forKey:@"iconImage"];
-        [themeSpecifier setProperty:@"poop" forKey:@"isTheming"];
-        _specifiers = [super specifiers];
-        [(NSMutableArray*)_specifiers addObject:[PSSpecifier emptyGroupSpecifier]];
-        [(NSMutableArray*)_specifiers addObject:themeSpecifier];
-    }
-    return _specifiers;
+  if (!_specifiers) {
+    PSSpecifier* themeSpecifier = [PSSpecifier preferenceSpecifierNamed:@"Documentation"
+                                    target:self
+                                       set:NULL
+                                       get:NULL
+                                    detail:Nil
+                                      cell:PSButtonCell
+                                      edit:Nil];
+    [themeSpecifier setProperty:SK_RSIMG(@"tutorial.png") forKey:@"iconImage"];
+    [themeSpecifier setProperty:@"poop" forKey:@"isTheming"];
+    _specifiers = [super specifiers];
+    [(NSMutableArray*)_specifiers addObject:[PSSpecifier emptyGroupSpecifier]];
+    [(NSMutableArray*)_specifiers addObject:themeSpecifier];
+  }
+  return _specifiers;
 }
 
 -(void) openThemingDocumentation
 {
-    [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://elijahandandrew.com/multiplexer/ThemingDocumentation.html"]];
+  [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://elijahandandrew.com/multiplexer/ThemingDocumentation.html"]];
 }
 
 -(void) tableView:(id)arg1 didSelectRowAtIndexPath:(id)arg2
 {
-    [super tableView:arg1 didSelectRowAtIndexPath:arg2];
+  [super tableView:arg1 didSelectRowAtIndexPath:arg2];
 
-    PSTableCell *cell = [self tableView:arg1 cellForRowAtIndexPath:arg2];
-    if ([cell.specifier propertyForKey:@"isTheming"])
-    {
-        [self openThemingDocumentation];
-    }
+  PSTableCell *cell = [self tableView:arg1 cellForRowAtIndexPath:arg2];
+  if ([cell.specifier propertyForKey:@"isTheming"])
+  {
+    [self openThemingDocumentation];
+  }
 }
 @end
 
@@ -79,17 +79,17 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
+  [super viewWillAppear:animated];
 
-    self.navigationController.navigationBar.tintColor = self.navigationTintColor;
-    [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
+  self.navigationController.navigationBar.tintColor = self.navigationTintColor;
+  [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	[super viewWillDisappear:animated];
+  [super viewWillDisappear:animated];
 
-    [[UIApplication sharedApplication] keyWindow].tintColor = nil;
-    self.navigationController.navigationBar.tintColor = nil;
+  [[UIApplication sharedApplication] keyWindow].tintColor = nil;
+  self.navigationController.navigationBar.tintColor = nil;
 }
 @end

@@ -63,14 +63,14 @@ extern int rotationDegsForOrientation(int o);
 	CGRect newFrame = overlayWindow.frame;
 	switch ([UIApplication.sharedApplication statusBarOrientation])
 	{
-	    case UIInterfaceOrientationPortrait:
-	     	newFrame = (CGRect) { { newFrame.origin.x + newFrame.size.height, newFrame.origin.y }, newFrame.size };
-	    case UIInterfaceOrientationPortraitUpsideDown:
-	     	newFrame = (CGRect) { { newFrame.origin.x - newFrame.size.height, newFrame.origin.y }, newFrame.size };
-	    case UIInterfaceOrientationLandscapeLeft:
-	     	newFrame = (CGRect) { { newFrame.origin.x, newFrame.origin.y - newFrame.size.height }, newFrame.size };
-	    case UIInterfaceOrientationLandscapeRight:
-	     	newFrame = (CGRect) { { newFrame.origin.x, newFrame.origin.y + newFrame.size.height }, newFrame.size };
+	  case UIInterfaceOrientationPortrait:
+	   	newFrame = (CGRect) { { newFrame.origin.x + newFrame.size.height, newFrame.origin.y }, newFrame.size };
+	  case UIInterfaceOrientationPortraitUpsideDown:
+	   	newFrame = (CGRect) { { newFrame.origin.x - newFrame.size.height, newFrame.origin.y }, newFrame.size };
+	  case UIInterfaceOrientationLandscapeLeft:
+	   	newFrame = (CGRect) { { newFrame.origin.x, newFrame.origin.y - newFrame.size.height }, newFrame.size };
+	  case UIInterfaceOrientationLandscapeRight:
+	   	newFrame = (CGRect) { { newFrame.origin.x, newFrame.origin.y + newFrame.size.height }, newFrame.size };
 	}
 
 	[UIView animateWithDuration:0.3 animations:^{
@@ -103,74 +103,74 @@ extern int rotationDegsForOrientation(int o);
 	[self closeCurrentView];
 
 	SBApplication *app = nil;
-    FBScene *scene = nil;
+	FBScene *scene = nil;
 
-    if (identifier)
-        app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:identifier];
-    else
-    {
-	    NSMutableArray *bundleIdentifiers = [[%c(RAAppSwitcherModelWrapper) appSwitcherAppIdentiferList] mutableCopy];
-	    while (!scene && bundleIdentifiers.count > 0)
+	if (identifier)
+		app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:identifier];
+	else
+	{
+	  NSMutableArray *bundleIdentifiers = [[%c(RAAppSwitcherModelWrapper) appSwitcherAppIdentiferList] mutableCopy];
+	  while (!scene && bundleIdentifiers.count > 0)
+	  {
+	    identifier = bundleIdentifiers[0];
+
+	    if ([identifier isEqual:currentAppIdentifier])
 	    {
-	        identifier = bundleIdentifiers[0];
-
-	        if ([identifier isEqual:currentAppIdentifier])
-	        {
-	            [bundleIdentifiers removeObjectAtIndex:0];
-	            continue;
-	        }
-
-	        app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:identifier];
-	        break;
+	      [bundleIdentifiers removeObjectAtIndex:0];
+	      continue;
 	    }
-    }
 
-    if (app)
-    {
-    	SBDisplayLayout *layout = [%c(SBDisplayLayout) fullScreenDisplayLayoutForApplication:app];
-    	if (layout)
- 		   	[[%c(SBAppSwitcherModel) sharedInstance] addToFront:layout];
-    }
+	    app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:identifier];
+	    break;
+	  }
+	}
 
-    if (!identifier || identifier.length == 0)
-        return;
+	if (app)
+	{
+		SBDisplayLayout *layout = [%c(SBDisplayLayout) fullScreenDisplayLayoutForApplication:app];
+		if (layout)
+			[[%c(SBAppSwitcherModel) sharedInstance] addToFront:layout];
+	}
 
-    RAHostedAppView *view = [[%c(RAHostedAppView) alloc] initWithBundleIdentifier:identifier];
-    view.autosizesApp = NO;
-		if (!overlayWindow.isHidingUnderlyingApp)
-			view.autosizesApp = YES;
-    view.shouldUseExternalKeyboard = YES;
-    view.allowHidingStatusBar = NO;
-    view.frame = UIScreen.mainScreen._referenceBounds;
-    view.showSplashscreenInsteadOfSpinner = YES;
-		view.renderWallpaper = YES;
-    [view rotateToOrientation:UIInterfaceOrientationPortrait];
-    [view loadApp];
+	if (!identifier || identifier.length == 0)
+		return;
 
-    UIImageView *detachView = [[UIImageView alloc] initWithFrame:CGRectMake(0, -20, view.frame.size.width, 20)];
-    detachView.image = [[%c(RAResourceImageProvider) imageForFilename:@"SwipeOverDetachImage" constrainedToSize:CGSizeMake(97, 28)] _flatImageWithColor:THEMED(swipeOverDetachImageColor)];
-    detachView.contentMode = UIViewContentModeScaleAspectFit;
-    UITapGestureRecognizer *detachGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(detachViewAndCloseSwipeOver)];
-    [detachView addGestureRecognizer:detachGesture];
-    detachView.backgroundColor = THEMED(swipeOverDetachBarColor);
-    detachView.userInteractionEnabled = YES;
-    detachGesture.delegate = overlayWindow;
-    detachView.tag = 9903553;
-    [view addSubview:detachView];
+	RAHostedAppView *view = [[%c(RAHostedAppView) alloc] initWithBundleIdentifier:identifier];
+	view.autosizesApp = NO;
+	if (!overlayWindow.isHidingUnderlyingApp)
+		view.autosizesApp = YES;
+	view.shouldUseExternalKeyboard = YES;
+	view.allowHidingStatusBar = NO;
+	view.frame = UIScreen.mainScreen._referenceBounds;
+	view.showSplashscreenInsteadOfSpinner = YES;
+	view.renderWallpaper = YES;
+	[view rotateToOrientation:UIInterfaceOrientationPortrait];
+	[view loadApp];
 
-    if (!overlayWindow.isHidingUnderlyingApp) // side-by-side
-	    view.frame = CGRectMake(10, 0, view.frame.size.width, view.frame.size.height);
-		else // overlay
-		{
-			view.frame = CGRectMake(SCREEN_WIDTH - 50, 0, view.frame.size.width, view.frame.size.height);
+	UIImageView *detachView = [[UIImageView alloc] initWithFrame:CGRectMake(0, -20, view.frame.size.width, 20)];
+	detachView.image = [[%c(RAResourceImageProvider) imageForFilename:@"SwipeOverDetachImage" constrainedToSize:CGSizeMake(97, 28)] _flatImageWithColor:THEMED(swipeOverDetachImageColor)];
+	detachView.contentMode = UIViewContentModeScaleAspectFit;
+	UITapGestureRecognizer *detachGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(detachViewAndCloseSwipeOver)];
+	[detachView addGestureRecognizer:detachGesture];
+	detachView.backgroundColor = THEMED(swipeOverDetachBarColor);
+	detachView.userInteractionEnabled = YES;
+	detachGesture.delegate = overlayWindow;
+	detachView.tag = 9903553;
+	[view addSubview:detachView];
 
-			CGFloat scale = 0.1; // MIN(MAX(scale, 0.1), 0.98);
-			view.transform = CGAffineTransformMakeScale(scale, scale);
-			view.center = (CGPoint) { SCREEN_WIDTH - (view.frame.size.width / 2), view.center.y };
-		}
+	if (!overlayWindow.isHidingUnderlyingApp) // side-by-side
+		view.frame = CGRectMake(10, 0, view.frame.size.width, view.frame.size.height);
+	else // overlay
+	{
+		view.frame = CGRectMake(SCREEN_WIDTH - 50, 0, view.frame.size.width, view.frame.size.height);
 
-    view.tag = RASWIPEOVER_VIEW_TAG;
-    [overlayWindow addSubview:view];
+		CGFloat scale = 0.1; // MIN(MAX(scale, 0.1), 0.98);
+		view.transform = CGAffineTransformMakeScale(scale, scale);
+		view.center = (CGPoint) { SCREEN_WIDTH - (view.frame.size.width / 2), view.center.y };
+	}
+
+	view.tag = RASWIPEOVER_VIEW_TAG;
+	[overlayWindow addSubview:view];
 
 	[self updateClientSizes:YES];
 }
@@ -196,8 +196,8 @@ extern int rotationDegsForOrientation(int o);
 	if (UIApplication.sharedApplication.statusBarOrientation != UIInterfaceOrientationPortrait)
 	{
 		UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"MULTIPLEXER") message:@"Sorry, SwipeOver's side-by-side mode is not currently compatible with landscape." preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-    [alert show];
+		[alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+		[alert show];
 		return;
 	}
 

@@ -1,29 +1,29 @@
 #import "headers.h"
 
 typedef NS_ENUM(NSInteger, RABackgroundMode) {
-    RABackgroundModeNative = 1,
-    RABackgroundModeForceNativeForOldApps = 2,
-    RABackgroundModeForcedForeground = 3,
-    RABackgroundModeForceNone = 4,
-    RABackgroundModeSuspendImmediately = 5,
-    RABackgroundModeUnlimitedBackgroundingTime = 6,
+  RABackgroundModeNative = 1,
+  RABackgroundModeForceNativeForOldApps = 2,
+  RABackgroundModeForcedForeground = 3,
+  RABackgroundModeForceNone = 4,
+  RABackgroundModeSuspendImmediately = 5,
+  RABackgroundModeUnlimitedBackgroundingTime = 6,
 };
 
 typedef NS_ENUM(NSInteger, RAIconIndicatorViewInfo) {
-	RAIconIndicatorViewInfoNone = 0,
-	RAIconIndicatorViewInfoNative = 1,
-	RAIconIndicatorViewInfoForced = 2,
-	RAIconIndicatorViewInfoSuspendImmediately = 4,
+  RAIconIndicatorViewInfoNone = 0,
+  RAIconIndicatorViewInfoNative = 1,
+  RAIconIndicatorViewInfoForced = 2,
+  RAIconIndicatorViewInfoSuspendImmediately = 4,
 
-	RAIconIndicatorViewInfoUnkillable = 8,
-	RAIconIndicatorViewInfoForceDeath = 16,
+  RAIconIndicatorViewInfoUnkillable = 8,
+  RAIconIndicatorViewInfoForceDeath = 16,
 
-	RAIconIndicatorViewInfoUnlimitedBackgroundTime = 32,
+  RAIconIndicatorViewInfoUnlimitedBackgroundTime = 32,
 
 
-	RAIconIndicatorViewInfoTemporarilyInhibit = 1024,
-	RAIconIndicatorViewInfoInhibit = 2048,
-	RAIconIndicatorViewInfoUninhibit = 4096,
+  RAIconIndicatorViewInfoTemporarilyInhibit = 1024,
+  RAIconIndicatorViewInfoInhibit = 2048,
+  RAIconIndicatorViewInfoUninhibit = 4096,
 };
 
 NSString *FriendlyNameForBackgroundMode(RABackgroundMode mode);

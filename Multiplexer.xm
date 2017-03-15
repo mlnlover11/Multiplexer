@@ -36,25 +36,25 @@
 	else
 	{
 	// ** below code from Mirmir (https://github.com/EthanArbuckle/Mirmir/blob/lamo_no_ms/Lamo/CDTLamo.mm#L114-L138)
-    SBWorkspaceApplicationTransitionContext *transitionContext = [[%c(SBWorkspaceApplicationTransitionContext) alloc] init];
+		SBWorkspaceApplicationTransitionContext *transitionContext = [[%c(SBWorkspaceApplicationTransitionContext) alloc] init];
 
-    //set layout role to 'side' (deactivating)
-    SBWorkspaceDeactivatingEntity *deactivatingEntity = [%c(SBWorkspaceDeactivatingEntity) entity];
-    [deactivatingEntity setLayoutRole:3];
-    [transitionContext setEntity:deactivatingEntity forLayoutRole:3];
+		//set layout role to 'side' (deactivating)
+		SBWorkspaceDeactivatingEntity *deactivatingEntity = [%c(SBWorkspaceDeactivatingEntity) entity];
+		[deactivatingEntity setLayoutRole:3];
+		[transitionContext setEntity:deactivatingEntity forLayoutRole:3];
 
-    //set layout role for 'primary' (activating)
-    SBWorkspaceHomeScreenEntity *homescreenEntity = [[%c(SBWorkspaceHomeScreenEntity) alloc] init];
-    [transitionContext setEntity:homescreenEntity forLayoutRole:2];
+		//set layout role for 'primary' (activating)
+		SBWorkspaceHomeScreenEntity *homescreenEntity = [[%c(SBWorkspaceHomeScreenEntity) alloc] init];
+		[transitionContext setEntity:homescreenEntity forLayoutRole:2];
 
-    [transitionContext setAnimationDisabled:YES];
+		[transitionContext setAnimationDisabled:YES];
 
-    //create transititon request
-    SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[%c(FBDisplayManager) mainDisplay]];
-    [transitionRequest setApplicationContext:transitionContext];
+		//create transititon request
+		SBMainWorkspaceTransitionRequest *transitionRequest = [[%c(SBMainWorkspaceTransitionRequest) alloc] initWithDisplay:[%c(FBDisplayManager) mainDisplay]];
+		[transitionRequest setApplicationContext:transitionContext];
 
-    return [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithTransitionRequest:transitionRequest];
-  }
+		return [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithTransitionRequest:transitionRequest];
+	}
 }
 
 +(BOOL) shouldShowControlCenterGrabberOnFirstSwipe

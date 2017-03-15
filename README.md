@@ -8,7 +8,7 @@ http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=multiplexerDp
 - iOS 9-like "slide over" (Swipe Over)
 - Mission Control with multiple desktops (Mission Control)
 - Windowed multitasking (Empoleon)
-- An app in a Notication Center tab (Quick Access)
+- An app in a Notification Center tab (Quick Access)
 - Backgrounding features (Aura)
 
 ### Wiki

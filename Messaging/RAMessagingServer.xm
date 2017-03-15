@@ -36,38 +36,38 @@ extern BOOL launchNextOpenIntoWindow;
 
 -(void) loadServer
 {
-		messagingCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
+	messagingCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
-		void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-		if (handle)
-		{
-				void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-				rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
-				dlclose(handle);
-		}
+	void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
+	if (handle)
+	{
+			void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
+			rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
+			dlclose(handle);
+	}
 
-    [messagingCenter runServerOnCurrentThread];
+	[messagingCenter runServerOnCurrentThread];
 
-    [messagingCenter registerForMessageName:RAMessagingShowKeyboardMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingHideKeyboardMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingUpdateKeyboardContextIdMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingRetrieveKeyboardContextIdMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingUpdateAppInfoMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingShowKeyboardMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingHideKeyboardMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingUpdateKeyboardContextIdMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingRetrieveKeyboardContextIdMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingUpdateAppInfoMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
 
-    [messagingCenter registerForMessageName:RAMessagingUpdateKeyboardSizeMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingOpenURLKMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingUpdateKeyboardSizeMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingOpenURLKMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
 
-    [messagingCenter registerForMessageName:RAMessagingGetFrontMostAppInfoMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingChangeFrontMostAppMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingGetFrontMostAppInfoMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingChangeFrontMostAppMessageName target:self selector:@selector(handleMessageNamed:userInfo:)];
 
-    [messagingCenter registerForMessageName:RAMessagingSnapFrontMostWindowLeftMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingSnapFrontMostWindowRightMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingGoToDesktopOnTheLeftMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingGoToDesktopOnTheRightMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingMaximizeAppMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingAddNewDesktopMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingCloseAppMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
-    [messagingCenter registerForMessageName:RAMessagingDetachCurrentAppMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingSnapFrontMostWindowLeftMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingSnapFrontMostWindowRightMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingGoToDesktopOnTheLeftMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingGoToDesktopOnTheRightMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingMaximizeAppMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingAddNewDesktopMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingCloseAppMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
+	[messagingCenter registerForMessageName:RAMessagingDetachCurrentAppMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
 }
 
 -(NSDictionary*) handleMessageNamed:(NSString*)identifier userInfo:(NSDictionary*)info
@@ -152,32 +152,32 @@ extern BOOL launchNextOpenIntoWindow;
 {
 	if ([identifier isEqual:RAMessagingDetachCurrentAppMessageName])
 	{
-      SBApplication *topApp = [[UIApplication sharedApplication] _accessibilityFrontMostApplication];
+		SBApplication *topApp = [[UIApplication sharedApplication] _accessibilityFrontMostApplication];
 
-      if (topApp)
-      {
-        [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
-        [[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
+		if (topApp)
+		{
+		  [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
+		  [[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
 
-        UIView *appView = [RAHostManager systemHostViewForApplication:topApp].superview;
+		  UIView *appView = [RAHostManager systemHostViewForApplication:topApp].superview;
 
-		    [UIView animateWithDuration:0.2 animations:^{
-		        appView.transform = CGAffineTransformMakeScale(0.5, 0.5);
-		    } completion:^(BOOL _) {
-	       		[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];
-		        FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
-								SBDeactivationSettings *deactiveSets = [[%c(SBDeactivationSettings) alloc] init];
-                [deactiveSets setFlag:YES forDeactivationSetting:20];
-                [deactiveSets setFlag:NO forDeactivationSetting:2];
-              	[topApp _setDeactivationSettings:deactiveSets];
+		 	[UIView animateWithDuration:0.2 animations:^{
+		  	appView.transform = CGAffineTransformMakeScale(0.5, 0.5);
+		  } completion:^(BOOL _) {
+				[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];
+				FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
+					SBDeactivationSettings *deactiveSets = [[%c(SBDeactivationSettings) alloc] init];
+				  [deactiveSets setFlag:YES forDeactivationSetting:20];
+				  [deactiveSets setFlag:NO forDeactivationSetting:2];
+				  [topApp _setDeactivationSettings:deactiveSets];
 
-		            SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
-		            [transaction begin];
-		        }];
-		        [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
-		        [RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
-		    }];
-      }
+				  SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
+				  [transaction begin];
+				}];
+				[(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
+				[RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
+		  }];
+		}
 	}
 	else if ([identifier isEqual:RAMessagingGoToDesktopOnTheLeftMessageName])
 	{
@@ -227,7 +227,7 @@ extern BOOL launchNextOpenIntoWindow;
 		UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"MULTIPLEXER") message:description preferredStyle:UIAlertControllerStyleAlert];
 		[alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
 		[alert show];
-  }
+	}
 #endif
 }
 

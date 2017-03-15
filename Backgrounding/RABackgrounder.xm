@@ -153,11 +153,11 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 
 	if (close)
 	{
-        FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
-						SBAppToAppWorkspaceTransaction *transaction = [%c(Multiplexer) createSBAppToAppWorkspaceTransactionForExitingApp:app];
-            [transaction begin];
-        }];
-        [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
+		FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
+			SBAppToAppWorkspaceTransaction *transaction = [%c(Multiplexer) createSBAppToAppWorkspaceTransactionForExitingApp:app];
+			[transaction begin];
+		}];
+		[(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
 	}
 }
 
@@ -216,8 +216,7 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 				ret = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] mappedIconViewForIcon:icon];
 		}
 
-
-    [ret RA_updateIndicatorView:info];
+		[ret RA_updateIndicatorView:info];
 	}
 }
 #pragma GCC diagnostic pop

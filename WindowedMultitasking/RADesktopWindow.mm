@@ -260,24 +260,24 @@
 	switch (base)
 	{
 		case UIInterfaceOrientationLandscapeLeft:
-	    	if (currentRotation >= 315 || currentRotation <= 45)
-	    		return UIInterfaceOrientationLandscapeLeft;
-	    	else if (currentRotation > 45 && currentRotation <= 135)
-	    		return UIInterfaceOrientationPortraitUpsideDown;
-	    	else if (currentRotation > 135 && currentRotation <= 215)
-	    		return UIInterfaceOrientationLandscapeRight;
-	    	else
-	    		return UIInterfaceOrientationPortrait;
+			if (currentRotation >= 315 || currentRotation <= 45)
+				return UIInterfaceOrientationLandscapeLeft;
+			else if (currentRotation > 45 && currentRotation <= 135)
+				return UIInterfaceOrientationPortraitUpsideDown;
+			else if (currentRotation > 135 && currentRotation <= 215)
+				return UIInterfaceOrientationLandscapeRight;
+			else
+				return UIInterfaceOrientationPortrait;
 
 		case UIInterfaceOrientationLandscapeRight:
-	    	if (currentRotation >= 315 || currentRotation <= 45)
-	    		return UIInterfaceOrientationLandscapeRight;
-	    	else if (currentRotation > 45 && currentRotation <= 135)
-	    		return UIInterfaceOrientationPortrait;
-	    	else if (currentRotation > 135 && currentRotation <= 215)
-	    		return UIInterfaceOrientationLandscapeLeft;
-	    	else
-	    		return UIInterfaceOrientationPortraitUpsideDown;
+			if (currentRotation >= 315 || currentRotation <= 45)
+				return UIInterfaceOrientationLandscapeRight;
+			else if (currentRotation > 45 && currentRotation <= 135)
+				return UIInterfaceOrientationPortrait;
+			else if (currentRotation > 135 && currentRotation <= 215)
+				return UIInterfaceOrientationLandscapeLeft;
+			else
+				return UIInterfaceOrientationPortraitUpsideDown;
 
 		case UIInterfaceOrientationPortraitUpsideDown:
 			if (currentRotation >= 315 || currentRotation <= 45)
@@ -323,19 +323,19 @@
 
 -(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
-    UIView *subview;
-    while ((subview = [objects nextObject]))
-    {
-    	if (self.rootViewController && [self.rootViewController.view isEqual:subview])
-    		continue;
-    	if (subview.hidden)
-    		continue;
-        UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
-        if (success)
-            return success;
-    }
-    return [super hitTest:point withEvent:event];
+	NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
+	UIView *subview;
+	while ((subview = [objects nextObject]))
+	{
+		if (self.rootViewController && [self.rootViewController.view isEqual:subview])
+			continue;
+		if (subview.hidden)
+			continue;
+		UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
+		if (success)
+		  return success;
+	}
+	return [super hitTest:point withEvent:event];
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
@@ -343,10 +343,10 @@
 	BOOL isContained = NO;
 	for (UIView *view in self.subviews)
 	{
-    	if (self.rootViewController && [self.rootViewController.view isEqual:view])
-    		continue;
-    	if (view.hidden)
-    		continue;
+		if (self.rootViewController && [self.rootViewController.view isEqual:view])
+			continue;
+		if (view.hidden)
+			continue;
 		if (CGRectContainsPoint(view.frame, point) || CGRectContainsPoint(view.frame, [view convertPoint:point fromView:self])) // [self convertPoint:point toView:view]))
 			isContained = YES;
 	}

@@ -13,17 +13,17 @@ static RAActivatorSortWindowsListener *sharedInstance$RAActivatorSortWindowsList
 @implementation RAActivatorSortWindowsListener
 - (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
 {
-    RADesktopWindow *desktop = RADesktopManager.sharedInstance.currentDesktop;
+  RADesktopWindow *desktop = RADesktopManager.sharedInstance.currentDesktop;
 
-    [RAWindowSorter sortWindowsOnDesktop:desktop resizeIfNecessary:YES];
+  [RAWindowSorter sortWindowsOnDesktop:desktop resizeIfNecessary:YES];
 }
 @end
 
 %ctor
 {
-    IF_SPRINGBOARD
-    {
-        sharedInstance$RAActivatorSortWindowsListener = [[RAActivatorSortWindowsListener alloc] init];
-        [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorSortWindowsListener forName:@"com.efrederickson.reachapp.windowedmultitasking.sortWindows"];
-    }
+  IF_SPRINGBOARD
+  {
+    sharedInstance$RAActivatorSortWindowsListener = [[RAActivatorSortWindowsListener alloc] init];
+    [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorSortWindowsListener forName:@"com.efrederickson.reachapp.windowedmultitasking.sortWindows"];
+  }
 }

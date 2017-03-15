@@ -160,8 +160,8 @@ void handle_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEven
 	void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
 	if(handle)
 	{
-	    void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-	    rocketbootstrap_distributedmessagingcenter_apply(center);
-	    dlclose(handle);
+		void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
+		rocketbootstrap_distributedmessagingcenter_apply(center);
+		dlclose(handle);
 	}
 }

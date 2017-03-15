@@ -24,7 +24,7 @@
 	[apps addObject:app];
 	for (NSObject<RARunningAppsProviderDelegate>* target in targets)
 		if ([target respondsToSelector:@selector(appDidStart:)])
-    	dispatch_async(dispatch_get_main_queue(), ^{
+			dispatch_async(dispatch_get_main_queue(), ^{
 				[target appDidStart:app];
 			});
 
@@ -39,7 +39,7 @@
 
 	for (NSObject<RARunningAppsProviderDelegate>* target in targets)
 		if ([target respondsToSelector:@selector(appDidDie:)])
- 	   	dispatch_async(dispatch_get_main_queue(), ^{
+			dispatch_async(dispatch_get_main_queue(), ^{
 				[target appDidDie:app];
 			});
 

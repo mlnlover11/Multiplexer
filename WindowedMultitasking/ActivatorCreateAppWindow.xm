@@ -21,18 +21,18 @@ static RAActivatorCreateWindowListener *sharedInstance$RAActivatorCreateWindowLi
   // Close app
   [[%c(RABackgrounder) sharedInstance] temporarilyApplyBackgroundingMode:RABackgroundModeForcedForeground forApplication:topApp andCloseForegroundApp:NO];
   FBWorkspaceEvent *event = [%c(FBWorkspaceEvent) eventWithName:@"ActivateSpringBoard" handler:^{
-      SBDeactivationSettings *deactiveSets = [[%c(SBDeactivationSettings) alloc] init];
-      [deactiveSets setFlag:YES forDeactivationSetting:20];
-      [deactiveSets setFlag:NO forDeactivationSetting:2];
-      [topApp _setDeactivationSettings:deactiveSets];
+    SBDeactivationSettings *deactiveSets = [[%c(SBDeactivationSettings) alloc] init];
+    [deactiveSets setFlag:YES forDeactivationSetting:20];
+    [deactiveSets setFlag:NO forDeactivationSetting:2];
+    [topApp _setDeactivationSettings:deactiveSets];
 
-      SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
-      [transaction begin];
+    SBAppToAppWorkspaceTransaction *transaction = [Multiplexer createSBAppToAppWorkspaceTransactionForExitingApp:topApp];
+    [transaction begin];
 
-      // Open in window
-      RAWindowBar *windowBar = [RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
-      if (!RADesktopManager.sharedInstance.lastUsedWindow)
-          RADesktopManager.sharedInstance.lastUsedWindow = windowBar;
+    // Open in window
+    RAWindowBar *windowBar = [RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
+    if (!RADesktopManager.sharedInstance.lastUsedWindow)
+      RADesktopManager.sharedInstance.lastUsedWindow = windowBar;
   }];
   [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
 
@@ -45,9 +45,9 @@ static RAActivatorCreateWindowListener *sharedInstance$RAActivatorCreateWindowLi
 
 %ctor
 {
-    IF_SPRINGBOARD
-    {
-        sharedInstance$RAActivatorCreateWindowListener = [[RAActivatorCreateWindowListener alloc] init];
-        [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorCreateWindowListener forName:@"com.efrederickson.reachapp.windowedmultitasking.createWindow"];
-    }
+  IF_SPRINGBOARD
+  {
+    sharedInstance$RAActivatorCreateWindowListener = [[RAActivatorCreateWindowListener alloc] init];
+    [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorCreateWindowListener forName:@"com.efrederickson.reachapp.windowedmultitasking.createWindow"];
+  }
 }

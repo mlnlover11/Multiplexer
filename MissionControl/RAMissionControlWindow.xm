@@ -165,7 +165,7 @@
 
 	NSArray *switcherOrder = [[%c(RAAppSwitcherModelWrapper) appSwitcherAppIdentiferList] copy];
 	[runningApplications sortUsingComparator:^NSComparisonResult(SBApplication *obj1, SBApplication *obj2) {
-    	return [@([switcherOrder indexOfObject:obj1.bundleIdentifier]) compare:@([switcherOrder indexOfObject:obj2.bundleIdentifier])];
+		return [@([switcherOrder indexOfObject:obj1.bundleIdentifier]) compare:@([switcherOrder indexOfObject:obj2.bundleIdentifier])];
 	}];
 
 	appsWithoutWindows = [runningApplications mutableCopy];
@@ -446,10 +446,10 @@
 		//newCenter.y += initialCenter.y;
 		//draggedView.center = newCenter;
 
-        CGPoint center = draggedView.center;
-        center.x += point.x - lastPoint.x;
-        center.y += point.y - lastPoint.y;
-        draggedView.center = center;
+		CGPoint center = draggedView.center;
+		center.x += point.x - lastPoint.x;
+		center.y += point.y - lastPoint.y;
+		draggedView.center = center;
 	}
 	else
 	{
@@ -458,9 +458,9 @@
 		//CGPoint center = [gesture translationInView:draggedView];
 		//center.x += initialCenter.x;
 		//center.y += initialCenter.y;
-    CGPoint center = draggedView.center;
-    center.x += point.x - lastPoint.x;
-    center.y += point.y - lastPoint.y;
+		CGPoint center = draggedView.center;
+		center.x += point.x - lastPoint.x;
+		center.y += point.y - lastPoint.y;
 
 		BOOL didKill = NO;
 
@@ -670,16 +670,16 @@
 
 -(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
-    UIView *subview;
-    while ((subview = [objects nextObject]))
-    {
-        UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
-        if (success)
-            return success;
-    }
-    return self;
-    //return [super hitTest:point withEvent:event];
+	NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
+	UIView *subview;
+	while ((subview = [objects nextObject]))
+	{
+		UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
+		if (success)
+			return success;
+	}
+	return self;
+	//return [super hitTest:point withEvent:event];
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event

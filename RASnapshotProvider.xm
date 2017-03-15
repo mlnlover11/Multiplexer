@@ -270,9 +270,9 @@
 	UIGraphicsBeginImageContextWithOptions(UIScreen.mainScreen.bounds.size, YES, UIScreen.mainScreen.scale);
 	CGContextRef c = UIGraphicsGetCurrentContext();
 
-    [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAWallpaperSnapshot"];
+	[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAWallpaperSnapshot"];
 
-    [MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow").layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Wallpaper
+	[MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow").layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Wallpaper
 
 	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();

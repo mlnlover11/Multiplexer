@@ -13,7 +13,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 +(BOOL) isParagonInstalled
 {
 	static BOOL installed = NO;
-	static dispatch_once_t onceToken = 0;
+	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 	    installed = [NSFileManager.defaultManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/ParagonPlus.dylib"];
 	});
@@ -23,7 +23,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 +(BOOL) isActivatorInstalled
 {
 	static BOOL installed = NO;
-	static dispatch_once_t onceToken = 0;
+	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		if ([NSFileManager.defaultManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/libactivator.dylib"])
 		{
@@ -37,7 +37,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 +(BOOL) isLibStatusBarInstalled
 {
 	static BOOL installed = NO;
-	static dispatch_once_t onceToken = 0;
+	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		if ([NSFileManager.defaultManager fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/libstatusbar.dylib"])
 		{
@@ -143,7 +143,7 @@ NSCache *backgrounderSettingsCache = [NSCache new];
 	CFPreferencesAppSynchronize(appID);
 	CFRelease(appID);
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.respring"), nil, nil, YES);
+	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.respring"), nil, nil, YES);
 }
 
 -(BOOL) enabled

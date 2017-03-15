@@ -20,15 +20,15 @@ static RAActivatorListener *sharedInstance;
 			[[%c(SBMainSwitcherViewController) sharedInstance] RA_dismissSwitcherUnanimated];
 		}
 	}
-  [event setHandled:YES];
+	[event setHandled:YES];
 }
 @end
 
 %ctor
 {
-    IF_SPRINGBOARD
-    {
-        sharedInstance = [[RAActivatorListener alloc] init];
-        [[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];
-    }
+	IF_SPRINGBOARD
+	{
+		sharedInstance = [[RAActivatorListener alloc] init];
+		[[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];
+	}
 }

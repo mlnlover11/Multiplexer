@@ -174,9 +174,9 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 
 %new -(void) RA_setIsIconIndicatorInhibited:(BOOL)value showAgainImmediately:(BOOL)value2
 {
-		self.RA_isIconIndicatorInhibited = value;
-    if (value2 || value)
-	    [self RA_updateIndicatorViewWithExistingInfo];
+	self.RA_isIconIndicatorInhibited = value;
+	if (value2 || value)
+	   [self RA_updateIndicatorViewWithExistingInfo];
 }
 
 -(void) dealloc
@@ -195,10 +195,10 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 
 -(void) layoutSubviews
 {
-    %orig;
+	%orig;
 
-    //if ([self viewWithTag:9962] == nil)
-    // this is back in, again, to try to fix "Smartclose badges show randomly in the app switcher for random applications even though I only have one app smart closed"
+	//if ([self viewWithTag:9962] == nil)
+	// this is back in, again, to try to fix "Smartclose badges show randomly in the app switcher for random applications even though I only have one app smart closed"
 	//    [self RA_updateIndicatorView:GET_INFO];
 }
 
@@ -295,28 +295,28 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 	        	item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
 	    		lsbitems[self.bundleIdentifier] = item;
 	    	}
-    	}
+			}
 	}
 }
 
 - (void)setApplicationState:(unsigned int)arg1
 {
-    %orig;
+	%orig;
 
-    if (!self.isRunning)
-    {
-    	[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:RAIconIndicatorViewInfoNone];
-    	//SET_INFO_(self.bundleIdentifier, RAIconIndicatorViewInfoNone);
-    	[lsbitems removeObjectForKey:self.bundleIdentifier];
-    }
-    else
-    {
-    	if ([self respondsToSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)])
+	if (!self.isRunning)
+	{
+		[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:RAIconIndicatorViewInfoNone];
+		//SET_INFO_(self.bundleIdentifier, RAIconIndicatorViewInfoNone);
+		[lsbitems removeObjectForKey:self.bundleIdentifier];
+	}
+	else
+	{
+		if ([self respondsToSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)])
 	    	[self performSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)];
 
 		[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:[RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier]];
 		SET_INFO_(self.bundleIdentifier, [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier]);
-    }
+	}
 }
 
 %new +(void) RA_clearAllStatusBarIcons
@@ -341,10 +341,10 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 %hook SBIconViewMap
 - (id) _iconViewForIcon:(unsafe_id)arg1
 {
-    SBIconView *iconView = %orig;
+	SBIconView *iconView = %orig;
 
-    [iconView RA_updateIndicatorViewWithExistingInfo];
-    return iconView;
+	[iconView RA_updateIndicatorViewWithExistingInfo];
+	return iconView;
 }
 %end
 
@@ -365,7 +365,7 @@ inline NSString *getAppNameFromIndicatorName(NSString *indicatorName)
 -(id) contentsImage
 {
 	UIImage *img = [ALApplicationList.sharedApplicationList iconOfSize:15 forDisplayIdentifier:getAppNameFromIndicatorName(self.item.indicatorName)];
-    return [_UILegibilityImageSet imageFromImage:img withShadowImage:img];
+	return [_UILegibilityImageSet imageFromImage:img withShadowImage:img];
 }
 -(CGFloat) standardPadding { return 4; }
 %end

@@ -29,12 +29,12 @@ BOOL shouldLoadView = NO;
 %hook SBNotificationCenterViewController
 - (void)viewWillAppear:(BOOL)animated
 {
-   	%orig;
+	%orig;
 
-   	BOOL hideBecauseLS = [[%c(SBLockScreenManager) sharedInstance] isUILocked] ? [RASettings.sharedInstance ncAppHideOnLS] : NO;
+	BOOL hideBecauseLS = [[%c(SBLockScreenManager) sharedInstance] isUILocked] ? [RASettings.sharedInstance ncAppHideOnLS] : NO;
 
-   	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
-   	{
+	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
+	{
 		SBModeViewController* modeVC = MSHookIvar<id>(self, "_modeController");
 		if (!ncAppViewController)
 			ncAppViewController = [self _newBulletinObserverViewControllerOfClass:[RANCViewController class]];
@@ -61,12 +61,12 @@ BOOL shouldLoadView = NO;
 %hook SBNotificationCenterLayoutViewController
 - (void)viewWillAppear:(BOOL)animated
 {
-   	%orig;
+	%orig;
 
-   	BOOL hideBecauseLS = [[%c(SBLockScreenManager) sharedInstance] isUILocked] ? [RASettings.sharedInstance ncAppHideOnLS] : NO;
+	BOOL hideBecauseLS = [[%c(SBLockScreenManager) sharedInstance] isUILocked] ? [RASettings.sharedInstance ncAppHideOnLS] : NO;
 
-   	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
-   	{
+	if ([RASettings.sharedInstance NCAppEnabled] && !hideBecauseLS)
+	{
 		SBModeViewController* modeVC = MSHookIvar<id>(self, "_modeViewController");
 		if (!ncAppViewController)
 			ncAppViewController = [[RANCViewController alloc] init];

@@ -22,21 +22,21 @@
 
 	if ([app respondsToSelector:@selector(mainScene)])
 	{
-			[[UIApplication sharedApplication] launchApplicationWithIdentifier:app.bundleIdentifier suspended:YES];
+		[[UIApplication sharedApplication] launchApplicationWithIdentifier:app.bundleIdentifier suspended:YES];
 
-	    FBScene *scene = [app mainScene];
-	    FBWindowContextHostManager *contextHostManager = [scene contextHostManager];
+		FBScene *scene = [app mainScene];
+		FBWindowContextHostManager *contextHostManager = [scene contextHostManager];
 
-	    FBSMutableSceneSettings *settings = [[scene mutableSettings] mutableCopy];
-	    if (!settings)
-	        return nil;
+		FBSMutableSceneSettings *settings = [[scene mutableSettings] mutableCopy];
+		if (!settings)
+		    return nil;
 
-			SET_BACKGROUNDED(settings, NO);
-	    [scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
+		SET_BACKGROUNDED(settings, NO);
+		[scene _applyMutableSettings:settings withTransitionContext:nil completion:nil];
 
-	    [contextHostManager enableHostingForRequester:@"reachapp" orderFront:YES];
-	    UIView *hostView = [contextHostManager hostViewForRequester:@"reachapp" enableAndOrderFront:YES];
-			return hostView;
+		[contextHostManager enableHostingForRequester:@"reachapp" orderFront:YES];
+		UIView *hostView = [contextHostManager hostViewForRequester:@"reachapp" enableAndOrderFront:YES];
+		return hostView;
 	}
 
 	[RACompatibilitySystem showWarning:@"Unable to find valid method for accessing context host views"];
@@ -50,8 +50,8 @@
 
 	if ([app respondsToSelector:@selector(mainScene)])
 	{
-	    FBScene *scene = [app mainScene];
-	    return (NSObject*)[scene contextHostManager];
+	  FBScene *scene = [app mainScene];
+	  return (NSObject*)[scene contextHostManager];
 	}
 
 	[RACompatibilitySystem showWarning:@"Unable to find valid method for accessing context host view managers"];

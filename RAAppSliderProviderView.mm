@@ -41,19 +41,19 @@
 	currentView = [swipeProvider viewAtCurrentIndex];
 
 	if (self.isSwipeable && self.swipeProvider)
-    {
-    	self.backgroundColor = [UIColor clearColor]; // redColor];
-    	self.userInteractionEnabled = YES;
+	{
+		self.backgroundColor = [UIColor clearColor]; // redColor];
+		self.userInteractionEnabled = YES;
 
-		[RAGestureManager.sharedInstance addGestureRecognizerWithTarget:self forEdge:UIRectEdgeLeft | UIRectEdgeRight identifier:currentView.bundleIdentifier priority:RAGesturePriorityHigh];
-		//[RAGestureManager.sharedInstance addGestureRecognizerWithTarget:self forEdge:UIRectEdgeRight identifier:currentView.bundleIdentifier priority:RAGesturePriorityHigh];
+	[RAGestureManager.sharedInstance addGestureRecognizerWithTarget:self forEdge:UIRectEdgeLeft | UIRectEdgeRight identifier:currentView.bundleIdentifier priority:RAGesturePriorityHigh];
+	//[RAGestureManager.sharedInstance addGestureRecognizerWithTarget:self forEdge:UIRectEdgeRight identifier:currentView.bundleIdentifier priority:RAGesturePriorityHigh];
 
-    	currentView.frame = CGRectMake(0, 0, self.frame.size.width - 0, self.frame.size.height);
-    }
-    else
-    	currentView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-    [self addSubview:currentView];
-    [self load];
+		currentView.frame = CGRectMake(0, 0, self.frame.size.width - 0, self.frame.size.height);
+	}
+	else
+		currentView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+	[self addSubview:currentView];
+	[self load];
 }
 
 -(CGRect) clientFrame

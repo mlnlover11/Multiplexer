@@ -64,9 +64,9 @@ extern BOOL allowOpenApp;
 	view.hideStatusBar = YES;
 	[self addSubview:view];
 
-  panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-  panGesture.delegate = self;
-  [self addGestureRecognizer:panGesture];
+	panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+	panGesture.delegate = self;
+	[self addGestureRecognizer:panGesture];
 
 	scaleGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
 	scaleGesture.delegate = self;
@@ -104,79 +104,79 @@ extern BOOL allowOpenApp;
 
 	[doubleTapGesture requireGestureRecognizerToFail:tripleTapGesture];
 
-    self.userInteractionEnabled = YES;
-    enableDrag = YES;
-    enableLongPress = YES;
+	self.userInteractionEnabled = YES;
+	enableDrag = YES;
+	enableLongPress = YES;
 
-    titleLabel = [[RAInsetLabel alloc] initWithFrame:CGRectMake(0, 0, myFrame.size.width, height)];
-    titleLabel.textInset = UIEdgeInsetsMake(0, THEMED(windowedMultitaskingBarTitleTextInset) ?: 5, 0, THEMED(windowedMultitaskingBarTitleTextInset) ?: 5);
-    titleLabel.textAlignment = THEMED(windowedMultaskingBarTitleTextAlignment);
-    titleLabel.font = [UIFont systemFontOfSize:18];
-    titleLabel.textColor = THEMED(windowedMultitaskingBarTitleColor);
-    titleLabel.text = [view displayName];
-    [self addSubview:titleLabel];
+	titleLabel = [[RAInsetLabel alloc] initWithFrame:CGRectMake(0, 0, myFrame.size.width, height)];
+	titleLabel.textInset = UIEdgeInsetsMake(0, THEMED(windowedMultitaskingBarTitleTextInset) ?: 5, 0, THEMED(windowedMultitaskingBarTitleTextInset) ?: 5);
+	titleLabel.textAlignment = THEMED(windowedMultaskingBarTitleTextAlignment);
+	titleLabel.font = [UIFont systemFontOfSize:18];
+	titleLabel.textColor = THEMED(windowedMultitaskingBarTitleColor);
+	titleLabel.text = [view displayName];
+	[self addSubview:titleLabel];
 
-    CGFloat tmp = 16;
-    while (tmp + 16 < height)
-    	tmp += 16;
-    buttonSize = tmp;
-    spacing = (height - buttonSize) / 2.0;
+	CGFloat tmp = 16;
+	while (tmp + 16 < height)
+		tmp += 16;
+	buttonSize = tmp;
+	spacing = (height - buttonSize) / 2.0;
 
-    if (![RASettings.sharedInstance onlyShowWindowBarIconsOnOverlay])
-    {
-	    /*
-	        alignment:
-			0 = left
-			1 = right
-	    */
+	if (![RASettings.sharedInstance onlyShowWindowBarIconsOnOverlay])
+	{
+		/*
+		    alignment:
+		0 = left
+		1 = right
+		*/
 
-	    // This is terribly inefficient.... plz send help
+		// This is terribly inefficient.... plz send help
 
-	    static id closeItemIdentifier = [[NSObject alloc] init],
-	    	maxItemIdentifier = [[NSObject alloc] init],
-	    	minItemIdentifier = [[NSObject alloc] init],
-	    	rotationItemIdentifier = [[NSObject alloc] init];
+		static id closeItemIdentifier = [[NSObject alloc] init],
+		maxItemIdentifier = [[NSObject alloc] init],
+		minItemIdentifier = [[NSObject alloc] init],
+		rotationItemIdentifier = [[NSObject alloc] init];
 
-	    NSMutableArray *infos = [NSMutableArray array];
+		NSMutableArray *infos = [NSMutableArray array];
 
-	    NSInteger closeAlignment = THEMED(windowedMultitaskingCloseButtonAlignment);
-	    NSInteger maxAlignment = THEMED(windowedMultitaskingMaxButtonAlignment);
-	    NSInteger minAlignment = THEMED(windowedMultitaskingMinButtonAlignment);
-	    NSInteger rotationAlignment = THEMED(windowedMultitaskingRotationAlignment);
+		NSInteger closeAlignment = THEMED(windowedMultitaskingCloseButtonAlignment);
+		NSInteger maxAlignment = THEMED(windowedMultitaskingMaxButtonAlignment);
+		NSInteger minAlignment = THEMED(windowedMultitaskingMinButtonAlignment);
+		NSInteger rotationAlignment = THEMED(windowedMultitaskingRotationAlignment);
 
-	    NSInteger closePriority = THEMED(windowedMultitaskingCloseButtonPriority);
-	    NSInteger maxPriority = THEMED(windowedMultitaskingMaxButtonPriority);
-	    NSInteger minPriority = THEMED(windowedMultitaskingMinButtonPriority);
-	    NSInteger rotationPriority = THEMED(windowedMultitaskingRotationPriority);
+		NSInteger closePriority = THEMED(windowedMultitaskingCloseButtonPriority);
+		NSInteger maxPriority = THEMED(windowedMultitaskingMaxButtonPriority);
+		NSInteger minPriority = THEMED(windowedMultitaskingMinButtonPriority);
+		NSInteger rotationPriority = THEMED(windowedMultitaskingRotationPriority);
 
-	    RAWindowBarIconInfo *tmpItem = [[RAWindowBarIconInfo alloc] init];
-	    tmpItem.alignment = closeAlignment;
-	    tmpItem.priority = closePriority;
-	    tmpItem.item = closeItemIdentifier;
-	    [infos addObject:tmpItem];
+		RAWindowBarIconInfo *tmpItem = [[RAWindowBarIconInfo alloc] init];
+		tmpItem.alignment = closeAlignment;
+		tmpItem.priority = closePriority;
+		tmpItem.item = closeItemIdentifier;
+		[infos addObject:tmpItem];
 
-			tmpItem = [[RAWindowBarIconInfo alloc] init];
-	    tmpItem.alignment = maxAlignment;
-	    tmpItem.priority = maxPriority;
-	    tmpItem.item = maxItemIdentifier;
-	    [infos addObject:tmpItem];
+		tmpItem = [[RAWindowBarIconInfo alloc] init];
+		tmpItem.alignment = maxAlignment;
+		tmpItem.priority = maxPriority;
+		tmpItem.item = maxItemIdentifier;
+		[infos addObject:tmpItem];
 
-	    tmpItem = [[RAWindowBarIconInfo alloc] init];
-	    tmpItem.alignment = minAlignment;
-	    tmpItem.priority = minPriority;
-	    tmpItem.item = minItemIdentifier;
-	    [infos addObject:tmpItem];
+		tmpItem = [[RAWindowBarIconInfo alloc] init];
+		tmpItem.alignment = minAlignment;
+		tmpItem.priority = minPriority;
+		tmpItem.item = minItemIdentifier;
+		[infos addObject:tmpItem];
 
-	    tmpItem = [[RAWindowBarIconInfo alloc] init];
-	    tmpItem.alignment = rotationAlignment;
-	    tmpItem.priority = rotationPriority;
-	    tmpItem.item = rotationItemIdentifier;
-	    [infos addObject:tmpItem];
+		tmpItem = [[RAWindowBarIconInfo alloc] init];
+		tmpItem.alignment = rotationAlignment;
+		tmpItem.priority = rotationPriority;
+		tmpItem.item = rotationItemIdentifier;
+		[infos addObject:tmpItem];
 
-	    NSMutableArray *leftIconOrder = [NSMutableArray array];
-	    NSMutableArray *rightIconOrder = [NSMutableArray array];
+		NSMutableArray *leftIconOrder = [NSMutableArray array];
+		NSMutableArray *rightIconOrder = [NSMutableArray array];
 
-	    for (int i = 0; i < infos.count; i++)
+		for (int i = 0; i < infos.count; i++)
 		{
 			RAWindowBarIconInfo *info = infos[i];
 			if (info.alignment == 0)
@@ -305,12 +305,12 @@ extern BOOL allowOpenApp;
 
 -(void) drawRect:(CGRect)rect
 {
-    CGRect topRect = CGRectMake(0, 0, rect.size.width, height);
-    // Fill the rectangle with grey
-    [barBackgroundColor setFill];
-    UIRectFill(topRect);
+	CGRect topRect = CGRectMake(0, 0, rect.size.width, height);
+	// Fill the rectangle with grey
+	[barBackgroundColor setFill];
+	UIRectFill(topRect);
 
-    [super drawRect:rect];
+	[super drawRect:rect];
 }
 
 -(void) close
@@ -425,30 +425,30 @@ extern BOOL allowOpenApp;
 	if (rads != 0)
 		self.transform = CGAffineTransformRotate(self.transform, rads);
 
-    if (update)
+	if (update)
 	{
-    	CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
-    	CGFloat rotateSnapDegrees = 0;
+		CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
+		CGFloat rotateSnapDegrees = 0;
 
-    	if (currentRotation < 0)
-    		currentRotation = 360 + currentRotation;
+		if (currentRotation < 0)
+			currentRotation = 360 + currentRotation;
 
-    	if (currentRotation >= 315 || currentRotation <= 45)
-    		rotateSnapDegrees = 360 - currentRotation;
-    	else if (currentRotation > 45 && currentRotation <= 135)
-    		rotateSnapDegrees = 90 - currentRotation;
-    	else if (currentRotation > 135 && currentRotation <= 215)
-    		rotateSnapDegrees = 180 - currentRotation;
-    	else
-    		rotateSnapDegrees = 270 - currentRotation;
+		if (currentRotation >= 315 || currentRotation <= 45)
+			rotateSnapDegrees = 360 - currentRotation;
+		else if (currentRotation > 45 && currentRotation <= 135)
+			rotateSnapDegrees = 90 - currentRotation;
+		else if (currentRotation > 135 && currentRotation <= 215)
+			rotateSnapDegrees = 180 - currentRotation;
+		else
+			rotateSnapDegrees = 270 - currentRotation;
 
-    	if ([RASettings.sharedInstance snapRotation])
-	    	[UIView animateWithDuration:0.2 animations:^{
-		    	self.transform = CGAffineTransformRotate(self.transform, DEGREES_TO_RADIANS(rotateSnapDegrees));
-		    }];
+		if ([RASettings.sharedInstance snapRotation])
+	  	[UIView animateWithDuration:0.2 animations:^{
+	    	self.transform = CGAffineTransformRotate(self.transform, DEGREES_TO_RADIANS(rotateSnapDegrees));
+	    }];
 
 		if (!appRotationLocked)
-	    	[attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
+	   	[attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
 
 		if ([RASettings.sharedInstance snapWindows] && [RAWindowSnapDataProvider shouldSnapWindow:self])
 		{
@@ -457,15 +457,15 @@ extern BOOL allowOpenApp;
 		}
 
 		[self saveWindowInfo];
-    }
+	}
 }
 
 -(void) updateClientRotation
 {
 	if (!appRotationLocked)
 	{
-    	CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
-    	[self updateClientRotation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
+		CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
+		[self updateClientRotation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
 	}
 }
 
@@ -473,8 +473,8 @@ extern BOOL allowOpenApp;
 {
 	if (!appRotationLocked)
 	{
-    	CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
-	    [attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
+		CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
+		[attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
 	}
 }
 
@@ -500,16 +500,16 @@ extern BOOL allowOpenApp;
 	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing)
 		return;
 
-    if (gesture.state == UIGestureRecognizerStateChanged)
-    {
-    	[self addRotation:gesture.rotation updateApp:NO];
-        //[self setTransform:CGAffineTransformRotate(self.transform, gesture.rotation)];
-        gesture.rotation = 0.0;
-    }
-    else if (gesture.state == UIGestureRecognizerStateEnded)
+	if (gesture.state == UIGestureRecognizerStateChanged)
 	{
-    	[self addRotation:0 updateApp:YES];
-    }
+		[self addRotation:gesture.rotation updateApp:NO];
+		//[self setTransform:CGAffineTransformRotate(self.transform, gesture.rotation)];
+		gesture.rotation = 0.0;
+	}
+	else if (gesture.state == UIGestureRecognizerStateEnded)
+	{
+		[self addRotation:0 updateApp:YES];
+	}
 }
 
 -(void) handleLongPress:(UILongPressGestureRecognizer*)sender
@@ -613,13 +613,13 @@ extern BOOL allowOpenApp;
 	}
 
 	isSnapped = NO;
-    UIView *view = sender.view;
-    CGPoint point = [sender translationInView:view.superview];
+	UIView *view = sender.view;
+	CGPoint point = [sender translationInView:view.superview];
 
-    CGPoint translatedPoint = CGPointMake(initialPoint.x + point.x, initialPoint.y + point.y);
-    view.center = translatedPoint;
+	CGPoint translatedPoint = CGPointMake(initialPoint.x + point.x, initialPoint.y + point.y);
+	view.center = translatedPoint;
 
-    [self updatePotentialSnapShadow];
+	[self updatePotentialSnapShadow];
 }
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)gesture
@@ -627,18 +627,18 @@ extern BOOL allowOpenApp;
 	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing)
 		return;
 
-    switch (gesture.state) {
-        case UIGestureRecognizerStateBegan:
-        	enableDrag = NO; enableLongPress = NO;
-            break;
-        case UIGestureRecognizerStateChanged:
-            [self setTransform:CGAffineTransformScale(self.transform, gesture.scale, gesture.scale)];
-            //self.bounds = (CGRect){ self.bounds.origin, {self.bounds.size.width * gesture.scale, self.bounds.size.height * gesture.scale} };
+	switch (gesture.state) {
+	  case UIGestureRecognizerStateBegan:
+	  	enableDrag = NO; enableLongPress = NO;
+	    break;
+	  case UIGestureRecognizerStateChanged:
+	    [self setTransform:CGAffineTransformScale(self.transform, gesture.scale, gesture.scale)];
+	    //self.bounds = (CGRect){ self.bounds.origin, {self.bounds.size.width * gesture.scale, self.bounds.size.height * gesture.scale} };
 
-            gesture.scale = 1.0;
-            break;
-        case UIGestureRecognizerStateEnded:
-        	enableDrag = YES; enableLongPress = YES;
+	    gesture.scale = 1.0;
+	    break;
+	  case UIGestureRecognizerStateEnded:
+			enableDrag = YES; enableLongPress = YES;
 
 			if ([RAWindowSnapDataProvider shouldSnapWindow:self])
 			{
@@ -650,11 +650,10 @@ extern BOOL allowOpenApp;
 				return;
 			}
 			[self saveWindowInfo];
-
-            break;
-        default:
-            break;
-    }
+	     break;
+	  default:
+	    break;
+	}
 }
 
 -(void) setTransform:(CGAffineTransform)trans
@@ -707,10 +706,10 @@ extern BOOL allowOpenApp;
 		snapShadowView.layer.shadowRadius = 20;
 		snapShadowView.layer.shadowOpacity = 0.8;
 		snapShadowView.layer.shadowOffset = CGSizeMake(0, 0);
-  		snapShadowView.layer.borderWidth = 1.5f;
-  		snapShadowView.layer.cornerRadius = 6;
-  		snapShadowView.clipsToBounds = YES;
-  		snapShadowView.layer.masksToBounds = YES;
+		snapShadowView.layer.borderWidth = 1.5f;
+		snapShadowView.layer.cornerRadius = 6;
+		snapShadowView.clipsToBounds = YES;
+		snapShadowView.layer.masksToBounds = YES;
 
 		[self.superview insertSubview:snapShadowView belowSubview:self];
 	}
@@ -746,26 +745,26 @@ extern BOOL allowOpenApp;
 
 -(void) resignForemostApp
 {
-    titleLabel.font = [UIFont systemFontOfSize:18];
+	titleLabel.font = [UIFont systemFontOfSize:18];
 }
 
 -(void) becomeForemostApp
 {
-    titleLabel.font = [UIFont boldSystemFontOfSize:20];
+	titleLabel.font = [UIFont boldSystemFontOfSize:20];
 	[self.superview bringSubviewToFront:self];
 }
 
 -(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
-    UIView *subview;
-    while ((subview = [objects nextObject]))
-    {
-        UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
-        if (success)
-            return success;
-    }
-    return [super hitTest:point withEvent:event];
+	NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
+	UIView *subview;
+	while ((subview = [objects nextObject]))
+	{
+		UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
+		if (success)
+		  return success;
+	}
+	return [super hitTest:point withEvent:event];
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event

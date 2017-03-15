@@ -123,7 +123,7 @@ CGRect swappedForOrientation2(CGRect in)
 	[[%c(RAGestureManager) sharedInstance] ignoreSwipesBeginningInRect:UIScreen.mainScreen.bounds forIdentifier:@"com.efrederickson.reachapp.windowedmultitasking.systemgesture"];
 	[[%c(RARunningAppsProvider) sharedInstance] addTarget:window];
 	[%c(RAOrientationLocker) lockOrientation];
-  [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAMissionControlManager"];
+	[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAMissionControlManager"];
 	self.inhibitDismissalGesture = NO;
 	[%c(RAControlCenterInhibitor) setInhibited:YES];
 
@@ -224,7 +224,7 @@ CGRect swappedForOrientation2(CGRect in)
 	[[%c(RAGestureManager) sharedInstance] removeGestureWithIdentifier:@"com.efrederickson.reachapp.missioncontrol.dismissgesture"];
 	[[%c(RAGestureManager) sharedInstance] stopIgnoringSwipesForIdentifier:@"com.efrederickson.reachapp.windowedmultitasking.systemgesture"];
 	[%c(RAOrientationLocker) unlockOrientation];
-    [%c(RAControlCenterInhibitor) setInhibited:NO];
+	[%c(RAControlCenterInhibitor) setInhibited:NO];
 
 	//if (lastOpenedApp && lastOpenedApp.isRunning && UIApplication.sharedApplication._accessibilityFrontMostApplication != lastOpenedApp)
 	//{
@@ -359,9 +359,9 @@ CGRect swappedForOrientation2(CGRect in)
 %hook SBLockStateAggregator
 -(void) _updateLockState
 {
-    %orig;
+	%orig;
 
-    if ([self hasAnyLockState])
+	if ([self hasAnyLockState])
 		if (RAMissionControlManager.sharedInstance.isShowingMissionControl)
 			[RAMissionControlManager.sharedInstance hideMissionControl:NO];
 }

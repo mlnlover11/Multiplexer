@@ -18,10 +18,10 @@ static RAActivatorToggleEditModeListener *sharedInstance;
     {
     	if ([view isKindOfClass:[RAWindowBar class]])
     	{
-	    	if (view.isOverlayShowing)
-	    		[view hideOverlay];
-	    	else
-	    		[view showOverlay];
+        if (view.isOverlayShowing)
+        	[view hideOverlay];
+        else
+        	[view showOverlay];
     	}
     }
 }
@@ -29,9 +29,9 @@ static RAActivatorToggleEditModeListener *sharedInstance;
 
 %ctor
 {
-    IF_SPRINGBOARD
-    {
-        sharedInstance = [[RAActivatorToggleEditModeListener alloc] init];
-        [[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.windowedmultitasking.toggleEditMode"];
-    }
+  IF_SPRINGBOARD
+  {
+    sharedInstance = [[RAActivatorToggleEditModeListener alloc] init];
+    [[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.windowedmultitasking.toggleEditMode"];
+  }
 }

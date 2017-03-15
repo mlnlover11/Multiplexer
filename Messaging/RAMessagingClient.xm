@@ -61,18 +61,18 @@ extern BOOL allowClosingReachabilityNatively;
 
 	serverCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
-  void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-  if (handle)
-  {
-      void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-      rocketbootstrap_distributedmessagingcenter_apply(serverCenter);
-      dlclose(handle);
-  }
+	void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
+	if (handle)
+	{
+		void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
+		rocketbootstrap_distributedmessagingcenter_apply(serverCenter);
+		dlclose(handle);
+	}
 }
 
 -(void) alertUser:(NSString*)description
 {
-		LogError(@"%@", description);
+	LogError(@"%@", description);
 }
 
 -(void) _requestUpdateFromServerWithTries:(int)tries
@@ -131,9 +131,9 @@ extern BOOL allowClosingReachabilityNatively;
 	_currentData = data;
 
 	if (didStatusBarVisibilityChange && !data.shouldForceStatusBar)
-   		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:YES];
-   	else if (data.shouldForceStatusBar)
-   		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:NO];
+		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:YES];
+	else if (data.shouldForceStatusBar)
+		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:NO];
 
 	if (didSizingChange && !data.shouldForceSize)
 	   	[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:YES];
@@ -200,20 +200,12 @@ extern BOOL allowClosingReachabilityNatively;
 -(BOOL) isBeingHosted { return _currentData.isBeingHosted; }
 @end
 
-void reloadClientData(CFNotificationCenterRef center,
-                    void *observer,
-                    CFStringRef name,
-                    const void *object,
-                    CFDictionaryRef userInfo)
+void reloadClientData(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
 	[[RAMessagingClient sharedInstance] requestUpdateFromServer];
 }
 
-void updateFrontmostApp(CFNotificationCenterRef center,
-                    void *observer,
-                    CFStringRef name,
-                    const void *object,
-                    CFDictionaryRef userInfo)
+void updateFrontmostApp(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
 	RAMessagingClient.sharedInstance.knownFrontmostApp = ((__bridge NSDictionary*)userInfo)[@"bundleIdentifier"];
 }
@@ -226,7 +218,7 @@ void updateFrontmostApp(CFNotificationCenterRef center,
 	else
 	{
 		[RAMessagingClient sharedInstance];
-    	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reloadClientData, (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",NSBundle.mainBundle.bundleIdentifier], NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-    	CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), NULL, &updateFrontmostApp, CFSTR("com.efrederickson.reachapp.frontmostAppDidUpdate"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reloadClientData, (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",NSBundle.mainBundle.bundleIdentifier], NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), NULL, &updateFrontmostApp, CFSTR("com.efrederickson.reachapp.frontmostAppDidUpdate"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 	}
 }

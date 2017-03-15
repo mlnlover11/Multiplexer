@@ -53,7 +53,7 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 		{
 			// Try nicely
 			FBApplicationProcess *process = [[%c(FBProcessManager) sharedInstance] createApplicationProcessForBundleID:app.bundleIdentifier];
-    		[process killForReason:1 andReport:NO withDescription:@"PSY SLAYED" completion:nil];
+			[process killForReason:1 andReport:NO withDescription:@"PSY SLAYED" completion:nil];
 		}
 		/*else if (tries == 1)
 		{
