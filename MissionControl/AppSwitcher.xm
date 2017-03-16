@@ -466,8 +466,6 @@ BOOL toggleOrActivate = NO;
 		UIImage *snapshot = [[%c(RASnapshotProvider) sharedInstance] storedSnapshotOfMissionControl];
 
 		if (snapshot) {
-			LogDebug(@"snapshot exists, using");
-			
 			fakeView = [[UIImageView alloc] initWithFrame:view.frame];
 			((UIImageView*)fakeView).image = snapshot;
 			[view addSubview:fakeView];
@@ -568,7 +566,6 @@ BOOL toggleOrActivate = NO;
 				} else {
 					[[%c(SBMainSwitcherViewController) sharedInstance] RA_dismissSwitcherUnanimated];
 				}
-				[[%c(SBUIController) sharedInstance] restoreContentUpdatingStatusBar:YES];
 				[RAMissionControlManager.sharedInstance showMissionControl:NO];
 				[fakeView removeFromSuperview];
 				fakeView = nil;

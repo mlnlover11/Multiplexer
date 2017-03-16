@@ -115,24 +115,15 @@
 
 -(void) storeSnapshotOfMissionControl:(UIWindow*)window
 {
-	LogDebug(@"storing snapshot");
-	//Running on background thread results in black screen
-	//dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-		UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0);
-		//CGContextRef c = UIGraphicsGetCurrentContext();
-		//CGContextSetAllowsAntialiasing(c, YES);
-		//[window.layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES];
+	UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0);
 
-		ON_MAIN_THREAD(^{
-			[window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
-		});
+	[window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
 
-		UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-		UIGraphicsEndImageContext();
+	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
 
-		if (image)
-			[imageCache setObject:image forKey:@"missioncontrol"];
-	//});
+	if (image)
+		[imageCache setObject:image forKey:@"missioncontrol"];
 }
 
 -(NSString*) createKeyForDesktop:(RADesktopWindow*)desktop

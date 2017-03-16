@@ -123,15 +123,16 @@ CGRect swappedForOrientation2(CGRect in)
 	[[%c(RAGestureManager) sharedInstance] ignoreSwipesBeginningInRect:UIScreen.mainScreen.bounds forIdentifier:@"com.efrederickson.reachapp.windowedmultitasking.systemgesture"];
 	[[%c(RARunningAppsProvider) sharedInstance] addTarget:window];
 	[%c(RAOrientationLocker) lockOrientation];
-	[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAMissionControlManager"];
+	if (IS_IOS_OR_OLDER(iOS_10_0)) { //Not required on 10.x, not sure about other versions
+		[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAMissionControlManager"];
+	}
 	self.inhibitDismissalGesture = NO;
 	[%c(RAControlCenterInhibitor) setInhibited:YES];
 
 	if ([[%c(SBControlCenterController) sharedInstance] isVisible])
 		[[%c(SBControlCenterController) sharedInstance] dismissAnimated:YES];
 
-	LogDebug(@"storeSnapshotOfMissionControl");
-	[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
+	didStoreSnapshot = NO;
 }
 
 -(void) createWindow
@@ -140,8 +141,8 @@ CGRect swappedForOrientation2(CGRect in)
 	{
 		if (originalAppView)
 			originalAppView.frame = originalAppFrame;
-			window.hidden = YES;
-			window = nil;
+		window.hidden = YES;
+		window = nil;
 	}
 
 	window = [[RAMissionControlWindow alloc] initWithFrame:UIScreen.mainScreen.RA_interfaceOrientedBounds];
@@ -190,8 +191,8 @@ CGRect swappedForOrientation2(CGRect in)
 
 -(void) hideMissionControl:(BOOL)animated
 {
-	//if (!didStoreSnapshot)
-		//[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
+	if (!didStoreSnapshot)
+		[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
 	[[%c(RARunningAppsProvider) sharedInstance] removeTarget:window];
 
 	void (^destructor)() = ^{
@@ -200,7 +201,9 @@ CGRect swappedForOrientation2(CGRect in)
 		window = nil;
 
 		// This goes here to prevent the wallpaper from appearing black when dismissing
-	    [[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"RAMissionControlManager"];
+		if (IS_IOS_OR_OLDER(iOS_10_0)) {
+			[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"RAMissionControlManager"];
+		}
 	};
 
 	if (animated)
@@ -315,7 +318,7 @@ CGRect swappedForOrientation2(CGRect in)
 	else if (state == UIGestureRecognizerStateBegan)
 	{
 		//[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
-		//didStoreSnapshot = YES;
+		didStoreSnapshot = YES;
 		hasMoved = YES;
 		[%c(RAControlCenterInhibitor) setInhibited:YES];
 		initialCenter = window.center;
