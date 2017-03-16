@@ -9,12 +9,12 @@
 static RAActivatorBackgrounderToggleModeListener *sharedInstance$RAActivatorBackgrounderToggleModeListener;
 
 @implementation RAActivatorBackgrounderToggleModeListener
-- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
-{
+- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event {
   SBApplication *app = [UIApplication sharedApplication]._accessibilityFrontMostApplication;
 
-  if (!app)
+  if (!app) {
     return;
+  }
 
   BOOL dismissApp = [[%c(RASettings) sharedInstance] exitAppAfterUsingActivatorAction];
 
@@ -43,11 +43,10 @@ static RAActivatorBackgrounderToggleModeListener *sharedInstance$RAActivatorBack
 }
 @end
 
-%ctor
-{
-  IF_SPRINGBOARD
-  {
-    sharedInstance$RAActivatorBackgrounderToggleModeListener = [[RAActivatorBackgrounderToggleModeListener alloc] init];
-    [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorBackgrounderToggleModeListener forName:@"com.efrederickson.reachapp.backgrounder.togglemode"];
+%ctor {
+  IF_NOT_SPRINGBOARD {
+    return;
   }
+  sharedInstance$RAActivatorBackgrounderToggleModeListener = [[RAActivatorBackgrounderToggleModeListener alloc] init];
+  [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorBackgrounderToggleModeListener forName:@"com.efrederickson.reachapp.backgrounder.togglemode"];
 }

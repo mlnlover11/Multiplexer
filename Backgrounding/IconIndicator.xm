@@ -12,51 +12,53 @@ NSMutableDictionary *indicatorStateDict = [[[NSMutableDictionary alloc] init] re
 #define GET_INFO           (self.icon && self.icon.application ? GET_INFO_(self.icon.application.bundleIdentifier) : RAIconIndicatorViewInfoNone)
 
 
-NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
-{
+NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info) {
 	NSString *ret = @"";
 
-	if (info & RAIconIndicatorViewInfoNone)
+	if (info & RAIconIndicatorViewInfoNone) {
 		return nil;
+	}
 
-	if ([[%c(RASettings) sharedInstance] showNativeStateIconIndicators] && (info & RAIconIndicatorViewInfoNative))
+	if ([[%c(RASettings) sharedInstance] showNativeStateIconIndicators] && (info & RAIconIndicatorViewInfoNative)) {
 		ret = [ret stringByAppendingString:@"N"];
+	}
 
-	if (info & RAIconIndicatorViewInfoForced)
+	if (info & RAIconIndicatorViewInfoForced) {
 		ret = [ret stringByAppendingString:@"F"];
+	}
 
 	//if (info & RAIconIndicatorViewInfoForceDeath)
 	//	[ret appendString:@"D"];
 
-	if (info & RAIconIndicatorViewInfoSuspendImmediately)
+	if (info & RAIconIndicatorViewInfoSuspendImmediately) {
 		ret = [ret stringByAppendingString:@"ll"];
+	}
 
-	if (info & RAIconIndicatorViewInfoUnkillable)
+	if (info & RAIconIndicatorViewInfoUnkillable) {
 		ret = [ret stringByAppendingString:@"U"];
+	}
 
-	if (info & RAIconIndicatorViewInfoUnlimitedBackgroundTime)
+	if (info & RAIconIndicatorViewInfoUnlimitedBackgroundTime) {
 		ret = [ret stringByAppendingString:@"∞"];
+	}
 
 	return ret;
 }
 
 %hook SBIconView
 %property (nonatomic, assign) BOOL RA_isIconIndicatorInhibited;
-%new -(void) RA_updateIndicatorView:(RAIconIndicatorViewInfo)info
-{
+%new - (void)RA_updateIndicatorView:(RAIconIndicatorViewInfo)info {
 	@autoreleasepool {
-		if (info == RAIconIndicatorViewInfoTemporarilyInhibit || info == RAIconIndicatorViewInfoInhibit)
-		{
+		if (info == RAIconIndicatorViewInfoTemporarilyInhibit || info == RAIconIndicatorViewInfoInhibit) {
 			[[self viewWithTag:9962] removeFromSuperview];
 			[self RA_setIsIconIndicatorInhibited:YES];
-			if (info == RAIconIndicatorViewInfoTemporarilyInhibit)
+			if (info == RAIconIndicatorViewInfoTemporarilyInhibit) {
 				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 					[self RA_setIsIconIndicatorInhibited:NO showAgainImmediately:NO];
 				});
+			}
 			return;
-		}
-		else if (info == RAIconIndicatorViewInfoUninhibit)
-		{
+		} else if (info == RAIconIndicatorViewInfoUninhibit) {
 			[self RA_setIsIconIndicatorInhibited:NO showAgainImmediately:NO];
 		}
 
@@ -73,8 +75,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 		}
 
 		UILabel *badge = (UILabel*)[self viewWithTag:9962];
-		if (!badge)
-		{
+		if (!badge) {
 			badge = [[[UILabel alloc] init] retain];
 			badge.tag = 9962;
 
@@ -86,47 +87,34 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 			badge.backgroundColor = GET_COLORBADGES_COLOR(self.icon, THEMED(backgroundingIndicatorBackgroundColor));
 
 			//badge.textColor = GET_ACCEPTABLE_TEXT_COLOR(badge.backgroundColor, THEMED(backgroundingIndicatorTextColor));
-			if (HAS_COLORBADGES && [%c(ColorBadges) isEnabled])
-			{
+			if (HAS_COLORBADGES && [%c(ColorBadges) isEnabled]) {
 				int bgColor = RGBFromUIColor(badge.backgroundColor);
 				int txtColor = RGBFromUIColor(THEMED(backgroundingIndicatorTextColor));
 
-				if ([%c(ColorBadges) isDarkColor:bgColor])
-				{
+				if ([%c(ColorBadges) isDarkColor:bgColor]) {
 					// dark color
-					if ([%c(ColorBadges) isDarkColor:txtColor])
-					{
+					if ([%c(ColorBadges) isDarkColor:txtColor]) {
 						// dark + dark
 						badge.textColor = [UIColor whiteColor];
-					}
-					else
-					{
+					} else {
 						// dark + light
 						badge.textColor = THEMED(backgroundingIndicatorTextColor);
 					}
-				}
-				else
-				{
+				} else {
 					// light color
-					if ([%c(ColorBadges) isDarkColor:txtColor])
-					{
+					if ([%c(ColorBadges) isDarkColor:txtColor]) {
 						// light + dark
 						badge.textColor = THEMED(backgroundingIndicatorTextColor);
-					}
-					else
-					{
+					} else {
 						//light + light
 						badge.textColor = [UIColor blackColor];
 					}
 				}
-			}
-			else
-			{
+			} else {
 				badge.textColor = THEMED(backgroundingIndicatorTextColor);
 			}
 			UIImage *bgImage = [%c(SBIconBadgeView) _checkoutBackgroundImage];
-			if (%c(ANEMSettingsManager) && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"])
-			{
+			if (%c(ANEMSettingsManager) && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"]) {
 				badge.backgroundColor = [UIColor colorWithPatternImage:bgImage];
 			}
 
@@ -138,11 +126,9 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 			badge.layer.cornerRadius = MAX(badge.frame.size.width, badge.frame.size.height) / 2.0;
 		}
 
-		if (%c(ANEMSettingsManager) && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"])
-		{
+		if (%c(ANEMSettingsManager) && [[[%c(ANEMSettingsManager) sharedManager] themeSettings] containsObject:@"ModernBadges"]) {
 			UIImageView *textImageView = (UIImageView*)[badge viewWithTag:42];
-			if (!textImageView)
-			{
+			if (!textImageView) {
 				CGFloat padding = [%c(SBIconBadgeView) _textPadding];
 
 				textImageView = [[UIImageView alloc] initWithFrame:CGRectMake(padding, padding, badge.frame.size.width - (padding * 2.0), badge.frame.size.height - (padding * 2.0))];
@@ -153,39 +139,34 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 
 			UIImage *textImage = [%c(SBIconBadgeView) _checkoutImageForText:text highlighted:NO];
 			textImageView.image = textImage;
-		}
-		else
+		} else {
 			[badge performSelectorOnMainThread:@selector(setText:) withObject:text waitUntilDone:YES];
+		}
 
 		SET_INFO(info);
 	}
 }
 
-%new -(void) RA_updateIndicatorViewWithExistingInfo
-{
+%new - (void)RA_updateIndicatorViewWithExistingInfo {
 	//if ([self viewWithTag:9962])
 	[self RA_updateIndicatorView:GET_INFO];
 }
 
-%new -(void) RA_setIsIconIndicatorInhibited:(BOOL)value
-{
+%new - (void)RA_setIsIconIndicatorInhibited:(BOOL)value {
 	[self RA_setIsIconIndicatorInhibited:value showAgainImmediately:YES];
 }
 
-%new -(void) RA_setIsIconIndicatorInhibited:(BOOL)value showAgainImmediately:(BOOL)value2
-{
+%new -(void) RA_setIsIconIndicatorInhibited:(BOOL)value showAgainImmediately:(BOOL)value2 {
 	self.RA_isIconIndicatorInhibited = value;
-	if (value2 || value)
-	   [self RA_updateIndicatorViewWithExistingInfo];
+	if (value2 || value) {
+		[self RA_updateIndicatorViewWithExistingInfo];
+	}
 }
 
--(void) dealloc
-{
-	if (self)
-	{
+- (void)dealloc {
+	if (self) {
 		UIView *view = [self viewWithTag:9962];
-		if (view)
-		{
+		if (view) {
 			[view removeFromSuperview];
 		}
 	}
@@ -193,8 +174,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 	%orig;
 }
 
--(void) layoutSubviews
-{
+- (void)layoutSubviews {
 	%orig;
 
 	//if ([self viewWithTag:9962] == nil)
@@ -202,17 +182,13 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 	//    [self RA_updateIndicatorView:GET_INFO];
 }
 
-- (void)setIsEditing:(_Bool)arg1 animated:(_Bool)arg2
-{
+- (void)setIsEditing:(_Bool)arg1 animated:(_Bool)arg2 {
 	%orig;
 
-	if (arg1)
-	{
+	if (arg1) {
 		// inhibit icon indicator
 		[self RA_setIsIconIndicatorInhibited:YES];
-	}
-	else
-	{
+	} else {
 		[self RA_setIsIconIndicatorInhibited:NO];
 	}
 }
@@ -268,11 +244,9 @@ Tue Sep  8 12:44:19 2015: SpringBoard (com.apple.springboard): *** Terminating a
 FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 
 */
-%new -(void) RA_addStatusBarIconForSelfIfOneDoesNotExist
-{
+%new - (void)RA_addStatusBarIconForSelfIfOneDoesNotExist {
 #if DEBUG
-	if (![lsbitems respondsToSelector:@selector(objectForKey:)])
-	{
+	if (![lsbitems respondsToSelector:@selector(objectForKey:)]) {
 		LogError(@"ERROR: lsbitems is not NSDictionary it is %s", class_getName(lsbitems.class));
 		//@throw [NSException exceptionWithName:@"OH POOP" reason:@"Expected NSDictionary" userInfo:nil];
 	}
@@ -281,17 +255,15 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 	BOOL homescreenMapCheck = [%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)] && [[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier];
 	BOOL homescreenIconViewMapCheck = [[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] containsObject:self.bundleIdentifier];
 
-	if (%c(LSStatusBarItem) && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier])
-	{
-		if (homescreenMapCheck || homescreenIconViewMapCheck)
-		{
+	if (%c(LSStatusBarItem) && ![lsbitems objectForKey:self.bundleIdentifier] && [RABackgrounder.sharedInstance shouldShowStatusBarIconForIdentifier:self.bundleIdentifier]) {
+		if (homescreenMapCheck || homescreenIconViewMapCheck) {
 			RAIconIndicatorViewInfo info = [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier];
 			BOOL native = (info & RAIconIndicatorViewInfoNative);
-			if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons]))
-			{
+			if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons])) {
 				LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-				if (![item customViewClass])
+				if (![item customViewClass]) {
 					item.customViewClass = @"RAAppIconStatusBarIconView";
+				}
 				item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
 				lsbitems[self.bundleIdentifier] = item;
 			}
@@ -299,48 +271,41 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 	}
 }
 
-- (void)setApplicationState:(unsigned int)arg1
-{
+- (void)setApplicationState:(unsigned int)arg1 {
 	%orig;
 
-	if (!self.isRunning)
-	{
+	if (!self.isRunning) {
 		[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:RAIconIndicatorViewInfoNone];
 		//SET_INFO_(self.bundleIdentifier, RAIconIndicatorViewInfoNone);
 		[lsbitems removeObjectForKey:self.bundleIdentifier];
-	}
-	else
-	{
-		if ([self respondsToSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)])
-	    [self performSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)];
+	} else {
+		if ([self respondsToSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)]) {
+			[self performSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)];
+		}
 
 		[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:[RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier]];
 		SET_INFO_(self.bundleIdentifier, [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier]);
 	}
 }
 
-%new +(void) RA_clearAllStatusBarIcons
-{
+%new + (void)RA_clearAllStatusBarIcons {
 	[lsbitems removeAllObjects];
 }
 
-- (void)didAnimateActivation
-{
+- (void)didAnimateActivation {
 	//[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:RAIconIndicatorViewInfoUninhibit];
 	[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:RAIconIndicatorViewInfoTemporarilyInhibit];
 	%orig;
 }
 
-- (void)willAnimateActivation
-{
+- (void)willAnimateActivation {
 	[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:RAIconIndicatorViewInfoInhibit];
 	%orig;
 }
 %end
 
 %hook SBIconViewMap
-- (id) _iconViewForIcon:(unsafe_id)arg1
-{
+- (id)_iconViewForIcon:(unsafe_id)arg1 {
 	SBIconView *iconView = %orig;
 
 	[iconView RA_updateIndicatorViewWithExistingInfo];
@@ -356,24 +321,23 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 @interface UIStatusBarCustomItem : UIStatusBarItem
 @end
 
-inline NSString *getAppNameFromIndicatorName(NSString *indicatorName)
-{
+inline NSString *getAppNameFromIndicatorName(NSString *indicatorName) {
 	return [indicatorName substringFromIndex:(@"multiplexer-").length];
 }
 
 %subclass RAAppIconStatusBarIconView : UIStatusBarCustomItemView
--(id) contentsImage
-{
+- (id)contentsImage {
 	UIImage *img = [ALApplicationList.sharedApplicationList iconOfSize:15 forDisplayIdentifier:getAppNameFromIndicatorName(self.item.indicatorName)];
 	return [_UILegibilityImageSet imageFromImage:img withShadowImage:img];
 }
--(CGFloat) standardPadding { return 4; }
+
+- (CGFloat)standardPadding {
+	return 4;
+}
 %end
 %hook UIStatusBarCustomItem
--(NSUInteger) leftOrder
-{
-	if ([self.indicatorName hasPrefix:@"multiplexer-"])
-	{
+- (NSUInteger)leftOrder {
+	if ([self.indicatorName hasPrefix:@"multiplexer-"]) {
 		return 7; // Shows just after vpn, before the loading/sync indicator
 	}
 	return %orig;
@@ -381,10 +345,8 @@ inline NSString *getAppNameFromIndicatorName(NSString *indicatorName)
 %end
 %end
 
-%ctor
-{
-	if ([%c(RASettings) isLibStatusBarInstalled])
-	{
+%ctor {
+	if ([%c(RASettings) isLibStatusBarInstalled]) {
 		%init(libstatusbar);
 	}
 	%init;

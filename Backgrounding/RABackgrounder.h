@@ -29,28 +29,28 @@ typedef NS_ENUM(NSInteger, RAIconIndicatorViewInfo) {
 NSString *FriendlyNameForBackgroundMode(RABackgroundMode mode);
 
 @interface RABackgrounder : NSObject
-+(instancetype) sharedInstance;
++ (instancetype) sharedInstance;
 
--(BOOL) shouldAutoLaunchApplication:(NSString*)identifier;
--(BOOL) shouldAutoRelaunchApplication:(NSString*)identifier;
+- (BOOL)shouldAutoLaunchApplication:(NSString*)identifier;
+- (BOOL)shouldAutoRelaunchApplication:(NSString*)identifier;
 
--(BOOL) shouldKeepInForeground:(NSString*)identifier;
--(BOOL) shouldSuspendImmediately:(NSString*)identifier;
+- (BOOL)shouldKeepInForeground:(NSString*)identifier;
+- (BOOL)shouldSuspendImmediately:(NSString*)identifier;
 
--(BOOL) killProcessOnExit:(NSString*)identifier;
--(BOOL) shouldRemoveFromSwitcherWhenKilledOnExit:(NSString*)identifier;
--(BOOL) preventKillingOfIdentifier:(NSString*)identifier;
--(NSInteger) backgroundModeForIdentifier:(NSString*)identifier;
--(BOOL) hasUnlimitedBackgroundTime:(NSString*)identifier;
+- (BOOL)killProcessOnExit:(NSString*)identifier;
+- (BOOL)shouldRemoveFromSwitcherWhenKilledOnExit:(NSString*)identifier;
+- (BOOL)preventKillingOfIdentifier:(NSString*)identifier;
+- (NSInteger)backgroundModeForIdentifier:(NSString*)identifier;
+- (BOOL)hasUnlimitedBackgroundTime:(NSString*)identifier;
 
--(void) temporarilyApplyBackgroundingMode:(RABackgroundMode)mode forApplication:(SBApplication*)app andCloseForegroundApp:(BOOL)close;
--(void) queueRemoveTemporaryOverrideForIdentifier:(NSString*)identifier;
--(void) removeTemporaryOverrideForIdentifier:(NSString*)identifier;
+- (void)temporarilyApplyBackgroundingMode:(RABackgroundMode)mode forApplication:(SBApplication*)app andCloseForegroundApp:(BOOL)close;
+- (void)queueRemoveTemporaryOverrideForIdentifier:(NSString*)identifier;
+- (void)removeTemporaryOverrideForIdentifier:(NSString*)identifier;
 
--(NSInteger) application:(NSString*)identifier overrideBackgroundMode:(NSString*)mode;
+- (NSInteger)application:(NSString*)identifier overrideBackgroundMode:(NSString*)mode;
 
--(RAIconIndicatorViewInfo) allAggregatedIndicatorInfoForIdentifier:(NSString*)identifier;
--(void) updateIconIndicatorForIdentifier:(NSString*)identifier withInfo:(RAIconIndicatorViewInfo)info;
--(BOOL) shouldShowIndicatorForIdentifier:(NSString*)identifier;
--(BOOL) shouldShowStatusBarIconForIdentifier:(NSString*)identifier;
+- (RAIconIndicatorViewInfo)allAggregatedIndicatorInfoForIdentifier:(NSString*)identifier;
+- (void)updateIconIndicatorForIdentifier:(NSString*)identifier withInfo:(RAIconIndicatorViewInfo)info;
+- (BOOL)shouldShowIndicatorForIdentifier:(NSString*)identifier;
+- (BOOL)shouldShowStatusBarIconForIdentifier:(NSString*)identifier;
 @end

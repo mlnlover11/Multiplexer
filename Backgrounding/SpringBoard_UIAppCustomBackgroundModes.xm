@@ -6,23 +6,21 @@
 
 @interface FBApplicationInfo : NSObject
 @property (nonatomic, copy) NSString *bundleIdentifier;
--(BOOL) isExitsOnSuspend;
+- (BOOL)isExitsOnSuspend;
 @end
 
 %hook FBApplicationInfo
-- (BOOL)supportsBackgroundMode:(__unsafe_unretained NSString *)mode
-{
+- (BOOL)supportsBackgroundMode:(__unsafe_unretained NSString *)mode {
 	int override = [RABackgrounder.sharedInstance application:self.bundleIdentifier overrideBackgroundMode:mode];
-	if (override == -1)
+	if (override == -1) {
 		return %orig;
-
+	}
 	return override;
 }
 %end
 
 %hook BKSProcessAssertion
-- (id)initWithPID:(NSInteger)arg1 flags:(NSUInteger)arg2 reason:(NSUInteger)arg3 name:(NSString *)arg4 withHandler:(unsafe_id)arg5
-{
+- (instancetype)initWithPID:(NSInteger)arg1 flags:(NSUInteger)arg2 reason:(NSUInteger)arg3 name:(NSString *)arg4 withHandler:(unsafe_id)arg5 {
 	if (arg3 != BKSProcessAssertionReasonViewServices && // whitelist this to allow share menu to work
 	    ![arg4 isEqualToString:@"Called by iOS6_iCleaner, from unknown method"] && // whitelist iCleaner to prevent crash on open
 	    ![arg4 isEqualToString:@"Called by Filza_main, from -[AppDelegate applicationDidEnterBackground:]"]) // Whitelist filza to prevent iOS hang (?!) Not sure if the springboard hack is still required
@@ -34,10 +32,9 @@
 
 		//LogDebug(@"BKSProcessAssertion initWithPID:'%zd' flags:'%tu' reason:'%tu' name:'%@' withHandler:'%@' process identifier:'%@'", arg1, arg2, arg3, arg4, arg5, identifier);
 
-		if ([RABackgrounder.sharedInstance shouldSuspendImmediately:identifier])
-		{
+		if ([RABackgrounder.sharedInstance shouldSuspendImmediately:identifier]) {
 		  if ((arg3 >= BKSProcessAssertionReasonAudio && arg3 <= BKSProcessAssertionReasonVOiP)) // In most cases arg3 == 4 (finish task)
-		  {
+			{
 		    //NSLog(@"[ReachApp] blocking BKSProcessAssertion");
 
 		    //if (arg5)
