@@ -110,7 +110,7 @@ CGRect swappedForOrientation2(CGRect in)
 			window.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
 
 			if (originalAppView)
-					originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppFrame.origin.x, originalAppView.frame.size.height, originalAppFrame.size.width, originalAppFrame.size.height));
+				originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppFrame.origin.x, originalAppView.frame.size.height, originalAppFrame.size.width, originalAppFrame.size.height));
 		} completion:nil];
 	}
 	else if (originalAppView) // dismiss even if not animating open
@@ -130,7 +130,8 @@ CGRect swappedForOrientation2(CGRect in)
 	if ([[%c(SBControlCenterController) sharedInstance] isVisible])
 		[[%c(SBControlCenterController) sharedInstance] dismissAnimated:YES];
 
-	didStoreSnapshot = NO;
+	LogDebug(@"storeSnapshotOfMissionControl");
+	[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
 }
 
 -(void) createWindow
@@ -189,8 +190,8 @@ CGRect swappedForOrientation2(CGRect in)
 
 -(void) hideMissionControl:(BOOL)animated
 {
-	if (!didStoreSnapshot)
-		[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
+	//if (!didStoreSnapshot)
+		//[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
 	[[%c(RARunningAppsProvider) sharedInstance] removeTarget:window];
 
 	void (^destructor)() = ^{
@@ -314,7 +315,7 @@ CGRect swappedForOrientation2(CGRect in)
 	else if (state == UIGestureRecognizerStateBegan)
 	{
 		//[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
-		didStoreSnapshot = YES;
+		//didStoreSnapshot = YES;
 		hasMoved = YES;
 		[%c(RAControlCenterInhibitor) setInhibited:YES];
 		initialCenter = window.center;

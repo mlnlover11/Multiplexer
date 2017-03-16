@@ -27,32 +27,32 @@
 	    ![arg4 isEqualToString:@"Called by iOS6_iCleaner, from unknown method"] && // whitelist iCleaner to prevent crash on open
 	    ![arg4 isEqualToString:@"Called by Filza_main, from -[AppDelegate applicationDidEnterBackground:]"]) // Whitelist filza to prevent iOS hang (?!) Not sure if the springboard hack is still required
 	{
-	    NSString *identifier = [NSBundle mainBundle].bundleIdentifier;
+		NSString *identifier = [NSBundle mainBundle].bundleIdentifier;
 
-	    if (!identifier)
-	        goto ORIGINAL;
+		if (!identifier)
+		  goto ORIGINAL;
 
-	    LogDebug(@"BKSProcessAssertion initWithPID:'%zd' flags:'%tu' reason:'%tu' name:'%@' withHandler:'%@' process identifier:'%@'", arg1, arg2, arg3, arg4, arg5, identifier);
+		//LogDebug(@"BKSProcessAssertion initWithPID:'%zd' flags:'%tu' reason:'%tu' name:'%@' withHandler:'%@' process identifier:'%@'", arg1, arg2, arg3, arg4, arg5, identifier);
 
-	    if ([RABackgrounder.sharedInstance shouldSuspendImmediately:identifier])
-	    {
-	        if ((arg3 >= BKSProcessAssertionReasonAudio && arg3 <= BKSProcessAssertionReasonVOiP)) // In most cases arg3 == 4 (finish task)
-	        {
-	            //NSLog(@"[ReachApp] blocking BKSProcessAssertion");
+		if ([RABackgrounder.sharedInstance shouldSuspendImmediately:identifier])
+		{
+		  if ((arg3 >= BKSProcessAssertionReasonAudio && arg3 <= BKSProcessAssertionReasonVOiP)) // In most cases arg3 == 4 (finish task)
+		  {
+		    //NSLog(@"[ReachApp] blocking BKSProcessAssertion");
 
-	            //if (arg5)
-	            //{
-	                //void (^arg5fix)() = arg5;
-	                //arg5fix();
-	                // ^^ causes crashes with share menu
-	            //}
-	            return nil;
-	        }
-	        //else if (arg3 == kProcessAssertionReasonActivation)
-	        //{
-	        //    arg2 = ProcessAssertionFlagAllowIdleSleep;
-	        //}
-	    }
+		    //if (arg5)
+		    //{
+		        //void (^arg5fix)() = arg5;
+		        //arg5fix();
+		        // ^^ causes crashes with share menu
+		    //}
+		    return nil;
+		  }
+		  //else if (arg3 == kProcessAssertionReasonActivation)
+		  //{
+		  //    arg2 = ProcessAssertionFlagAllowIdleSleep;
+		  //}
+		}
 	}
 ORIGINAL:
 	return %orig(arg1, arg2, arg3, arg4, arg5);

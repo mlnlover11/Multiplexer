@@ -200,20 +200,19 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
 			if ([[[%c(SBIconViewMap) homescreenMap] iconModel] respondsToSelector:@selector(applicationIconForBundleIdentifier:)])
 			{
-					// iOS 8.0+
-
-					SBApplicationIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:identifier];
-					ret = [[%c(SBIconViewMap) homescreenMap] mappedIconViewForIcon:icon];
+				// iOS 8.0+
+				SBApplicationIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForBundleIdentifier:identifier];
+				ret = [[%c(SBIconViewMap) homescreenMap] mappedIconViewForIcon:icon];
 			}
 			else
 			{
-					// iOS 7.X
-					SBApplicationIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForDisplayIdentifier:identifier];
-					ret = [[%c(SBIconViewMap) homescreenMap] mappedIconViewForIcon:icon];
+				// iOS 7.X
+				SBApplicationIcon *icon = [[[%c(SBIconViewMap) homescreenMap] iconModel] applicationIconForDisplayIdentifier:identifier];
+				ret = [[%c(SBIconViewMap) homescreenMap] mappedIconViewForIcon:icon];
 			}
 		} else {
-				SBApplicationIcon *icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:identifier];
-				ret = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] mappedIconViewForIcon:icon];
+			SBApplicationIcon *icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:identifier];
+			ret = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] mappedIconViewForIcon:icon];
 		}
 
 		[ret RA_updateIndicatorView:info];

@@ -30,12 +30,12 @@ Minor Things/Bugs to note:
 - MC works but causes jittery animations (not as much as before)
 - Some say it causes serious lag (probably because logs werent disabled/due to MC)?
 - Startup bug still isnt fixed (apparently caused by gesture support?)
-- General Code Cleanup, feels to messy RN
 - Check iPad support/lower iOS versions
 
 Things to do/Features to add:
 - 3D Touch actions?
 - (Real distant future) split all 6 features into seperate tweaks
+- General Code Cleanup/conform to standards, feels to messy RN (at least indents are fine)
 
 notes:
 use _referenceBounds instead of bounds on UIScreen to get physical bounds. Makes landscape support easier?

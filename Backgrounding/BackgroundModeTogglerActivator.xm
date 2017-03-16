@@ -11,43 +11,43 @@ static RAActivatorBackgrounderToggleModeListener *sharedInstance$RAActivatorBack
 @implementation RAActivatorBackgrounderToggleModeListener
 - (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
 {
-    SBApplication *app = [UIApplication sharedApplication]._accessibilityFrontMostApplication;
+  SBApplication *app = [UIApplication sharedApplication]._accessibilityFrontMostApplication;
 
-    if (!app)
-        return;
+  if (!app)
+    return;
 
-    BOOL dismissApp = [[%c(RASettings) sharedInstance] exitAppAfterUsingActivatorAction];
+  BOOL dismissApp = [[%c(RASettings) sharedInstance] exitAppAfterUsingActivatorAction];
 
-    NSString *friendlyCurrentBackgroundMode = FriendlyNameForBackgroundMode((RABackgroundMode)[RABackgrounder.sharedInstance backgroundModeForIdentifier:app.bundleIdentifier]);
+  NSString *friendlyCurrentBackgroundMode = FriendlyNameForBackgroundMode((RABackgroundMode)[RABackgrounder.sharedInstance backgroundModeForIdentifier:app.bundleIdentifier]);
 
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"MULTIPLEXER") message:[NSString stringWithFormat:LOCALIZE(@"BACKGROUNDER_POPUP_SWITCHER_TEXT"),app.displayName,friendlyCurrentBackgroundMode] preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"FORCE_FOREGROUND") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-      [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeForcedForeground forApplication:app andCloseForegroundApp:dismissApp];
-    }]];
+  UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"MULTIPLEXER") message:[NSString stringWithFormat:LOCALIZE(@"BACKGROUNDER_POPUP_SWITCHER_TEXT"),app.displayName,friendlyCurrentBackgroundMode] preferredStyle:UIAlertControllerStyleAlert];
+  [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"FORCE_FOREGROUND") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeForcedForeground forApplication:app andCloseForegroundApp:dismissApp];
+  }]];
 
-    [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"NATIVE") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-      [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeNative forApplication:app andCloseForegroundApp:dismissApp];
-    }]];
+  [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"NATIVE") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeNative forApplication:app andCloseForegroundApp:dismissApp];
+  }]];
 
-    [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"SUSPEND_IMMEDIATELY") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-      [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeSuspendImmediately forApplication:app andCloseForegroundApp:dismissApp];
-    }]];
+  [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"SUSPEND_IMMEDIATELY") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeSuspendImmediately forApplication:app andCloseForegroundApp:dismissApp];
+  }]];
 
-    [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"DISABLE") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-      [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeForceNone forApplication:app andCloseForegroundApp:dismissApp];
-    }]];
+  [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"DISABLE") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [RABackgrounder.sharedInstance temporarilyApplyBackgroundingMode:RABackgroundModeForceNone forApplication:app andCloseForegroundApp:dismissApp];
+  }]];
 
-    [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"CANCEL") style:UIAlertActionStyleDefault handler:nil]];
+  [alert addAction:[UIAlertAction actionWithTitle:LOCALIZE(@"CANCEL") style:UIAlertActionStyleDefault handler:nil]];
 
-    [alert show];
+  [alert show];
 }
 @end
 
 %ctor
 {
-    IF_SPRINGBOARD
-    {
-        sharedInstance$RAActivatorBackgrounderToggleModeListener = [[RAActivatorBackgrounderToggleModeListener alloc] init];
-        [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorBackgrounderToggleModeListener forName:@"com.efrederickson.reachapp.backgrounder.togglemode"];
-    }
+  IF_SPRINGBOARD
+  {
+    sharedInstance$RAActivatorBackgrounderToggleModeListener = [[RAActivatorBackgrounderToggleModeListener alloc] init];
+    [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorBackgrounderToggleModeListener forName:@"com.efrederickson.reachapp.backgrounder.togglemode"];
+  }
 }

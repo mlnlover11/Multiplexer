@@ -212,10 +212,7 @@ void updateFrontmostApp(CFNotificationCenterRef center, void *observer, CFString
 
 %ctor
 {
-	IF_SPRINGBOARD {
-
-	}
-	else
+	IF_NOT_SPRINGBOARD
 	{
 		[RAMessagingClient sharedInstance];
 		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reloadClientData, (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",NSBundle.mainBundle.bundleIdentifier], NULL, CFNotificationSuspensionBehaviorDeliverImmediately);

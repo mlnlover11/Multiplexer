@@ -33,9 +33,9 @@ BOOL toggleOrActivate = NO;
 		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl)
 		{
 			[RAMissionControlManager.sharedInstance showMissionControl:YES];
-	    }
-	    else
-	    	[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
+		else
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
 
 		return YES;
 	}
@@ -100,7 +100,6 @@ BOOL toggleOrActivate = NO;
 -(void)_showNotificationCenterGestureBeganWithGestureRecognizer:(id)arg1 {
 	CGPoint location = [arg1 locationInView:[[%c(SBMainSwitcherViewController) sharedInstance] view]];
 	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && [[%c(SBUIController) sharedInstance] isAppSwitcherShowing] && CGRectContainsPoint([[[[%c(SBMainSwitcherViewController) sharedInstance] valueForKey:@"_contentView"] contentView] viewWithTag:999].frame, location)) {
-		LogDebug(@"contains rect");
 		return;
 	}
 
@@ -467,6 +466,8 @@ BOOL toggleOrActivate = NO;
 		UIImage *snapshot = [[%c(RASnapshotProvider) sharedInstance] storedSnapshotOfMissionControl];
 
 		if (snapshot) {
+			LogDebug(@"snapshot exists, using");
+			
 			fakeView = [[UIImageView alloc] initWithFrame:view.frame];
 			((UIImageView*)fakeView).image = snapshot;
 			[view addSubview:fakeView];

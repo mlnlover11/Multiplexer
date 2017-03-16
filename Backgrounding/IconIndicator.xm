@@ -164,7 +164,7 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info)
 %new -(void) RA_updateIndicatorViewWithExistingInfo
 {
 	//if ([self viewWithTag:9962])
-		[self RA_updateIndicatorView:GET_INFO];
+	[self RA_updateIndicatorView:GET_INFO];
 }
 
 %new -(void) RA_setIsIconIndicatorInhibited:(BOOL)value
@@ -289,13 +289,13 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 			BOOL native = (info & RAIconIndicatorViewInfoNative);
 			if ((info & RAIconIndicatorViewInfoNone) == 0 && (!native || [[%c(RASettings) sharedInstance] shouldShowStatusBarNativeIcons]))
 			{
-		    	LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
-		    	if (![item customViewClass])
-		    		item.customViewClass = @"RAAppIconStatusBarIconView";
-	        	item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
-	    		lsbitems[self.bundleIdentifier] = item;
-	    	}
+				LSStatusBarItem *item = [[%c(LSStatusBarItem) alloc] initWithIdentifier:[NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier] alignment:StatusBarAlignmentLeft];
+				if (![item customViewClass])
+					item.customViewClass = @"RAAppIconStatusBarIconView";
+				item.imageName = [NSString stringWithFormat:@"multiplexer-%@",self.bundleIdentifier];
+				lsbitems[self.bundleIdentifier] = item;
 			}
+		}
 	}
 }
 
@@ -312,7 +312,7 @@ FIXED?: Forgot to -retain the dictionary. (It was autoreleased i believe?)
 	else
 	{
 		if ([self respondsToSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)])
-	    	[self performSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)];
+	    [self performSelector:@selector(RA_addStatusBarIconForSelfIfOneDoesNotExist)];
 
 		[RABackgrounder.sharedInstance updateIconIndicatorForIdentifier:self.bundleIdentifier withInfo:[RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier]];
 		SET_INFO_(self.bundleIdentifier, [RABackgrounder.sharedInstance allAggregatedIndicatorInfoForIdentifier:self.bundleIdentifier]);

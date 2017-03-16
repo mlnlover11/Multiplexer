@@ -69,13 +69,14 @@
 
 					if (view)
 					{
-						UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, [UIScreen mainScreen].scale);
-						CGContextRef c = UIGraphicsGetCurrentContext();
-						//CGContextSetAllowsAntialiasing(c, YES);
-						[view.layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES];
+						UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, 0);
+
+						ON_MAIN_THREAD(^{
+							[view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+						});
+
 						image = UIGraphicsGetImageFromCurrentImageContext();
 						UIGraphicsEndImageContext();
-						view.layer.contents = nil;
 					}
 				}
 				@catch (NSException *ex)
@@ -114,8 +115,10 @@
 
 -(void) storeSnapshotOfMissionControl:(UIWindow*)window
 {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-		UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].RA_interfaceOrientedBounds.size, YES, [UIScreen mainScreen].scale);
+	LogDebug(@"storing snapshot");
+	//Running on background thread results in black screen
+	//dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+		UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0);
 		//CGContextRef c = UIGraphicsGetCurrentContext();
 		//CGContextSetAllowsAntialiasing(c, YES);
 		//[window.layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES];
@@ -126,12 +129,10 @@
 
 		UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 		UIGraphicsEndImageContext();
-		window.layer.contents = nil;
 
 		if (image)
 			[imageCache setObject:image forKey:@"missioncontrol"];
-	});
-
+	//});
 }
 
 -(NSString*) createKeyForDesktop:(RADesktopWindow*)desktop
@@ -203,7 +204,7 @@
 -(UIImage*) renderPreviewForDesktop:(RADesktopWindow*)desktop
 {
 	@autoreleasepool {
-		UIGraphicsBeginImageContextWithOptions(UIScreen.mainScreen.bounds.size, YES, UIScreen.mainScreen.scale);
+		UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, 0);
 		CGContextRef c = UIGraphicsGetCurrentContext();
 
 	    [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
@@ -267,7 +268,7 @@
 	if ([imageCache objectForKey:key])
 		return [imageCache objectForKey:key];
 
-	UIGraphicsBeginImageContextWithOptions(UIScreen.mainScreen.bounds.size, YES, UIScreen.mainScreen.scale);
+	UIGraphicsBeginImageContextWithOptions(UIScreen.mainScreen.bounds.size, YES, 0);
 	CGContextRef c = UIGraphicsGetCurrentContext();
 
 	[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAWallpaperSnapshot"];
