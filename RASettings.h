@@ -14,79 +14,79 @@ typedef NS_ENUM(NSInteger, RAGrabArea) {
 @interface RASettings : NSObject {
 	NSDictionary *_settings;
 }
-+(instancetype)sharedInstance;
++ (instancetype)sharedInstance;
 
-+(BOOL) isParagonInstalled;
-+(BOOL) isActivatorInstalled;
-+(BOOL) isLibStatusBarInstalled;
++ (BOOL)isParagonInstalled;
++ (BOOL)isActivatorInstalled;
++ (BOOL)isLibStatusBarInstalled;
 
--(void) reloadSettings;
--(void) resetSettings;
+- (void)reloadSettings;
+- (void)resetSettings;
 
--(BOOL) enabled;
+- (BOOL)enabled;
 
--(BOOL) reachabilityEnabled;
--(BOOL) disableAutoDismiss;
--(BOOL) enableRotation;
--(BOOL) showNCInstead;
--(BOOL) homeButtonClosesReachability;
--(BOOL) showBottomGrabber;
--(BOOL) showWidgetSelector;
--(BOOL) scalingRotationMode;
--(BOOL) autoSizeWidgetSelector;
--(BOOL) showAllAppsInWidgetSelector;
--(BOOL) showRecentAppsInWidgetSelector;
--(BOOL) pagingEnabled;
--(NSMutableArray*) favoriteApps;
--(BOOL) unifyStatusBar;
--(BOOL) flipTopAndBottom;
--(BOOL) showFavorites;
+- (BOOL)reachabilityEnabled;
+- (BOOL)disableAutoDismiss;
+- (BOOL)enableRotation;
+- (BOOL)showNCInstead;
+- (BOOL)homeButtonClosesReachability;
+- (BOOL)showBottomGrabber;
+- (BOOL)showWidgetSelector;
+- (BOOL)scalingRotationMode;
+- (BOOL)autoSizeWidgetSelector;
+- (BOOL)showAllAppsInWidgetSelector;
+- (BOOL)showRecentAppsInWidgetSelector;
+- (BOOL)pagingEnabled;
+- (NSMutableArray*)favoriteApps;
+- (BOOL)unifyStatusBar;
+- (BOOL)flipTopAndBottom;
+- (BOOL)showFavorites;
 
--(BOOL) NCAppEnabled;
--(NSString*) NCApp;
--(BOOL) ncAppHideOnLS;
+- (BOOL)NCAppEnabled;
+- (NSString*)NCApp;
+- (BOOL)ncAppHideOnLS;
 
--(BOOL) alwaysEnableGestures;
--(BOOL) snapWindows;
--(BOOL) snapRotation;
--(BOOL) launchIntoWindows;
--(BOOL) windowedMultitaskingCompleteAnimations;
--(BOOL) openLinksInWindows;
--(BOOL) showSnapHelper;
+- (BOOL)alwaysEnableGestures;
+- (BOOL)snapWindows;
+- (BOOL)snapRotation;
+- (BOOL)launchIntoWindows;
+- (BOOL)windowedMultitaskingCompleteAnimations;
+- (BOOL)openLinksInWindows;
+- (BOOL)showSnapHelper;
 
--(NSInteger) globalBackgroundMode;
--(BOOL) shouldShowStatusBarIcons;
--(BOOL) shouldShowStatusBarNativeIcons;
--(BOOL) backgrounderEnabled;
--(BOOL) shouldShowIconIndicatorsGlobally;
--(BOOL) showNativeStateIconIndicators;
--(NSDictionary*) rawCompiledBackgrounderSettingsForIdentifier:(NSString*)identifier;
+- (NSInteger)globalBackgroundMode;
+- (BOOL)shouldShowStatusBarIcons;
+- (BOOL)shouldShowStatusBarNativeIcons;
+- (BOOL)backgrounderEnabled;
+- (BOOL)shouldShowIconIndicatorsGlobally;
+- (BOOL)showNativeStateIconIndicators;
+- (NSDictionary*)rawCompiledBackgrounderSettingsForIdentifier:(NSString*)identifier;
 
--(BOOL) missionControlEnabled;
--(BOOL) replaceAppSwitcherWithMC;
--(BOOL) missionControlKillApps;
--(NSInteger) missionControlDesktopStyle;
--(BOOL) missionControlPagingEnabled;
+- (BOOL)missionControlEnabled;
+- (BOOL)replaceAppSwitcherWithMC;
+- (BOOL)missionControlKillApps;
+- (NSInteger)missionControlDesktopStyle;
+- (BOOL)missionControlPagingEnabled;
 
--(BOOL) isFirstRun;
--(void) setFirstRun:(BOOL)value;
+- (BOOL)isFirstRun;
+- (void)setFirstRun:(BOOL)value;
 
--(BOOL) swipeOverEnabled;
--(BOOL) alwaysShowSOGrabber;
+- (BOOL)swipeOverEnabled;
+- (BOOL)alwaysShowSOGrabber;
 
--(BOOL) exitAppAfterUsingActivatorAction;
+- (BOOL)exitAppAfterUsingActivatorAction;
 
--(BOOL) quickAccessUseGenericTabLabel;
+- (BOOL)quickAccessUseGenericTabLabel;
 
 #if DEBUG
--(BOOL) debug_showIPCMessages;
+- (BOOL)debug_showIPCMessages;
 #endif
 
--(BOOL) windowedMultitaskingEnabled;
--(NSInteger) windowRotationLockMode;
--(RAGrabArea) windowedMultitaskingGrabArea;
--(RAGrabArea) swipeOverGrabArea;
--(BOOL) onlyShowWindowBarIconsOnOverlay;
+- (BOOL)windowedMultitaskingEnabled;
+- (NSInteger)windowRotationLockMode;
+- (RAGrabArea)windowedMultitaskingGrabArea;
+- (RAGrabArea)swipeOverGrabArea;
+- (BOOL)onlyShowWindowBarIconsOnOverlay;
 
--(NSString*) currentThemeIdentifier;
+- (NSString*)currentThemeIdentifier;
 @end

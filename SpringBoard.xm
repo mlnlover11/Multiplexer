@@ -21,23 +21,19 @@
 extern BOOL overrideDisableForStatusBar;
 
 %hook SBUIController
-- (_Bool)clickedMenuButton
-{
-	if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver])
-	{
+- (_Bool)clickedMenuButton {
+	if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver]) {
 		[[%c(RASwipeOverManager) sharedInstance] stopUsingSwipeOver];
 		return YES;
 	}
 
-	if ([RASettings.sharedInstance homeButtonClosesReachability] && [GET_SBWORKSPACE isUsingReachApp] && ((SBReachabilityManager*)[%c(SBReachabilityManager) sharedInstance]).reachabilityModeActive)
-	{
+	if ([RASettings.sharedInstance homeButtonClosesReachability] && [GET_SBWORKSPACE isUsingReachApp] && ((SBReachabilityManager*)[%c(SBReachabilityManager) sharedInstance]).reachabilityModeActive) {
 		overrideDisableForStatusBar = NO;
 		[[%c(SBReachabilityManager) sharedInstance] _handleReachabilityDeactivated];
 		return YES;
 	}
 
-	if ([[%c(RAMissionControlManager) sharedInstance] isShowingMissionControl])
-	{
+	if ([[%c(RAMissionControlManager) sharedInstance] isShowingMissionControl]) {
 		[[%c(RAMissionControlManager) sharedInstance] hideMissionControl:YES];
 		return YES;
 	}
@@ -45,23 +41,19 @@ extern BOOL overrideDisableForStatusBar;
 	return %orig;
 }
 
-- (BOOL)handleHomeButtonSinglePressUp
-{
-	if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver])
-	{
+- (BOOL)handleHomeButtonSinglePressUp {
+	if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver]) {
 		[[%c(RASwipeOverManager) sharedInstance] stopUsingSwipeOver];
 		return YES;
 	}
 
-	if ([RASettings.sharedInstance homeButtonClosesReachability] && [GET_SBWORKSPACE isUsingReachApp] && ((SBReachabilityManager*)[%c(SBReachabilityManager) sharedInstance]).reachabilityModeActive)
-	{
+	if ([RASettings.sharedInstance homeButtonClosesReachability] && [GET_SBWORKSPACE isUsingReachApp] && ((SBReachabilityManager*)[%c(SBReachabilityManager) sharedInstance]).reachabilityModeActive) {
 		overrideDisableForStatusBar = NO;
 		[[%c(SBReachabilityManager) sharedInstance] _handleReachabilityDeactivated];
 		return YES;
 	}
 
-	if ([[%c(RAMissionControlManager) sharedInstance] isShowingMissionControl])
-	{
+	if ([[%c(RAMissionControlManager) sharedInstance] isShowingMissionControl]) {
 		[[%c(RAMissionControlManager) sharedInstance] hideMissionControl:YES];
 		return YES;
 	}
@@ -85,16 +77,14 @@ extern BOOL overrideDisableForStatusBar;
 }*/
 
 // This should help fix the problems where closing an app with Tage or the iPad Gesture would cause the app to suspend(?) and lock up the device.
-- (void)_suspendGestureBegan
-{
+- (void)_suspendGestureBegan {
   %orig;
   [UIApplication.sharedApplication._accessibilityFrontMostApplication clearDeactivationSettings];
 }
 %end
 
 %hook SpringBoard
--(void) _performDeferredLaunchWork
-{
+- (void)_performDeferredLaunchWork {
   %orig;
   [RADesktopManager sharedInstance]; // load desktop (and previous windows!)
 
@@ -105,12 +95,12 @@ extern BOOL overrideDisableForStatusBar;
 %end
 
 %hook SBApplicationController
-%new -(SBApplication*) RA_applicationWithBundleIdentifier:(__unsafe_unretained NSString*)bundleIdentifier
-{
-  if ([self respondsToSelector:@selector(applicationWithBundleIdentifier:)])
-    return [self applicationWithBundleIdentifier:bundleIdentifier];
-  else if ([self respondsToSelector:@selector(applicationWithDisplayIdentifier:)])
-    return [self applicationWithDisplayIdentifier:bundleIdentifier];
+%new - (SBApplication*)RA_applicationWithBundleIdentifier:(__unsafe_unretained NSString*)bundleIdentifier {
+  if ([self respondsToSelector:@selector(applicationWithBundleIdentifier:)]) {
+		return [self applicationWithBundleIdentifier:bundleIdentifier];
+	} else if ([self respondsToSelector:@selector(applicationWithDisplayIdentifier:)]) {
+		return [self applicationWithDisplayIdentifier:bundleIdentifier];
+	}
 
   [RACompatibilitySystem showWarning:@"Unable to find valid -[SBApplicationController applicationWithBundleIdentifier:] replacement"];
   return nil;
@@ -118,16 +108,15 @@ extern BOOL overrideDisableForStatusBar;
 %end
 
 %hook SBToAppsWorkspaceTransaction
-- (void)_willBegin
-{
+- (void)_willBegin {
 	@autoreleasepool {
 	  NSArray *apps = nil;
-	  if ([self respondsToSelector:@selector(toApplications)])
-	  	apps = [self toApplications];
-	  else
-	  	apps = [MSHookIvar<NSArray*>(self, "_toApplications") copy];
-	  for (SBApplication *app in apps)
-	  {
+	  if ([self respondsToSelector:@selector(toApplications)]) {
+			apps = [self toApplications];
+		} else {
+			apps = [MSHookIvar<NSArray*>(self, "_toApplications") copy];
+		}
+	  for (SBApplication *app in apps) {
       dispatch_async(dispatch_get_main_queue(), ^{
         [RADesktopManager.sharedInstance removeAppWithIdentifier:app.bundleIdentifier animated:NO forceImmediateUnload:YES];
       });
@@ -138,14 +127,14 @@ extern BOOL overrideDisableForStatusBar;
 
 // On iOS 8.3 and above, on the iPad, if a FBWindowContextWhatever creates a hosting context / enabled hosting, all the other hosted windows stop.
 // This fixes that.
--(void)_didComplete
-{
+- (void)_didComplete {
   %orig;
 
   // can't hurt to check all devices - especially if it changes/has changed to include phones.
   // however this was presumably done in preparation for the iOS 9 multitasking
-	if (IS_IPAD)
+	if (IS_IPAD) {
 		[RAHostedAppView iPad_iOS83_fixHosting];
+	}
 }
 %end
 
@@ -163,16 +152,14 @@ extern BOOL overrideDisableForStatusBar;
 */
 
 %hook SpringBoard
--(void)noteInterfaceOrientationChanged:(int)arg1 duration:(float)arg2
-{
+- (void)noteInterfaceOrientationChanged:(int)arg1 duration:(float)arg2 {
 	%orig;
 	[RASnapshotProvider.sharedInstance forceReloadEverything];
 }
 %end
 
 %hook SBApplication
-- (void)didActivateWithTransactionID:(unsigned long long)arg1
-{
+- (void)didActivateWithTransactionID:(unsigned long long)arg1 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 	  [RASnapshotProvider.sharedInstance forceReloadOfSnapshotForIdentifier:self.bundleIdentifier];
 	});
@@ -182,29 +169,27 @@ extern BOOL overrideDisableForStatusBar;
 %end
 
 %hook SBLockScreenManager
-- (void)_postLockCompletedNotification:(_Bool)arg1
-{
+- (void)_postLockCompletedNotification:(_Bool)arg1 {
 	%orig;
 
-	if (arg1)
-	{
-		if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver])
-		  [[%c(RASwipeOverManager) sharedInstance] stopUsingSwipeOver];
+	if (arg1) {
+		if ([[%c(RASwipeOverManager) sharedInstance] isUsingSwipeOver]) {
+			[[%c(RASwipeOverManager) sharedInstance] stopUsingSwipeOver];
+		}
 	}
 }
 %end
 
 %hook UIScreen
-%new -(CGRect) RA_interfaceOrientedBounds
-{
-	if ([self respondsToSelector:@selector(_interfaceOrientedBounds)])
-	  return [self _interfaceOrientedBounds];
+%new - (CGRect)RA_interfaceOrientedBounds {
+	if ([self respondsToSelector:@selector(_interfaceOrientedBounds)]) {
+		return [self _interfaceOrientedBounds];
+	}
 	return [self bounds];
 }
 %end
 
-void respring_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
+void respring_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
 	if (IS_IOS_OR_NEWER(iOS_9_3)) {
 		SBSRelaunchAction *restartAction = [%c(SBSRelaunchAction) actionWithReason:@"RestartRenderServer" options:SBSRelaunchOptionsFadeToBlack targetURL:nil];
 		[[%c(FBSSystemService) sharedService] sendActions:[NSSet setWithObject:restartAction] withResult:nil];
@@ -213,19 +198,17 @@ void respring_notification(CFNotificationCenterRef center, void *observer, CFStr
 	}
 }
 
-void reset_settings_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
+void reset_settings_notification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
 	[RASettings.sharedInstance resetSettings];
 }
 
-%ctor
-{
-	IF_SPRINGBOARD
-	{
-	  %init;
-	  LOAD_ASPHALEIA;
-
-	  CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &respring_notification, CFSTR("com.efrederickson.reachapp.respring"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-	  CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reset_settings_notification, CFSTR("com.efrederickson.reachapp.resetSettings"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+%ctor {
+	IF_NOT_SPRINGBOARD {
+		return;
 	}
+	%init;
+	LOAD_ASPHALEIA;
+
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &respring_notification, CFSTR("com.efrederickson.reachapp.respring"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reset_settings_notification, CFSTR("com.efrederickson.reachapp.resetSettings"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 }

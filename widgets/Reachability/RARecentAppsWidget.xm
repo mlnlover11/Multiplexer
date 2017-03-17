@@ -15,21 +15,34 @@
 @end
 
 @implementation RARecentAppsWidget
--(BOOL) enabled { return [RASettings.sharedInstance showRecentAppsInWidgetSelector]; }
+- (BOOL)enabled {
+	return [RASettings.sharedInstance showRecentAppsInWidgetSelector];
+}
 
--(NSInteger) sortOrder { return 1; }
--(NSString*) displayName { return LOCALIZE(@"RECENTS"); }
--(NSString*) identifier { return @"com.efrederickson.reachapp.widgets.sections.recentapps"; }
--(CGFloat) titleOffset { return savedX; }
+- (NSInteger)sortOrder {
+	return 1;
+}
 
--(UIView*) viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size_ iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing
-{
+- (NSString*)displayName {
+	return LOCALIZE(@"RECENTS");
+}
+
+- (NSString*)identifier {
+	return @"com.efrederickson.reachapp.widgets.sections.recentapps";
+}
+
+- (CGFloat)titleOffset {
+	return savedX;
+}
+
+- (UIView*)viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size_ iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing {
 	viewFrame = frame;
 	CGSize size = [%c(SBIconView) defaultIconSize];
 	spacing = (frame.size.width - (iconsPerLine * size.width)) / (iconsPerLine + 0);
 	NSString *currentBundleIdentifier = [[UIApplication sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
-	if (!currentBundleIdentifier)
+	if (!currentBundleIdentifier) {
 		return nil;
+	}
 	CGSize contentSize = CGSizeMake((spacing / 2.0), 10);
 	CGFloat interval = ((size.width + spacing) * iconsPerLine);
 	NSInteger intervalCount = 1;
@@ -41,8 +54,9 @@
 
 	NSMutableArray *recents = [[RAAppSwitcherModelWrapper appSwitcherAppIdentiferList] mutableCopy];
 	[recents removeObject:currentBundleIdentifier];
-	if (recents.count == 0)
+	if (recents.count == 0) {
 		return nil;
+	}
 
 	BOOL hasSecondRow = recents.count >= iconsPerLine;
 
@@ -50,8 +64,7 @@
 	recentsView.backgroundColor = [UIColor clearColor];
 	recentsView.pagingEnabled = [RASettings.sharedInstance pagingEnabled];
 
-	for (NSString *str in recents)
-	{
+	for (NSString *str in recents) {
 		app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:str];
 		SBApplicationIcon *icon = nil;
 		SBIconView *iconView = nil;
@@ -62,18 +75,15 @@
 			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
 			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
 		}
-		if (!iconView)
+		if (!iconView) {
 			continue;
+		}
 
-		if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
-		{
-			if (isTop)
-			{
+		if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount) {
+			if (isTop) {
 				contentSize.height += size.height + 10;
 				contentSize.width -= interval;
-			}
-			else
-			{
+			} else {
 				intervalCount++;
 				contentSize.height -= (size.height + 10);
 				width += interval;
@@ -101,8 +111,7 @@
 	return recentsView;
 }
 
--(void) appViewItemTap:(UIGestureRecognizer*)gesture
-{
+- (void)appViewItemTap:(UIGestureRecognizer*)gesture {
 	@autoreleasepool {
 		//[[%c(SBWorkspace) sharedInstance] appViewItemTap:gesture];
 
@@ -120,8 +129,7 @@
 }
 @end
 
-%ctor
-{
+%ctor {
 	static id _widget = [[RARecentAppsWidget alloc] init];
 	[RAWidgetSectionManager.sharedInstance registerSection:_widget];
 }

@@ -1,40 +1,33 @@
 #import "RAWidgetHostManager.h"
 
 @implementation RAWidgetHostManager
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(RAWidgetHostManager, sharedInstance->widgets = [NSMutableArray array]);
 }
 
--(void) addWidget:(RAWidgetBase*)widget
-{
-	if (![widgets containsObject:widget])
-		[widgets addObject:widget];
+- (void)addWidget:(RAWidgetBase*)widget {
+	if ([widgets containsObject:widget]) {
+		return;
+	}
+	[widgets addObject:widget];
 }
 
--(void) removeWidget:(RAWidgetBase*)widget
-{
+- (void)removeWidget:(RAWidgetBase*)widget {
 	[self removeWidgetWithIdentifier:widget.identifier];
 }
 
--(void) removeWidgetWithIdentifier:(NSString*)identifier
-{
-	for (RAWidgetBase *w in widgets)
-	{
-		if ([w.identifier isEqual:identifier])
-		{
+- (void)removeWidgetWithIdentifier:(NSString*)identifier {
+	for (RAWidgetBase *w in widgets) {
+		if ([w.identifier isEqual:identifier]) {
 			[widgets removeObject:w];
 			return;
 		}
 	}
 }
 
--(RAWidgetBase*) widgetForIdentifier:(NSString*)identifier
-{
-	for (RAWidgetBase *w in widgets)
-	{
-		if ([w.identifier isEqual:identifier])
-		{
+- (RAWidgetBase*)widgetForIdentifier:(NSString*)identifier {
+	for (RAWidgetBase *w in widgets) {
+		if ([w.identifier isEqual:identifier]) {
 			return w;
 		}
 	}

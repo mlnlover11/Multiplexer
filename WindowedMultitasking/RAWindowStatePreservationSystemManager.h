@@ -15,19 +15,19 @@ typedef struct {
 @interface RAWindowStatePreservationSystemManager : NSObject {
 	NSMutableDictionary *dict;
 }
-+(instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
--(void) loadInfo;
--(void) saveInfo;
+- (void)loadInfo;
+- (void)saveInfo;
 
 // Desktop
--(void) saveDesktopInformation:(RADesktopWindow*)desktop;
--(BOOL) hasDesktopInformationAtIndex:(NSInteger)index;
--(RAPreservedDesktopInformation) desktopInformationForIndex:(NSInteger)index;
+- (void)saveDesktopInformation:(RADesktopWindow*)desktop;
+- (BOOL)hasDesktopInformationAtIndex:(NSInteger)index;
+- (RAPreservedDesktopInformation)desktopInformationForIndex:(NSInteger)index;
 
 // Window
--(void) saveWindowInformation:(RAWindowBar*)window;
--(BOOL) hasWindowInformationForIdentifier:(NSString*)appIdentifier;
--(RAPreservedWindowInformation) windowInformationForAppIdentifier:(NSString*)identifier;
--(void) removeWindowInformationForIdentifier:(NSString*)appIdentifier;
+- (void)saveWindowInformation:(RAWindowBar*)window;
+- (BOOL)hasWindowInformationForIdentifier:(NSString*)appIdentifier;
+- (RAPreservedWindowInformation) windowInformationForAppIdentifier:(NSString*)identifier;
+- (void)removeWindowInformationForIdentifier:(NSString*)appIdentifier;
 @end

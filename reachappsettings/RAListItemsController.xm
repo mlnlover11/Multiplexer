@@ -15,26 +15,25 @@
 @end
 
 @implementation RAListItemsController
--(UIColor*) navigationTintColor { return [UIColor blackColor]; }
+- (UIColor*)navigationTintColor {
+  return [UIColor blackColor];
+}
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
   self.navigationController.navigationBar.tintColor = self.navigationTintColor;
   [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
 
   [[UIApplication sharedApplication] keyWindow].tintColor = nil;
   self.navigationController.navigationBar.tintColor = nil;
 }
 
--(NSArray*) specifiers
-{
+- (NSArray*)specifiers {
   if (!_specifiers) {
     PSSpecifier* themeSpecifier = [PSSpecifier preferenceSpecifierNamed:@"Documentation"
                                     target:self
@@ -52,18 +51,15 @@
   return _specifiers;
 }
 
--(void) openThemingDocumentation
-{
+- (void)openThemingDocumentation {
   [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://elijahandandrew.com/multiplexer/ThemingDocumentation.html"]];
 }
 
--(void) tableView:(id)arg1 didSelectRowAtIndexPath:(id)arg2
-{
+- (void)tableView:(id)arg1 didSelectRowAtIndexPath:(id)arg2 {
   [super tableView:arg1 didSelectRowAtIndexPath:arg2];
 
   PSTableCell *cell = [self tableView:arg1 cellForRowAtIndexPath:arg2];
-  if ([cell.specifier propertyForKey:@"isTheming"])
-  {
+  if ([cell.specifier propertyForKey:@"isTheming"]) {
     [self openThemingDocumentation];
   }
 }
@@ -75,18 +71,18 @@
 @end
 
 @implementation RABackgroundingListItemsController
--(UIColor*) navigationTintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
+- (UIColor*)navigationTintColor {
+  return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f];
+}
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
 
   self.navigationController.navigationBar.tintColor = self.navigationTintColor;
   [[UIApplication sharedApplication] keyWindow].tintColor = self.navigationTintColor;
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
 
   [[UIApplication sharedApplication] keyWindow].tintColor = nil;

@@ -10,13 +10,13 @@
 @property (nonatomic, retain) RAAppSliderProvider *swipeProvider;
 @property (nonatomic) BOOL isSwipeable;
 
--(CGRect) clientFrame;
--(NSString*) currentBundleIdentifier;
+- (CGRect)clientFrame;
+- (NSString*)currentBundleIdentifier;
 
--(void) goToTheLeft;
--(void) goToTheRight;
+- (void)goToTheLeft;
+- (void)goToTheRight;
 
--(void) load;
--(void) unload;
--(void) updateCurrentView;
+- (void)load;
+- (void)unload;
+- (void)updateCurrentView;
 @end

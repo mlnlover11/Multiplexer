@@ -12,14 +12,24 @@
 @end
 
 @implementation RAMakersController
--(BOOL) showHeartImage { return NO; }
--(UIColor*) navigationTintColor { return [UIColor blackColor]; }
--(UIColor*) switchOnTintColor { return self.navigationTintColor; }
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (UIColor*)navigationTintColor {
+  return [UIColor blackColor];
+}
+
+- (UIColor*)switchOnTintColor {
+  return self.navigationTintColor;
+}
 //-(UIColor*) iconColor { return self.navigationTintColor; }
 
--(NSString*) customTitle { return @"Creators"; }
+- (NSString*)customTitle {
+  return @"Creators";
+}
 
-- (id)customSpecifiers {
+- (NSArray*)customSpecifiers {
   return @[
            @{ @"cell": @"PSGroupCell", @"label": @"Developed and Designed by" },
            @{
@@ -147,24 +157,23 @@ Crafted with love in 🇨🇦 and 🇺🇸. \n\
            ];
 }
 
--(void) openGithub
-{
-    [SKSharedHelper openGitHub:@"mlnlover11/Multiplexer"];
+- (void)openGithub {
+  [SKSharedHelper openGitHub:@"mlnlover11/Multiplexer"];
 }
 
--(void) openElijahTwitter { [SKSharedHelper openTwitter:@"daementor"]; }
--(void) openAndrewTwitter { [SKSharedHelper openTwitter:@"drewplex"]; }
--(void) openShadeTwitter { [SKSharedHelper openTwitter:@"ShadeZepheri"]; }
--(void) openAndiTwitter { [SKSharedHelper openTwitter:@"Nexuist"]; }
--(void) openBetaPage { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://www.reddit.com/user/beta382"]]; }
--(void) openChonTwitter { [SKSharedHelper openTwitter:@"HikoMitsuketa"]; }
--(void) openDavidTwitter { [SKSharedHelper openTwitter:@"djaovx"]; }
--(void) openJackTwitter { [SKSharedHelper openTwitter:@"JackHaal"]; }
--(void) openMosheTwitter { [SKSharedHelper openTwitter:@"oniconpack"]; }
--(void) openBindersPAge { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://www.reddit.com/user/_BindersFullOfWomen_"]]; }
--(void) openWilsonTwitter { [SKSharedHelper openTwitter:@"xTM3x"]; }
--(void) openZiph0nTwitter { [SKSharedHelper openTwitter:@"ziph0n"]; }
--(void) openSharedRoutineTwitter { [SKSharedHelper openTwitter:@"sharedRoutine"]; }
--(void) openEthanTwitter { [SKSharedHelper openTwitter:@"its_not_herpes"]; }
--(void) openSite { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://elijahandandrew.com"]]; }
+- (void)openElijahTwitter { [SKSharedHelper openTwitter:@"daementor"]; }
+- (void)openAndrewTwitter { [SKSharedHelper openTwitter:@"drewplex"]; }
+- (void)openShadeTwitter { [SKSharedHelper openTwitter:@"ShadeZepheri"]; }
+- (void)openAndiTwitter { [SKSharedHelper openTwitter:@"Nexuist"]; }
+- (void)openBetaPage { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://www.reddit.com/user/beta382"]]; }
+- (void)openChonTwitter { [SKSharedHelper openTwitter:@"HikoMitsuketa"]; }
+- (void)openDavidTwitter { [SKSharedHelper openTwitter:@"djaovx"]; }
+- (void)openJackTwitter { [SKSharedHelper openTwitter:@"JackHaal"]; }
+- (void)openMosheTwitter { [SKSharedHelper openTwitter:@"oniconpack"]; }
+- (void)openBindersPAge { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://www.reddit.com/user/_BindersFullOfWomen_"]]; }
+- (void)openWilsonTwitter { [SKSharedHelper openTwitter:@"xTM3x"]; }
+- (void)openZiph0nTwitter { [SKSharedHelper openTwitter:@"ziph0n"]; }
+- (void)openSharedRoutineTwitter { [SKSharedHelper openTwitter:@"sharedRoutine"]; }
+- (void)openEthanTwitter { [SKSharedHelper openTwitter:@"its_not_herpes"]; }
+- (void)openSite { [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://elijahandandrew.com"]]; }
 @end

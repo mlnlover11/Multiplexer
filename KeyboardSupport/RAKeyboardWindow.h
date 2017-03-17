@@ -5,8 +5,8 @@
 	RARemoteKeyboardView *kbView;
 }
 
--(void) setupForKeyboardAndShow:(NSString*)identifier;
--(void) removeKeyboard;
+- (void)setupForKeyboardAndShow:(NSString*)identifier;
+- (void)removeKeyboard;
 
--(unsigned int) contextId;
+- (unsigned int)contextId;
 @end

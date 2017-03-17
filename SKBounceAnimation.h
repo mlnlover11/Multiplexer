@@ -25,7 +25,7 @@ extern SKBounceAnimationStiffness SKBounceAnimationStiffnessHeavy;
 @property (nonatomic, assign) BOOL shake; //if shaking, set fromValue to the furthest value, and toValue to the current value
 @property (nonatomic, assign) SKBounceAnimationStiffness stiffness;
 
-+ (SKBounceAnimation*) animationWithKeyPath:(NSString*)keyPath;
++ (SKBounceAnimation*)animationWithKeyPath:(NSString*)keyPath;
 
 
 @end

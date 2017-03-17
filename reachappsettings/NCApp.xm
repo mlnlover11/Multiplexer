@@ -14,15 +14,15 @@
 #define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.reachapp.settings.plist"
 
 @interface PSViewController (Protean)
--(void) viewDidLoad;
--(void) viewWillDisappear:(BOOL)animated;
+- (void)viewDidLoad;
+- (void)viewWillDisappear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 @end
 
 @interface PSViewController (SettingsKit2)
--(UINavigationController*)navigationController;
--(void)viewWillAppear:(BOOL)animated;
--(void)viewWillDisappear:(BOOL)animated;
+- (UINavigationController*)navigationController;
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewWillDisappear:(BOOL)animated;
 @end
 
 @interface ALApplicationTableDataSource (Private)
@@ -33,8 +33,7 @@
 @end
 
 @implementation ReachAppNCAppSettingsListController
--(UIView*) headerView
-{
+- (UIView*)headerView {
   RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50)];
   header.colors = @[
     (id) [UIColor colorWithRed:90/255.0f green:212/255.0f blue:39/255.0f alpha:1.0f].CGColor,
@@ -48,20 +47,29 @@
 
   return notHeader;
 }
--(UIColor*) tintColor { return [UIColor colorWithRed:90/255.0f green:212/255.0f blue:39/255.0f alpha:1.0f]; }
--(UIColor*) switchTintColor { return [[UISwitch alloc] init].tintColor; }
 
--(NSString*) customTitle { return @"Quick Access"; }
--(BOOL) showHeartImage { return NO; }
+- (UIColor*)tintColor {
+  return [UIColor colorWithRed:90/255.0f green:212/255.0f blue:39/255.0f alpha:1.0f];
+}
 
--(void) viewDidAppear:(BOOL)arg1
-{
-  [super viewDidAppear:arg1];
+- (UIColor*)switchTintColor {
+  return [[UISwitch alloc] init].tintColor;
+}
+
+- (NSString*)customTitle {
+  return @"Quick Access";
+}
+
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
   [super performSelector:@selector(setupHeader)];
 }
 
--(NSArray*) customSpecifiers
-{
+- (NSArray*)customSpecifiers {
   return @[
            @{ @"footerText": @"Quickly enable or disable Quick Access." },
            @{
@@ -101,8 +109,7 @@
 @end
 
 
-@interface RANCAppSelectorView : PSViewController <UITableViewDelegate>
-{
+@interface RANCAppSelectorView : PSViewController <UITableViewDelegate> {
   UITableView* _tableView;
   ALApplicationTableDataSource* _dataSource;
 }
@@ -117,8 +124,7 @@
 @end
 
 @implementation RANCApplicationTableDataSource
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   //NSInteger row = indexPath.row;
   UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
 
@@ -135,8 +141,7 @@
   }
   CFRelease(keyList);
 
-  if ([cell isKindOfClass:[ALCheckCell class]])
-  {
+  if ([cell isKindOfClass:[ALCheckCell class]]) {
     NSString *dn = [self displayIdentifierForIndexPath:indexPath];
     NSString *key = @"NCApp";// [NSString stringWithFormat:@"NCApp-%@",dn];
     //BOOL value = [prefs[key] boolValue];
@@ -149,8 +154,7 @@
 
 @implementation RANCAppSelectorView
 
--(void)updateDataSource:(NSString*)searchText
-{
+- (void)updateDataSource:(NSString*)searchText {
   _dataSource.sectionDescriptors = [NSArray arrayWithObjects:
                                 [NSDictionary dictionaryWithObjectsAndKeys:
                                  @"", ALSectionDescriptorTitleKey,
@@ -164,33 +168,30 @@
   [_tableView reloadData];
 }
 
--(instancetype)init
-{
-  if (!(self = [super init])) return nil;
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    CGRect bounds = [[UIScreen mainScreen] bounds];
 
-  CGRect bounds = [[UIScreen mainScreen] bounds];
+    _dataSource = [[RANCApplicationTableDataSource alloc] init];
 
-  _dataSource = [[RANCApplicationTableDataSource alloc] init];
-
-  _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
-  _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  _tableView.delegate = self;
-  _tableView.dataSource = _dataSource;
-  _dataSource.tableView = _tableView;
-  [self updateDataSource:nil];
-
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
+    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _tableView.delegate = self;
+    _tableView.dataSource = _dataSource;
+    _dataSource.tableView = _tableView;
+    [self updateDataSource:nil];
+  }
   return self;
 }
 
--(void)viewDidLoad
-{
+- (void)viewDidLoad {
   ((UIViewController *)self).title = @"Applications";
   [self.view addSubview:_tableView];
   [super viewDidLoad];
 }
 
--(void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
-{
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath {
   [tableView deselectRowAtIndexPath:indexPath animated:true];
   ALCheckCell* cell = (ALCheckCell*)[tableView cellForRowAtIndexPath:indexPath];
   [cell didSelect];
@@ -199,8 +200,9 @@
   BOOL selected = type == UITableViewCellAccessoryCheckmark;
 
   NSString *identifier = [_dataSource displayIdentifierForIndexPath:indexPath];
-  if (selected)
+  if (selected) {
     CFPreferencesSetAppValue((__bridge CFStringRef)@"NCApp", (CFPropertyListRef)(identifier), CFSTR("com.efrederickson.reachapp.settings"));
+  }
 
   [self updateDataSource:nil];
 

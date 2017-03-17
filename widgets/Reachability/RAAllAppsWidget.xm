@@ -10,16 +10,27 @@
 @end
 
 @implementation RAAllAppsWidget
--(BOOL) enabled { return [RASettings.sharedInstance showAllAppsInWidgetSelector]; }
+- (BOOL)enabled {
+	return [RASettings.sharedInstance showAllAppsInWidgetSelector];
+}
 
--(NSInteger) sortOrder { return 3; }
+- (NSInteger)sortOrder {
+	return 3;
+}
 
--(NSString*) displayName { return LOCALIZE(@"ALL_APPS"); }
--(NSString*) identifier { return @"com.efrederickson.reachapp.widgets.sections.allapps"; }
--(CGFloat) titleOffset { return savedX; }
+- (NSString*)displayName {
+	return LOCALIZE(@"ALL_APPS");
+}
 
--(UIView*) viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size_ iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing
-{
+- (NSString*)identifier {
+	return @"com.efrederickson.reachapp.widgets.sections.allapps";
+}
+
+- (CGFloat)titleOffset {
+	return savedX;
+}
+
+- (UIView*)viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size_ iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing {
 	UIScrollView *allAppsView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 200)];
 
 	CGSize size = [%c(SBIconView) defaultIconSize];
@@ -40,17 +51,16 @@
 	allAppsView.pagingEnabled = [RASettings.sharedInstance pagingEnabled];
 
 	static NSMutableArray *allApps = nil;
-	if (!allApps)
-	{
+	if (!allApps) {
 		if ([%c(SBIconViewMap) respondsToSelector:@selector(homescreenMap)]) {
 			allApps = [[[[%c(SBIconViewMap) homescreenMap] iconModel] visibleIconIdentifiers] mutableCopy];
 		} else {
 			allApps = [[[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers] mutableCopy];
 		}
-	    [allApps sortUsingComparator: ^(NSString* a, NSString* b) {
-	    	NSString *a_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:a].displayName;
-	    	NSString *b_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:b].displayName;
-	        return [a_ caseInsensitiveCompare:b_];
+		[allApps sortUsingComparator: ^(NSString* a, NSString* b) {
+			NSString *a_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:a].displayName;
+			NSString *b_ = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:b].displayName;
+		  return [a_ caseInsensitiveCompare:b_];
 		}];
 		//[allApps removeObject:currentBundleIdentifier];
 	}
@@ -58,8 +68,7 @@
 	isTop = YES;
 	intervalCount = 1;
 	hasSecondRow = NO;
-	for (NSString *str in allApps)
-	{
+	for (NSString *str in allApps) {
 		app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:str];
 		SBApplicationIcon *icon = nil;
 		SBIconView *iconView = nil;
@@ -70,18 +79,15 @@
 			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
 			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
 		}
-		if (!iconView || ![icon isKindOfClass:[%c(SBApplicationIcon) class]])
+		if (!iconView || ![icon isKindOfClass:[%c(SBApplicationIcon) class]]) {
 			continue;
+		}
 
-		if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
-		{
-			if (isTop)
-			{
+		if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount) {
+			if (isTop) {
 				contentSize.height += size.height + 10;
 				contentSize.width -= interval;
-			}
-			else
-			{
+			} else {
 				intervalCount++;
 				contentSize.height -= (size.height + 10);
 				width += interval;
@@ -109,15 +115,13 @@
 	return allAppsView;
 }
 
--(void) appViewItemTap:(UIGestureRecognizer*)gesture
-{
+- (void)appViewItemTap:(UIGestureRecognizer*)gesture {
 	[GET_SBWORKSPACE appViewItemTap:gesture];
 	//[[RAReachabilityManager sharedInstance] launchTopAppWithIdentifier:gesture.view.restorationIdentifier];
 }
 @end
 
-%ctor
-{
+%ctor {
 	static id _widget = [[RAAllAppsWidget alloc] init];
 	[RAWidgetSectionManager.sharedInstance registerSection:_widget];
 }

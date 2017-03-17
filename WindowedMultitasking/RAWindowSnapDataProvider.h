@@ -25,11 +25,11 @@ typedef NS_ENUM(NSInteger, RAWindowSnapLocation) {
 };
 
 @interface RAWindowSnapDataProvider : NSObject
-+(BOOL) shouldSnapWindow:(RAWindowBar*)bar;
-+(RAWindowSnapLocation) snapLocationForWindow:(RAWindowBar*)windowBar;
-+(CGPoint) snapCenterForWindow:(RAWindowBar*)window toLocation:(RAWindowSnapLocation)location;
-+(void) snapWindow:(RAWindowBar*)window toLocation:(RAWindowSnapLocation)location animated:(BOOL)animated;
-+(void) snapWindow:(RAWindowBar*)window toLocation:(RAWindowSnapLocation)location animated:(BOOL)animated completion:(dispatch_block_t)completionBlock;
++ (BOOL)shouldSnapWindow:(RAWindowBar*)bar;
++ (RAWindowSnapLocation)snapLocationForWindow:(RAWindowBar*)windowBar;
++ (CGPoint)snapCenterForWindow:(RAWindowBar*)window toLocation:(RAWindowSnapLocation)location;
++ (void)snapWindow:(RAWindowBar*)window toLocation:(RAWindowSnapLocation)location animated:(BOOL)animated;
++ (void)snapWindow:(RAWindowBar*)window toLocation:(RAWindowSnapLocation)location animated:(BOOL)animated completion:(dispatch_block_t)completionBlock;
 @end
 
 RAWindowSnapLocation RAWindowSnapLocationGetLeftOfScreen();

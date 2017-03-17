@@ -63,11 +63,12 @@ extern BOOL $__IS_SPRINGBOARD;
 
 #define ON_MAIN_THREAD(block) \
     { \
-        dispatch_block_t _blk = block; \
-        if (NSThread.isMainThread) \
-            _blk(); \
-        else \
-            dispatch_sync(dispatch_get_main_queue(), _blk); \
+      dispatch_block_t _blk = block; \
+      if (NSThread.isMainThread) { \
+        _blk(); \
+      } else { \
+        dispatch_sync(dispatch_get_main_queue(), _blk); \
+      } \
     }
 
 #define IF_SPRINGBOARD if (IS_SPRINGBOARD)

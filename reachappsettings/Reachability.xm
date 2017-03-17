@@ -14,15 +14,15 @@
 #define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.reachapp.settings.plist"
 
 @interface PSViewController (Protean)
--(void) viewDidLoad;
--(void) viewWillDisappear:(BOOL)animated;
+- (void) viewDidLoad;
+- (void) viewWillDisappear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 @end
 
 @interface PSViewController (SettingsKit2)
--(UINavigationController*)navigationController;
--(void)viewWillAppear:(BOOL)animated;
--(void)viewWillDisappear:(BOOL)animated;
+- (UINavigationController*)navigationController;
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewWillDisappear:(BOOL)animated;
 @end
 
 @interface ALApplicationTableDataSource (Private)
@@ -33,12 +33,11 @@
 @end
 
 @implementation ReachAppReachabilitySettingsListController
--(UIView*) headerView
-{
+- (UIView*)headerView {
   RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
   header.colors = @[
-      (id) [UIColor colorWithRed:29/255.0f green:119/255.0f blue:239/255.0f alpha:1.0f].CGColor,
-      (id) [UIColor colorWithRed:82/255.0f green:191/255.0f blue:232/255.0f alpha:1.0f].CGColor
+    (id) [UIColor colorWithRed:29/255.0f green:119/255.0f blue:239/255.0f alpha:1.0f].CGColor,
+    (id) [UIColor colorWithRed:82/255.0f green:191/255.0f blue:232/255.0f alpha:1.0f].CGColor
   ];
   header.shouldBlend = NO;
   //header.title = @"ReachApp";
@@ -49,19 +48,29 @@
 
   return notHeader;
 }
--(UIColor*) tintColor { return [UIColor colorWithRed:29/255.0f green:119/255.0f blue:239/255.0f alpha:1.0f]; }
--(UIColor*) switchTintColor { return [[UISwitch alloc] init].tintColor; }
--(NSString*) customTitle { return @"Reach App"; }
--(BOOL) showHeartImage { return NO; }
 
--(void) viewDidAppear:(BOOL)arg1
-{
-  [super viewDidAppear:arg1];
+- (UIColor*)tintColor {
+  return [UIColor colorWithRed:29/255.0f green:119/255.0f blue:239/255.0f alpha:1.0f];
+}
+
+- (UIColor*)switchTintColor {
+  return [[UISwitch alloc] init].tintColor;
+}
+
+- (NSString*)customTitle {
+  return @"Reach App";
+}
+
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
   [super performSelector:@selector(setupHeader)];
 }
 
--(NSArray*) customSpecifiers
-{
+- (NSArray*)customSpecifiers {
   return @[
            @{ @"footerText": @"Quickly enable or disable ReachApp." },
            @{
@@ -178,9 +187,11 @@
 @end
 
 @implementation RAAppChooserOptionsListController
--(BOOL) showHeartImage { return NO; }
--(NSArray*) customSpecifiers
-{
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (NSArray*)customSpecifiers {
   return @[
            @{ @"footerText": @"If enabled, the app selector will scale to the size of available apps." },
            @{
@@ -246,7 +257,7 @@
 @end
 
 @implementation RASwitchCell
--(instancetype)initWithStyle:(int)arg1 reuseIdentifier:(id)arg2 specifier:(id)arg3 { //init method
+- (instancetype)initWithStyle:(int)arg1 reuseIdentifier:(id)arg2 specifier:(id)arg3 { //init method
   self = [super initWithStyle:arg1 reuseIdentifier:arg2 specifier:arg3]; //call the super init method
   if (self) {
     [((UISwitch *)[self control]) setOnTintColor:[UIColor redColor]]; //change the switch color
@@ -255,8 +266,7 @@
 }
 @end
 
-@interface RAFavoritesAppSelectorView : PSViewController <UITableViewDelegate>
-{
+@interface RAFavoritesAppSelectorView : PSViewController <UITableViewDelegate> {
   UITableView* _tableView;
   ALApplicationTableDataSource* _dataSource;
 }
@@ -271,8 +281,7 @@
 @end
 
 @implementation RAApplicationTableDataSource
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //NSInteger row = indexPath.row;
   UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
 
@@ -289,8 +298,7 @@
   }
   CFRelease(keyList);
 
-  if ([cell isKindOfClass:[ALCheckCell class]])
-  {
+  if ([cell isKindOfClass:[ALCheckCell class]]) {
     NSString *dn = [self displayIdentifierForIndexPath:indexPath];
     NSString *key = [NSString stringWithFormat:@"Favorites-%@",dn];
     BOOL value = [prefs[key] boolValue];
@@ -302,8 +310,7 @@
 
 @implementation RAFavoritesAppSelectorView
 
--(void)updateDataSource:(NSString*)searchText
-{
+-(void)updateDataSource:(NSString*)searchText {
   _dataSource.sectionDescriptors = [NSArray arrayWithObjects:
                                 [NSDictionary dictionaryWithObjectsAndKeys:
                                  @"", ALSectionDescriptorTitleKey,
@@ -317,8 +324,7 @@
   [_tableView reloadData];
 }
 
--(instancetype)init
-{
+- (instancetype)init {
   if (self = [super init]) {
     CGRect bounds = [[UIScreen mainScreen] bounds];
 
@@ -334,15 +340,13 @@
   return self;
 }
 
--(void)viewDidLoad
-{
+- (void)viewDidLoad {
   ((UIViewController *)self).title = @"Applications";
   [self.view addSubview:_tableView];
   [super viewDidLoad];
 }
 
--(void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
-{
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath {
   [tableView deselectRowAtIndexPath:indexPath animated:true];
   ALCheckCell* cell = (ALCheckCell*)[tableView cellForRowAtIndexPath:indexPath];
   [cell didSelect];

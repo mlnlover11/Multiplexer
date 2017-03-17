@@ -30,34 +30,28 @@
 @end
 
 @implementation RAMissionControlWindow
--(instancetype) initWithFrame:(CGRect)frame
-{
-	if (self = [super initWithFrame:frame])
-	{
+- (instancetype)initWithFrame:(CGRect)frame {
+	if (self = [super initWithFrame:frame]) {
 		trashIcon = [%c(RAResourceImageProvider) imageForFilename:@"Trash.png"];
 	}
 	return self;
 }
 
--(UIWindowLevel) windowLevel
-{
+- (UIWindowLevel)windowLevel {
 	//return UIWindowLevelStatusBar + 1;
 	return 1000;
 }
 
-- (BOOL)_shouldAutorotateToInterfaceOrientation:(int)arg1 checkForDismissal:(BOOL)arg2 isRotationDisabled:(BOOL*)arg3
-{
+- (BOOL)_shouldAutorotateToInterfaceOrientation:(int)arg1 checkForDismissal:(BOOL)arg2 isRotationDisabled:(BOOL*)arg3 {
 	return YES;
 }
 
--(void) reloadDesktopSection
-{
+- (void)reloadDesktopSection {
 	width = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 4.5714;
 	height = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 4.36;
 	panePadding = width;
 	int count = 1;
-	while (panePadding + width < UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width)
-	{
+	while (panePadding + width < UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width) {
 		count += 1;
 		panePadding += width;
 	}
@@ -71,12 +65,9 @@
 	// DESKTOP
 	CGFloat y = 20;
 
-	if (desktopScrollView)
-	{
+	if (desktopScrollView) {
 		[desktopScrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	}
-	else
-	{
+	} else {
 		desktopLabel = [[UILabel alloc] initWithFrame:CGRectMake(panePadding, y, self.frame.size.width - 20, 25)];
 		desktopLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 		desktopLabel.textColor = UIColor.whiteColor;
@@ -94,8 +85,7 @@
 
 	CGFloat x = panePadding;
 	int desktopIndex = 0;
-	for (RADesktopWindow *desktop in [[%c(RADesktopManager) sharedInstance] availableDesktops])
-	{
+	for (RADesktopWindow *desktop in [[%c(RADesktopManager) sharedInstance] availableDesktops]) {
 		RAMissionControlPreviewView *preview = [[RAMissionControlPreviewView alloc] initWithFrame:CGRectMake(x, (desktopScrollView.frame.size.height - height) / 2.0, width, height)];
 		x += panePadding + preview.frame.size.width;
 
@@ -103,16 +93,13 @@
 		//preview.image = [[%c(RASnapshotProvider) sharedInstance] snapshotForDesktop:desktop];
 		[preview generateDesktopPreviewAsync:desktop completion:desktop == [[%c(RADesktopManager) sharedInstance] currentDesktop] ? ^{ [[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO]; } : (dispatch_block_t)nil];
 
-		if (desktop == [[%c(RADesktopManager) sharedInstance] currentDesktop] && [[%c(RASettings) sharedInstance] missionControlDesktopStyle] == 0)
-		{
+		if (desktop == [[%c(RADesktopManager) sharedInstance] currentDesktop] && [[%c(RASettings) sharedInstance] missionControlDesktopStyle] == 0) {
 			preview.backgroundColor = [UIColor grayColor];
 			preview.clipsToBounds = YES;
 			preview.layer.borderWidth = 2;
 			preview.layer.cornerRadius = 10;
 			preview.layer.borderColor = [UIColor whiteColor].CGColor;
-		}
-		else if (desktop != [[%c(RADesktopManager) sharedInstance] currentDesktop] && [[%c(RASettings) sharedInstance] missionControlDesktopStyle] == 1)
-		{
+		} else if (desktop != [[%c(RADesktopManager) sharedInstance] currentDesktop] && [[%c(RASettings) sharedInstance] missionControlDesktopStyle] == 1) {
 			UIView *crapView = [[UIView alloc] initWithFrame:(CGRect){{ 0, 0 }, preview.frame.size }];
 			crapView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.5];
 			[preview addSubview:crapView];
@@ -154,13 +141,11 @@
 	//height = UIScreen.mainScreen.bounds.size.height / 4.36;
 }
 
--(void) reloadWindowedAppsSection
-{
+- (void)reloadWindowedAppsSection {
 	[self reloadWindowedAppsSection:runningApplications];
 }
 
--(void) reloadWindowedAppsSection:(NSArray*)runningApplicationsArg
-{
+-(void) reloadWindowedAppsSection:(NSArray*)runningApplicationsArg {
 	runningApplications = [runningApplicationsArg mutableCopy];
 
 	NSArray *switcherOrder = [[%c(RAAppSwitcherModelWrapper) appSwitcherAppIdentiferList] copy];
@@ -176,21 +161,18 @@
 		visibleIcons = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] visibleIconIdentifiers];
 	}
 
-	for (SBApplication *app in runningApplications)
-	{
-		if (![visibleIcons containsObject:app.bundleIdentifier])// || [RAMissionControlManager.sharedInstance.inhibitedApplications containsObject:app.bundleIdentifier])
+	for (SBApplication *app in runningApplications) {
+		if (![visibleIcons containsObject:app.bundleIdentifier]) {
 			[appsWithoutWindows removeObject:app];
+		}// || [RAMissionControlManager.sharedInstance.inhibitedApplications containsObject:app.bundleIdentifier])
 	}
 
 	CGFloat x = panePadding;
 	CGFloat y = desktopScrollView.frame.origin.y + desktopScrollView.frame.size.height + 7;
 
-	if (windowedAppScrollView)
-	{
+	if (windowedAppScrollView) {
 		[windowedAppScrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	}
-	else
-	{
+	} else {
 		windowedLabel = [[UILabel alloc] initWithFrame:CGRectMake(panePadding, y, self.frame.size.width - 20, 25)];
 		windowedLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 		windowedLabel.textColor = UIColor.whiteColor;
@@ -205,8 +187,7 @@
 	}
 
 	BOOL empty = YES;
-	for (RAHostedAppView *app in [[%c(RADesktopManager) sharedInstance] currentDesktop].hostedWindows)
-	{
+	for (RAHostedAppView *app in [[%c(RADesktopManager) sharedInstance] currentDesktop].hostedWindows) {
 		SBApplication *sbapp = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:app.bundleIdentifier];
 		[appsWithoutWindows removeObject:sbapp];
 
@@ -228,8 +209,7 @@
 		empty = NO;
 	}
 
-	if (empty)
-	{
+	if (empty) {
 		UILabel *emptyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, (windowedAppScrollView.frame.size.height - 30) / 2, windowedAppScrollView.frame.size.width, 30)];
 		emptyLabel.textAlignment = NSTextAlignmentCenter;
 		emptyLabel.font = [UIFont systemFontOfSize:25];
@@ -238,16 +218,12 @@
 		emptyLabel.alpha = 0.7;
 		[windowedAppScrollView addSubview:emptyLabel];
 
-		if (windowedKillAllButton)
-		{
+		if (windowedKillAllButton) {
 			[windowedKillAllButton removeFromSuperview];
 			windowedKillAllButton = nil;
 		}
-	}
-	else
-	{
-		if (!windowedKillAllButton)
-		{
+	} else {
+		if (!windowedKillAllButton) {
 			windowedKillAllButton = [UIButton buttonWithType:UIButtonTypeCustom];
 			[windowedKillAllButton setTitle:LOCALIZE(@"KILL_ALL") forState:UIControlStateNormal];
 			windowedKillAllButton.titleLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
@@ -261,17 +237,13 @@
 	windowedAppScrollView.contentSize = CGSizeMake(MAX(x, self.frame.size.width + (empty ? 0 : 1)), height * 1.15); // make slightly scrollable
 }
 
--(void) reloadOtherAppsSection
-{
+- (void)reloadOtherAppsSection {
 	CGFloat x = panePadding;
 	CGFloat y = windowedAppScrollView.frame.origin.y + windowedAppScrollView.frame.size.height + 7;
 
-	if (otherRunningAppsScrollView)
-	{
+	if (otherRunningAppsScrollView) {
 		[otherRunningAppsScrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	}
-	else
-	{
+	} else {
 		otherLabel = [[UILabel alloc] initWithFrame:CGRectMake(panePadding, y, self.frame.size.width - 20, 25)];
 		otherLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
 		otherLabel.textColor = UIColor.whiteColor;
@@ -286,8 +258,7 @@
 	}
 
 	BOOL empty = YES;
-	for (SBApplication *app in appsWithoutWindows)
-	{
+	for (SBApplication *app in appsWithoutWindows) {
 		empty = NO;
 
 		RAMissionControlPreviewView *preview = [[RAMissionControlPreviewView alloc] initWithFrame:CGRectMake(x, (otherRunningAppsScrollView.frame.size.height - height) / 2, width, height)];
@@ -307,8 +278,7 @@
 		preview.userInteractionEnabled = YES;
 	}
 
-	if (empty)
-	{
+	if (empty) {
 		UILabel *emptyLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, (windowedAppScrollView.frame.size.height - 30) / 2, windowedAppScrollView.frame.size.width, 30)];
 		emptyLabel.textAlignment = NSTextAlignmentCenter;
 		emptyLabel.font = [UIFont systemFontOfSize:25];
@@ -317,16 +287,12 @@
 		emptyLabel.alpha = 0.7;
 		[otherRunningAppsScrollView addSubview:emptyLabel];
 
-		if (otherKillAllButton)
-		{
+		if (otherKillAllButton) {
 			[otherKillAllButton removeFromSuperview];
 			otherKillAllButton = nil;
 		}
-	}
-	else
-	{
-		if (!otherKillAllButton)
-		{
+	} else {
+		if (!otherKillAllButton) {
 			otherKillAllButton = [UIButton buttonWithType:UIButtonTypeCustom];
 			[otherKillAllButton setTitle:LOCALIZE(@"KILL_ALL") forState:UIControlStateNormal];
 			otherKillAllButton.titleLabel.font = [UIFont fontWithName:(IS_IOS_OR_NEWER(iOS_9_0) ? @"SFUIText-Medium" : @"HelveticaNeue-Medium") size:14];
@@ -341,8 +307,7 @@
 	otherRunningAppsScrollView.contentSize = CGSizeMake(MAX(x, self.frame.size.width + (empty ? 0 : 1)), height * 1.15); // make slightly scrollable
 }
 
--(void) createNewDesktop:(UIButton*)view
-{
+- (void)createNewDesktop:(UIButton*)view {
 	[[%c(RADesktopManager) sharedInstance] addDesktop:NO];
 
 	[UIView animateWithDuration:0.4 animations:^{
@@ -352,59 +317,52 @@
 	}];
 }
 
--(void) removeCardForApplication:(SBApplication*)app
-{
+- (void)removeCardForApplication:(SBApplication*)app {
 	CGFloat originX = -1;
 	UIView *targetView = nil;
 	UIScrollView *parentView = [appsWithoutWindows containsObject:app] ? otherRunningAppsScrollView : windowedAppScrollView;
 	NSArray *subviews = [parentView.subviews copy];
 
-	for (UIView *view in subviews)
-	{
-		if ([view isKindOfClass:[RAMissionControlPreviewView class]])
-		{
+	for (UIView *view in subviews) {
+		if ([view isKindOfClass:[RAMissionControlPreviewView class]]) {
 			RAMissionControlPreviewView *real = (RAMissionControlPreviewView*)view;
-			if ([real.application.bundleIdentifier isEqualToString:app.bundleIdentifier])
-			{
+			if ([real.application.bundleIdentifier isEqualToString:app.bundleIdentifier]) {
 				originX = view.frame.origin.x;
 				targetView = view;
 			}
 		}
 
-		if (originX == -1)
+		if (originX == -1) {
 			continue;
-		else if (view.frame.origin.x == originX)
-		{
+		} else if (view.frame.origin.x == originX) {
 			[UIView animateWithDuration:0.2 animations:^{
 				view.frame = CGRectOffset(view.frame, 0, view.frame.size.height + panePadding);
 			} completion:^(BOOL _) {
 				[view removeFromSuperview];
 			}];
-		}
-		else if (view.frame.origin.x > originX)
+		} else if (view.frame.origin.x > originX) {
 			[UIView animateWithDuration:0.4 animations:^{
 				view.frame = CGRectOffset(view.frame, -view.frame.size.width - panePadding, 0);
 			}];
+		}
 	}
 
-	if (parentView.contentSize.width - 1 <= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width)
+	if (parentView.contentSize.width - 1 <= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width) {
 		; // don't make it too small to scroll
-	else if (targetView)
+	} else if (targetView) {
 		parentView.contentSize = CGSizeMake(parentView.contentSize.width - targetView.frame.size.width - panePadding + 1, parentView.contentSize.height);
+	}
 }
 
--(void) handleAppPreviewPan:(UILongPressGestureRecognizer*)gesture
-{
+- (void)handleAppPreviewPan:(UILongPressGestureRecognizer*)gesture {
 	static CGPoint initialCenter;
 	static UIView *draggedView;
 	static CGPoint lastPoint;
 
 	CGPoint point = [gesture locationInView:self];
 
-	if (gesture.state == UIGestureRecognizerStateBegan)
-	{
-		if (!trashImageView || !trashImageView.superview /* new window perhaps */)
-		{
+	if (gesture.state == UIGestureRecognizerStateBegan) {
+		if (!trashImageView || !trashImageView.superview /* new window perhaps */) {
 			trashImageView = [[UIImageView alloc] initWithFrame:CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height + 75, 75, 75)];
 			trashImageView.image = trashIcon;
 			[self addSubview:trashImageView];
@@ -424,8 +382,7 @@
 			trashImageView.frame = CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - (75+45), 75, 75);
 		}];
 
-		if (!draggedView)
-		{
+		if (!draggedView) {
 			draggedView = [gesture.view snapshotViewAfterScreenUpdates:YES];
 			draggedView.frame = gesture.view.frame;
 			draggedView.center = [gesture.view.superview convertPoint:gesture.view.center toView:self];
@@ -438,9 +395,7 @@
 			}];
 		}
 		initialCenter = draggedView.center;
-	}
-	else if (gesture.state == UIGestureRecognizerStateChanged)
-	{
+	} else if (gesture.state == UIGestureRecognizerStateChanged) {
 		//CGPoint newCenter = [gesture translationInView:draggedView];
 		//newCenter.x += initialCenter.x;
 		//newCenter.y += initialCenter.y;
@@ -450,9 +405,7 @@
 		center.x += point.x - lastPoint.x;
 		center.y += point.y - lastPoint.y;
 		draggedView.center = center;
-	}
-	else
-	{
+	} else {
 		gesture.view.alpha = 1;
 
 		//CGPoint center = [gesture translationInView:draggedView];
@@ -464,12 +417,11 @@
 
 		BOOL didKill = NO;
 
-		if (CGRectContainsPoint(trashImageView.frame, center) || CGRectContainsPoint(CGRectOffset(shadowView.frame, 0, -(75/2)), center))
-		{
+		if (CGRectContainsPoint(trashImageView.frame, center) || CGRectContainsPoint(CGRectOffset(shadowView.frame, 0, -(75/2)), center)) {
 			SBApplication *app = ((RAMissionControlPreviewView*)gesture.view).application;
 			[[%c(RADesktopManager) sharedInstance] removeAppWithIdentifier:app.bundleIdentifier animated:NO];
 			[[%c(RAWindowStatePreservationSystemManager) sharedInstance] removeWindowInformationForIdentifier:app.bundleIdentifier];
-			if ([[%c(RASettings) sharedInstance] missionControlKillApps])
+			if ([[%c(RASettings) sharedInstance] missionControlKillApps]) {
 				[%c(RAAppKiller) killAppWithSBApplication:app completion:^{
 					[runningApplications removeObject:app];
 
@@ -481,6 +433,7 @@
 					//	[self removeCardForApplication:app];
 					//});
 				}];
+			}
 
 			didKill = YES;
 		}
@@ -488,17 +441,12 @@
 			shadowView.alpha = 0;
 			trashImageView.alpha = 0;
 			trashImageView.frame = CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height + 75, 75, 75);
-		} completion:^(BOOL _) {
-		}];
+		} completion:nil];
 
-		if (!didKill)
-		{
-			for (UIView *subview in desktopScrollView.subviews)
-			{
-				if ([subview isKindOfClass:[RAMissionControlPreviewView class]])
-				{
-					if (CGRectContainsPoint((CGRect){ [desktopScrollView convertPoint:subview.frame.origin toView:self], subview.frame.size }, center) || (CGRectContainsPoint((CGRect){ [windowedAppScrollView convertPoint:subview.frame.origin toView:self], windowedAppScrollView.frame.size }, center) && gesture.view.superview != windowedAppScrollView))
-					{
+		if (!didKill) {
+			for (UIView *subview in desktopScrollView.subviews) {
+				if ([subview isKindOfClass:[RAMissionControlPreviewView class]]) {
+					if (CGRectContainsPoint((CGRect){ [desktopScrollView convertPoint:subview.frame.origin toView:self], subview.frame.size }, center) || (CGRectContainsPoint((CGRect){ [windowedAppScrollView convertPoint:subview.frame.origin toView:self], windowedAppScrollView.frame.size }, center) && gesture.view.superview != windowedAppScrollView)) {
 						RADesktopWindow *desktop = [[%c(RADesktopManager) sharedInstance] desktopAtIndex:subview.tag];
 						SBApplication *app = ((RAMissionControlPreviewView*)gesture.view).application;
 
@@ -518,8 +466,7 @@
 		}
 
 		[UIView animateWithDuration:0.4 animations:^{
-			if (!didKill)
-			{
+			if (!didKill) {
 				draggedView.transform = CGAffineTransformIdentity;
 				draggedView.center = initialCenter;
 			}
@@ -531,22 +478,17 @@
 	lastPoint = point;
 }
 
--(void) animateDesktopRemovalForDesktopAtIndexReloadingSectionAfter:(NSInteger)index
-{
+- (void)animateDesktopRemovalForDesktopAtIndexReloadingSectionAfter:(NSInteger)index {
 	CGFloat originX = -1;
-	for (UIView *v in desktopScrollView.subviews)
-	{
-		if (v.tag == index)
-		{
+	for (UIView *v in desktopScrollView.subviews) {
+		if (v.tag == index) {
 			originX = v.frame.origin.x;
 			[UIView animateWithDuration:0.2 animations:^{
 				v.frame = CGRectOffset(v.frame, 0, -panePadding);
 			} completion:^(BOOL _) {
 				[v removeFromSuperview];
 			}];
-		}
-		else if (v.tag > index || (originX != -1 && originX < v.frame.origin.x))
-		{
+		} else if (v.tag > index || (originX != -1 && originX < v.frame.origin.x)) {
 			[UIView animateWithDuration:0.4 animations:^{
 				v.frame = CGRectOffset(v.frame, -v.frame.size.width - panePadding, 0);
 			}];
@@ -557,51 +499,45 @@
 	});
 }
 
--(void) handleDesktopPan:(UIPanGestureRecognizer*)gesture
-{
+- (void)handleDesktopPan:(UIPanGestureRecognizer*)gesture {
 	static CGPoint initialCenter;
 
-	if (gesture.state == UIGestureRecognizerStateBegan)
-	{
+	if (gesture.state == UIGestureRecognizerStateBegan) {
 		initialCenter = gesture.view.center;
-	}
-	else if (gesture.state == UIGestureRecognizerStateChanged)
-	{
+	} else if (gesture.state == UIGestureRecognizerStateChanged) {
 		CGPoint newCenter = [gesture translationInView:gesture.view];
 		//newCenter.x += initialCenter.x;
 		newCenter.x = initialCenter.x;
-		if (newCenter.y > 0 || gesture.view.tag == 0)
+		if (newCenter.y > 0 || gesture.view.tag == 0) {
 			newCenter.y = initialCenter.y + (newCenter.y / 5); //initialCenter.y;
-		else
+		} else {
 			newCenter.y += initialCenter.y;
+		}
 
 		gesture.view.center = newCenter;
-	}
-	else
-	{
-		if (gesture.view.center.y - initialCenter.y < -80 && gesture.view.tag > 0)
-		{
+	} else {
+		if (gesture.view.center.y - initialCenter.y < -80 && gesture.view.tag > 0) {
 			[[%c(RADesktopManager) sharedInstance] removeDesktopAtIndex:gesture.view.tag];
 			[UIView animateWithDuration:0.4 animations:^{
 				gesture.view.center = CGPointMake(gesture.view.center.x, -gesture.view.frame.size.height);
 			} completion:^(BOOL _) {
 				[self animateDesktopRemovalForDesktopAtIndexReloadingSectionAfter:gesture.view.tag];
 			}];
+		} else {
+			[UIView animateWithDuration:0.4 animations:^{
+				gesture.view.center = initialCenter;
+			}];
 		}
-		else
-			[UIView animateWithDuration:0.4 animations:^{ gesture.view.center = initialCenter; }];
 	}
 }
 
--(void) activateDesktop:(UITapGestureRecognizer*)gesture
-{
+- (void)activateDesktop:(UITapGestureRecognizer*)gesture {
 	int desktop = gesture.view.tag;
 	[[%c(RADesktopManager) sharedInstance] switchToDesktop:desktop];
 	[self.manager hideMissionControl:YES];
 }
 
--(void) handleSingleDesktopTap:(UITapGestureRecognizer*)gesture
-{
+- (void)handleSingleDesktopTap:(UITapGestureRecognizer*)gesture {
 	int desktop = gesture.view.tag;
 	[[%c(RADesktopManager) sharedInstance] switchToDesktop:desktop actuallyShow:NO];
 	[self reloadDesktopSection];
@@ -609,13 +545,11 @@
 	[self reloadOtherAppsSection];
 }
 
--(void) handleDoubleDesktopTap:(UITapGestureRecognizer*)gesture
-{
+- (void)handleDoubleDesktopTap:(UITapGestureRecognizer*)gesture {
 	[self activateDesktop:gesture];
 }
 
--(void) topIconViewTap:(UITapGestureRecognizer*)gesture
-{
+- (void)topIconViewTap:(UITapGestureRecognizer*)gesture {
 	[self.manager hideMissionControl:YES];
 	__block __strong NSString *identifier = [[[gesture view] performSelector:@selector(application)] bundleIdentifier];
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
@@ -624,12 +558,9 @@
 	});
 }
 
--(void) killAllWindowed
-{
-	for (UIView *view in windowedAppScrollView.subviews)
-	{
-		if ([view isKindOfClass:[RAMissionControlPreviewView class]])
-		{
+- (void)killAllWindowed {
+	for (UIView *view in windowedAppScrollView.subviews) {
+		if ([view isKindOfClass:[RAMissionControlPreviewView class]]) {
 			RAMissionControlPreviewView *realView = (RAMissionControlPreviewView*)view;
 			SBApplication *app = realView.application;
 			[%c(RAAppKiller) killAppWithSBApplication:app completion:^{
@@ -641,12 +572,9 @@
 	}
 }
 
--(void) killAllOther
-{
-	for (UIView *view in otherRunningAppsScrollView.subviews)
-	{
-		if ([view isKindOfClass:[RAMissionControlPreviewView class]])
-		{
+- (void)killAllOther {
+	for (UIView *view in otherRunningAppsScrollView.subviews) {
+		if ([view isKindOfClass:[RAMissionControlPreviewView class]]) {
 			RAMissionControlPreviewView *realView = (RAMissionControlPreviewView*)view;
 			SBApplication *app = realView.application;
 			[%c(RAAppKiller) killAppWithSBApplication:app completion:^{
@@ -657,35 +585,32 @@
 	}
 }
 
--(void) appDidStart:(SBApplication*)app
-{
+- (void)appDidStart:(SBApplication*)app {
 	[self reloadWindowedAppsSection:[[%c(RARunningAppsProvider) sharedInstance] runningApplications]];
 	[self reloadOtherAppsSection];
 }
 
--(void) appDidDie:(SBApplication*)app
-{
+- (void)appDidDie:(SBApplication*)app {
 	[self removeCardForApplication:app];
 }
 
--(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
 	NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
 	UIView *subview;
-	while ((subview = [objects nextObject]))
-	{
+	while ((subview = [objects nextObject])) {
 		UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
-		if (success)
+		if (success) {
 			return success;
+		}
 	}
 	return self;
 	//return [super hitTest:point withEvent:event];
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
-	if (CGRectContainsPoint(self.frame, point))
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+	if (CGRectContainsPoint(self.frame, point)) {
 		return YES;
+	}
 	return [super pointInside:point withEvent:event];
 }
 @end

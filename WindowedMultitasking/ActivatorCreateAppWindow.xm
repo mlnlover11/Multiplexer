@@ -13,8 +13,7 @@
 static RAActivatorCreateWindowListener *sharedInstance$RAActivatorCreateWindowListener;
 
 @implementation RAActivatorCreateWindowListener
-- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)levent
-{
+- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)levent {
   SBApplication *topApp = [[UIApplication sharedApplication] _accessibilityFrontMostApplication];
   RAIconIndicatorViewInfo indicatorInfo = [[%c(RABackgrounder) sharedInstance] allAggregatedIndicatorInfoForIdentifier:topApp.bundleIdentifier];
 
@@ -31,8 +30,9 @@ static RAActivatorCreateWindowListener *sharedInstance$RAActivatorCreateWindowLi
 
     // Open in window
     RAWindowBar *windowBar = [RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
-    if (!RADesktopManager.sharedInstance.lastUsedWindow)
+    if (!RADesktopManager.sharedInstance.lastUsedWindow) {
       RADesktopManager.sharedInstance.lastUsedWindow = windowBar;
+    }
   }];
   [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
 
@@ -43,11 +43,10 @@ static RAActivatorCreateWindowListener *sharedInstance$RAActivatorCreateWindowLi
 }
 @end
 
-%ctor
-{
-  IF_SPRINGBOARD
-  {
-    sharedInstance$RAActivatorCreateWindowListener = [[RAActivatorCreateWindowListener alloc] init];
-    [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorCreateWindowListener forName:@"com.efrederickson.reachapp.windowedmultitasking.createWindow"];
+%ctor {
+  IF_NOT_SPRINGBOARD {
+    return;
   }
+  sharedInstance$RAActivatorCreateWindowListener = [[RAActivatorCreateWindowListener alloc] init];
+  [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorCreateWindowListener forName:@"com.efrederickson.reachapp.windowedmultitasking.createWindow"];
 }

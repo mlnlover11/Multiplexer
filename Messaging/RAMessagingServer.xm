@@ -23,8 +23,7 @@ extern BOOL launchNextOpenIntoWindow;
 @end
 
 @implementation RAMessagingServer
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(RAMessagingServer,
 		[sharedInstance loadServer];
 		sharedInstance->dataForApps = [NSMutableDictionary dictionary];
@@ -34,16 +33,14 @@ extern BOOL launchNextOpenIntoWindow;
 	);
 }
 
--(void) loadServer
-{
+- (void)loadServer {
 	messagingCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
 	void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-	if (handle)
-	{
-			void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
-			rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
-			dlclose(handle);
+	if (handle) {
+		void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
+		rocketbootstrap_distributedmessagingcenter_apply(messagingCenter);
+		dlclose(handle);
 	}
 
 	[messagingCenter runServerOnCurrentThread];
@@ -70,36 +67,30 @@ extern BOOL launchNextOpenIntoWindow;
 	[messagingCenter registerForMessageName:RAMessagingDetachCurrentAppMessageName target:self selector:@selector(handleKeyboardEvent:userInfo:)];
 }
 
--(NSDictionary*) handleMessageNamed:(NSString*)identifier userInfo:(NSDictionary*)info
-{
-	if ([identifier isEqual:RAMessagingShowKeyboardMessageName])
+- (NSDictionary*)handleMessageNamed:(NSString*)identifier userInfo:(NSDictionary*)info {
+	if ([identifier isEqual:RAMessagingShowKeyboardMessageName]) {
 		[self receiveShowKeyboardForAppWithIdentifier:info[@"bundleIdentifier"]];
-	else if ([identifier isEqual:RAMessagingHideKeyboardMessageName])
+	} else if ([identifier isEqual:RAMessagingHideKeyboardMessageName]) {
 		[self receiveHideKeyboard];
-	else if ([identifier isEqual:RAMessagingUpdateKeyboardContextIdMessageName])
+	} else if ([identifier isEqual:RAMessagingUpdateKeyboardContextIdMessageName]) {
 		[self setKeyboardContextId:[info[@"contextId"] integerValue] forIdentifier:info[@"bundleIdentifier"]];
-	else if ([identifier isEqual:RAMessagingRetrieveKeyboardContextIdMessageName])
+	} else if ([identifier isEqual:RAMessagingRetrieveKeyboardContextIdMessageName]) {
 		return @{ @"contextId": @([self getStoredKeyboardContextIdForApp:info[@"bundleIdentifier"]]) };
-	else if ([identifier isEqual:RAMessagingUpdateKeyboardSizeMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingUpdateKeyboardSizeMessageName]) {
 		CGSize size = CGSizeFromString(info[@"size"]);
 		[RAKeyboardStateListener.sharedInstance _setSize:size];
-	}
-	else if ([identifier isEqual:RAMessagingUpdateAppInfoMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingUpdateAppInfoMessageName]) {
 		NSString *identifier = info[@"bundleIdentifier"];
 		RAMessageAppData data = [self getDataForIdentifier:identifier];
 
-		if ([waitingCompletions objectForKey:identifier])
-		{
+		if ([waitingCompletions objectForKey:identifier]) {
 			RAMessageCompletionCallback callback = (RAMessageCompletionCallback)waitingCompletions[identifier];
 			[waitingCompletions removeObjectForKey:identifier];
 			callback(YES);
 		}
 
 		// Got the message, cancel the re-sender
-		if ([asyncHandles objectForKey:identifier])
-		{
+		if ([asyncHandles objectForKey:identifier]) {
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
 			dispatch_after_cancel(handle);
 			[asyncHandles removeObjectForKey:identifier];
@@ -108,38 +99,33 @@ extern BOOL launchNextOpenIntoWindow;
 		return @{
 			@"data": [NSData dataWithBytes:&data length:sizeof(data)],
 		};
-	}
-	else if ([identifier isEqual:RAMessagingOpenURLKMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingOpenURLKMessageName]) {
 		NSURL *url = [NSURL URLWithString:info[@"url"]];
 		BOOL openInWindow = [RASettings.sharedInstance openLinksInWindows]; // [info[@"openInWindow"] boolValue];
-		if (openInWindow)
+		if (openInWindow) {
 			launchNextOpenIntoWindow = YES;
+		}
 
 		BOOL success = [UIApplication.sharedApplication openURL:url];
 		return @{ @"success": @(success) };
-	}
-	else if ([identifier isEqual:RAMessagingGetFrontMostAppInfoMessageName])
-	{
-		if (UIApplication.sharedApplication._accessibilityFrontMostApplication)
+	} else if ([identifier isEqual:RAMessagingGetFrontMostAppInfoMessageName]) {
+		if (UIApplication.sharedApplication._accessibilityFrontMostApplication) {
 			return nil;
+		}
 		RAWindowBar *window = RADesktopManager.sharedInstance.lastUsedWindow;
-		if (window)
-		{
+		if (window) {
 			SBApplication *app = window.attachedView.app;
-			if (app.pid)
+			if (app.pid) {
 				return @{
 					@"pid": @(app.pid),
 					@"bundleIdentifier": app.bundleIdentifier
 				};
+			}
 		}
-	}
-	else if ([identifier isEqual:RAMessagingChangeFrontMostAppMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingChangeFrontMostAppMessageName]) {
 		NSString *bundleIdentifier = info[@"bundleIdentifier"];
 		RAWindowBar *window = [RADesktopManager.sharedInstance windowForIdentifier:bundleIdentifier];
-		if (window)
-		{
+		if (window) {
 			RADesktopManager.sharedInstance.lastUsedWindow = window;
 			CFNotificationCenterPostNotification(CFNotificationCenterGetDistributedCenter(), CFSTR("com.efrederickson.reachapp.frontmostAppDidUpdate"), NULL, (__bridge CFDictionaryRef)@{ @"bundleIdentifier": bundleIdentifier }, YES);
 		}
@@ -148,14 +134,11 @@ extern BOOL launchNextOpenIntoWindow;
 	return nil;
 }
 
--(void) handleKeyboardEvent:(NSString*)identifier userInfo:(NSDictionary*)info
-{
-	if ([identifier isEqual:RAMessagingDetachCurrentAppMessageName])
-	{
+- (void)handleKeyboardEvent:(NSString*)identifier userInfo:(NSDictionary*)info {
+	if ([identifier isEqual:RAMessagingDetachCurrentAppMessageName]) {
 		SBApplication *topApp = [[UIApplication sharedApplication] _accessibilityFrontMostApplication];
 
-		if (topApp)
-		{
+		if (topApp) {
 		  [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
 		  [[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
 
@@ -178,52 +161,39 @@ extern BOOL launchNextOpenIntoWindow;
 				[RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
 		  }];
 		}
-	}
-	else if ([identifier isEqual:RAMessagingGoToDesktopOnTheLeftMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingGoToDesktopOnTheLeftMessageName]) {
 		int newIndex = RADesktopManager.sharedInstance.currentDesktopIndex - 1;
 		BOOL isValid = newIndex >= 0 && newIndex <= RADesktopManager.sharedInstance.numberOfDesktops;
-		if (isValid)
+		if (isValid) {
 			[RADesktopManager.sharedInstance switchToDesktop:newIndex];
-	}
-	else if ([identifier isEqual:RAMessagingGoToDesktopOnTheRightMessageName])
-	{
+		}
+	} else if ([identifier isEqual:RAMessagingGoToDesktopOnTheRightMessageName]) {
 		int newIndex = RADesktopManager.sharedInstance.currentDesktopIndex + 1;
 		BOOL isValid = newIndex >= 0 && newIndex < RADesktopManager.sharedInstance.numberOfDesktops;
 		if (isValid)
 			[RADesktopManager.sharedInstance switchToDesktop:newIndex];
-	}
-	else if ([identifier isEqual:RAMessagingAddNewDesktopMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingAddNewDesktopMessageName]) {
 		[RADesktopManager.sharedInstance addDesktop:YES];
 	}
 
 	RAWindowBar *window = RADesktopManager.sharedInstance.lastUsedWindow;
-	if (!window)
+	if (!window) {
 		return;
-	if ([identifier isEqual:RAMessagingSnapFrontMostWindowLeftMessageName])
-	{
+	}
+	if ([identifier isEqual:RAMessagingSnapFrontMostWindowLeftMessageName]) {
 		[RAWindowSnapDataProvider snapWindow:window toLocation:RAWindowSnapLocationGetLeftOfScreen() animated:YES];
-	}
-	else if ([identifier isEqual:RAMessagingSnapFrontMostWindowRightMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingSnapFrontMostWindowRightMessageName]) {
 		[RAWindowSnapDataProvider snapWindow:window toLocation:RAWindowSnapLocationGetRightOfScreen() animated:YES];
-	}
-	else if ([identifier isEqual:RAMessagingMaximizeAppMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingMaximizeAppMessageName]) {
 		[window maximize];
-	}
-	else if ([identifier isEqual:RAMessagingCloseAppMessageName])
-	{
+	} else if ([identifier isEqual:RAMessagingCloseAppMessageName]) {
 		[window close];
 	}
 }
 
--(void) alertUser:(NSString*)description
-{
+- (void)alertUser:(NSString*)description {
 #if DEBUG
-	if ([RASettings.sharedInstance debug_showIPCMessages])
-	{
+	if ([RASettings.sharedInstance debug_showIPCMessages]) {
 		UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"MULTIPLEXER") message:description preferredStyle:UIAlertControllerStyleAlert];
 		[alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
 		[alert show];
@@ -231,13 +201,11 @@ extern BOOL launchNextOpenIntoWindow;
 #endif
 }
 
--(RAMessageAppData) getDataForIdentifier:(NSString*)identifier
-{
+- (RAMessageAppData)getDataForIdentifier:(NSString*)identifier {
 	RAMessageAppData ret;
-	if ([dataForApps objectForKey:identifier] != nil)
+	if ([dataForApps objectForKey:identifier]) {
 		[dataForApps[identifier] getValue:&ret];
-	else
-	{
+	} else {
 		// Initialize with some default values
 		ret.shouldForceSize = NO;
 		ret.wantedClientOriginX = -1;
@@ -256,50 +224,44 @@ extern BOOL launchNextOpenIntoWindow;
 	return ret;
 }
 
--(void) setData:(RAMessageAppData)data forIdentifier:(NSString*)identifier
-{
-	if (identifier)
-	{
-		dataForApps[identifier] = [NSValue valueWithBytes:&data objCType:@encode(RAMessageAppData)];
+- (void)setData:(RAMessageAppData)data forIdentifier:(NSString*)identifier {
+	if (!identifier) {
+		return;
 	}
+	dataForApps[identifier] = [NSValue valueWithBytes:&data objCType:@encode(RAMessageAppData)];
 }
 
--(void) checkIfCompletionStillExitsForIdentifierAndFailIt:(NSString*)identifier
-{
-	if ([waitingCompletions objectForKey:identifier])
-	{
-		// We timed out, remove the re-sender
-		if ([asyncHandles objectForKey:identifier])
-		{
-			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
-			dispatch_after_cancel(handle);
-			[asyncHandles removeObjectForKey:identifier];
-		}
-
-		RAMessageCompletionCallback callback = (RAMessageCompletionCallback)waitingCompletions[identifier];
-		[waitingCompletions removeObjectForKey:identifier];
-
-		SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
-		[self alertUser:[NSString stringWithFormat:@"Unable to communicate with app %@ (%@)", app.displayName, identifier]];
-		callback(NO);
+- (void)checkIfCompletionStillExitsForIdentifierAndFailIt:(NSString*)identifier {
+	if (![waitingCompletions objectForKey:identifier]) {
+		return;
 	}
-}
+	// We timed out, remove the re-sender
+	if ([asyncHandles objectForKey:identifier]) {
+		struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
+		dispatch_after_cancel(handle);
+		[asyncHandles removeObjectForKey:identifier];
+	}
 
--(void) sendDataWithCurrentTries:(int)tries toAppWithBundleIdentifier:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
+	RAMessageCompletionCallback callback = (RAMessageCompletionCallback)waitingCompletions[identifier];
+	[waitingCompletions removeObjectForKey:identifier];
+
 	SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
-	if (!app.isRunning || ![app mainScene])
-	{
-		if (tries > 4)
-		{
+	[self alertUser:[NSString stringWithFormat:@"Unable to communicate with app %@ (%@)", app.displayName, identifier]];
+	callback(NO);
+}
+
+- (void)sendDataWithCurrentTries:(int)tries toAppWithBundleIdentifier:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
+	SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
+	if (!app.isRunning || ![app mainScene]) {
+		if (tries > 4) {
 			[self alertUser:[NSString stringWithFormat:@"Unable to communicate with app that isn't running: %@ (%@)", app.displayName, identifier]];
-			if (callback)
+			if (callback) {
 				callback(NO);
+			}
 			return;
 		}
 
-		if ([asyncHandles objectForKey:identifier])
-		{
+		if ([asyncHandles objectForKey:identifier]) {
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
 			dispatch_after_cancel(handle);
 			[asyncHandles removeObjectForKey:identifier];
@@ -314,10 +276,8 @@ extern BOOL launchNextOpenIntoWindow;
 
 	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",identifier], nil, nil, YES);
 
-	if (tries <= 4)
-	{
-		if ([asyncHandles objectForKey:identifier])
-		{
+	if (tries <= 4) {
+		if ([asyncHandles objectForKey:identifier]) {
 			struct dispatch_async_handle *handle = (struct dispatch_async_handle *)[asyncHandles[identifier] pointerValue];
 			dispatch_after_cancel(handle);
 			[asyncHandles removeObjectForKey:identifier];
@@ -328,12 +288,12 @@ extern BOOL launchNextOpenIntoWindow;
 		});
 		asyncHandles[identifier] = [NSValue valueWithPointer:handle];
 
-		if (![waitingCompletions objectForKey:identifier])
-		{
+		if (![waitingCompletions objectForKey:identifier]) {
 			//if (callback == nil)
 			//	callback = ^(BOOL _) { };
-			if (callback)
+			if (callback) {
 				waitingCompletions[identifier] = [callback copy];
+			}
 		}
 		// Reset failure checker
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(checkIfCompletionStillExitsForIdentifierAndFailIt:) object:identifier];
@@ -383,16 +343,15 @@ extern BOOL launchNextOpenIntoWindow;
 */
 }
 
--(void) sendStoredDataToApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
-	if (!identifier || identifier.length == 0)
+- (void)sendStoredDataToApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
+	if (!identifier || identifier.length == 0) {
 		return;
+	}
 
 	[self sendDataWithCurrentTries:0 toAppWithBundleIdentifier:identifier completion:callback];
 }
 
--(void) resizeApp:(NSString*)identifier toSize:(CGSize)size completion:(RAMessageCompletionCallback)callback
-{
+- (void)resizeApp:(NSString*)identifier toSize:(CGSize)size completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	data.wantedClientWidth = size.width;
 	data.wantedClientHeight = size.height;
@@ -401,8 +360,7 @@ extern BOOL launchNextOpenIntoWindow;
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) moveApp:(NSString*)identifier toOrigin:(CGPoint)origin completion:(RAMessageCompletionCallback)callback
-{
+- (void)moveApp:(NSString*)identifier toOrigin:(CGPoint)origin completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	data.wantedClientOriginX = (float)origin.x;
 	data.wantedClientOriginY = (float)origin.y;
@@ -411,8 +369,7 @@ extern BOOL launchNextOpenIntoWindow;
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) endResizingApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
+- (void)endResizingApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	//data.wantedClientSize = CGSizeMake(-1, -1);
 	data.shouldForceSize = NO;
@@ -420,12 +377,12 @@ extern BOOL launchNextOpenIntoWindow;
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) rotateApp:(NSString*)identifier toOrientation:(UIInterfaceOrientation)orientation completion:(RAMessageCompletionCallback)callback
-{
+- (void)rotateApp:(NSString*)identifier toOrientation:(UIInterfaceOrientation)orientation completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 
-	if (data.forcePhoneMode)
+	if (data.forcePhoneMode) {
 		return;
+	}
 
 	data.forcedOrientation = orientation;
 	data.shouldForceOrientation = YES;
@@ -433,8 +390,7 @@ extern BOOL launchNextOpenIntoWindow;
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) unRotateApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
+- (void)unRotateApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	data.forcedOrientation = UIApplication.sharedApplication.statusBarOrientation;
 	data.shouldForceOrientation = NO;
@@ -442,8 +398,7 @@ extern BOOL launchNextOpenIntoWindow;
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) forceStatusBarVisibility:(BOOL)visibility forApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
+- (void)forceStatusBarVisibility:(BOOL)visibility forApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	data.shouldForceStatusBar = YES;
 	data.statusBarVisibility = visibility;
@@ -451,70 +406,61 @@ extern BOOL launchNextOpenIntoWindow;
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) unforceStatusBarVisibilityForApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
+- (void)unforceStatusBarVisibilityForApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	data.shouldForceStatusBar = NO;
 	[self setData:data forIdentifier:identifier];
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) setShouldUseExternalKeyboard:(BOOL)value forApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
+- (void)setShouldUseExternalKeyboard:(BOOL)value forApp:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	data.shouldUseExternalKeyboard = value;
 	[self setData:data forIdentifier:identifier];
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) setHosted:(BOOL)value forIdentifier:(NSString*)identifier completion:(RAMessageCompletionCallback)callback
-{
+- (void)setHosted:(BOOL)value forIdentifier:(NSString*)identifier completion:(RAMessageCompletionCallback)callback {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 	data.isBeingHosted = value;
 	[self setData:data forIdentifier:identifier];
 	[self sendStoredDataToApp:identifier completion:callback];
 }
 
--(void) forcePhoneMode:(BOOL)value forIdentifier:(NSString*)identifier andRelaunchApp:(BOOL)relaunch
-{
+- (void)forcePhoneMode:(BOOL)value forIdentifier:(NSString*)identifier andRelaunchApp:(BOOL)relaunch {
 	RAMessageAppData data = [self getDataForIdentifier:identifier];
 
 	data.forcePhoneMode = value;
 	[self setData:data forIdentifier:identifier];
 
-	if (relaunch)
-	{
+	if (relaunch) {
 		[RAAppKiller killAppWithIdentifier:identifier completion:^{
 			[RADesktopManager.sharedInstance updateWindowSizeForApplication:identifier];
 		}];
 	}
 }
 
--(void) receiveShowKeyboardForAppWithIdentifier:(NSString*)identifier
-{
+- (void)receiveShowKeyboardForAppWithIdentifier:(NSString*)identifier {
 	[RASpringBoardKeyboardActivation.sharedInstance showKeyboardForAppWithIdentifier:identifier];
 }
 
--(void) receiveHideKeyboard
-{
+- (void)receiveHideKeyboard {
 	[RASpringBoardKeyboardActivation.sharedInstance hideKeyboard];
 }
 
--(void) setKeyboardContextId:(unsigned int)id forIdentifier:(NSString*)identifier
-{
+- (void)setKeyboardContextId:(unsigned int)id forIdentifier:(NSString*)identifier {
 	LogDebug(@"[ReachApp] got c id %d", id);
 	contextIds[identifier] = @(id);
 }
 
--(unsigned int) getStoredKeyboardContextIdForApp:(NSString*)identifier
-{
+- (unsigned int)getStoredKeyboardContextIdForApp:(NSString*)identifier {
 	return [contextIds objectForKey:identifier] ? [contextIds[identifier] unsignedIntValue] : 0;
 }
 @end
 
-%ctor
-{
-	IF_SPRINGBOARD {
-		[RAMessagingServer sharedInstance];
+%ctor {
+	IF_NOT_SPRINGBOARD {
+		return;
 	}
+	[RAMessagingServer sharedInstance];
 }

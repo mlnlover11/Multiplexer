@@ -3,8 +3,7 @@
 #import "RADesktopWindow.h"
 
 @implementation RAMissionControlPreviewView
--(void) generatePreview
-{
+- (void)generatePreview {
   [self performSelectorOnMainThread:@selector(setBackgroundColor:) withObject:[[UIColor blackColor] colorWithAlphaComponent:0.5] waitUntilDone:NO];
   //self.image = [[%c(RASnapshotProvider) sharedInstance] snapshotForIdentifier:self.application.bundleIdentifier];
   UIImage *img = [[%c(RASnapshotProvider) sharedInstance] snapshotForIdentifier:self.application.bundleIdentifier];
@@ -48,28 +47,27 @@
   [self performSelectorOnMainThread:@selector(updateIconViewFrame) withObject:nil waitUntilDone:NO];
 }
 
--(void) generatePreviewAsync
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        [self generatePreview];
-    });
+- (void)generatePreviewAsync {
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    [self generatePreview];
+  });
 }
 
--(void) generateDesktopPreviewAsync:(id)desktop_ completion:(dispatch_block_t)completionBlock
-{
-    RADesktopWindow *desktop = (RADesktopWindow*)desktop_;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        UIImage *image = [[%c(RASnapshotProvider) sharedInstance] snapshotForDesktop:desktop];
-        [self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
-        if (completionBlock)
-            completionBlock();
-    });
+- (void)generateDesktopPreviewAsync:(id)desktop_ completion:(dispatch_block_t)completionBlock {
+  RADesktopWindow *desktop = (RADesktopWindow*)desktop_;
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    UIImage *image = [[%c(RASnapshotProvider) sharedInstance] snapshotForDesktop:desktop];
+    [self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
+    if (completionBlock) {
+      completionBlock();
+    }
+  });
 }
 
--(void) updateIconViewFrame
-{
-  if (!iconView)
-  	return;
+- (void)updateIconViewFrame {
+  if (!iconView) {
+    return;
+  }
   [self bringSubviewToFront:iconView];
   iconView.frame = CGRectMake( (self.frame.size.width / 2) - (iconView.frame.size.width / 2), (self.frame.size.height / 2) - (iconView.frame.size.height / 2), iconView.frame.size.width, iconView.frame.size.height );
 }

@@ -44,11 +44,9 @@ extern BOOL allowOpenApp;
 @end
 
 @implementation RAWindowBar
--(void) attachView:(RAHostedAppView*)view
-{
+- (void)attachView:(RAHostedAppView*)view {
 	height = 40;
-	if (IS_IPAD)
-	{
+	if (IS_IPAD) {
 	    height = 45;
 	}
 
@@ -117,13 +115,13 @@ extern BOOL allowOpenApp;
 	[self addSubview:titleLabel];
 
 	CGFloat tmp = 16;
-	while (tmp + 16 < height)
+	while (tmp + 16 < height) {
 		tmp += 16;
+	}
 	buttonSize = tmp;
 	spacing = (height - buttonSize) / 2.0;
 
-	if (![RASettings.sharedInstance onlyShowWindowBarIconsOnOverlay])
-	{
+	if (![RASettings.sharedInstance onlyShowWindowBarIconsOnOverlay]) {
 		/*
 		    alignment:
 		0 = left
@@ -176,31 +174,31 @@ extern BOOL allowOpenApp;
 		NSMutableArray *leftIconOrder = [NSMutableArray array];
 		NSMutableArray *rightIconOrder = [NSMutableArray array];
 
-		for (int i = 0; i < infos.count; i++)
-		{
+		for (int i = 0; i < infos.count; i++) {
 			RAWindowBarIconInfo *info = infos[i];
-			if (info.alignment == 0)
+			if (info.alignment == 0) {
 				[leftIconOrder addObject:info];
-			else
+			} else {
 				[rightIconOrder addObject:info];
+			}
 		}
 
 		[leftIconOrder sortUsingComparator:^(RAWindowBarIconInfo *a, RAWindowBarIconInfo *b) {
-			if (a.priority > b.priority)
+			if (a.priority > b.priority) {
 				return (NSComparisonResult)NSOrderedDescending;
-			else if (a.priority < b.priority)
+			} else if (a.priority < b.priority) {
 				return (NSComparisonResult)NSOrderedAscending;
-
-		    return (NSComparisonResult)NSOrderedSame;
+			}
+		  return (NSComparisonResult)NSOrderedSame;
 		}];
 
 		[rightIconOrder sortUsingComparator:^(RAWindowBarIconInfo *a, RAWindowBarIconInfo *b) {
-			if (a.priority > b.priority)
+			if (a.priority > b.priority) {
 				return (NSComparisonResult)NSOrderedDescending;
-			else if (a.priority < b.priority)
+			} else if (a.priority < b.priority) {
 				return (NSComparisonResult)NSOrderedAscending;
-
-		    return (NSComparisonResult)NSOrderedSame;
+			}
+		  return (NSComparisonResult)NSOrderedSame;
 		}];
 
 
@@ -256,39 +254,37 @@ extern BOOL allowOpenApp;
 			return sizingLockButton;
 		};
 
-		for (RAWindowBarIconInfo *item in leftIconOrder)
-		{
+		for (RAWindowBarIconInfo *item in leftIconOrder) {
 			UIButton *button = nil;
-			if (item.item == closeItemIdentifier)
+			if (item.item == closeItemIdentifier) {
 				button = createCloseButton();
-			else if (item.item == maxItemIdentifier)
+			} else if (item.item == maxItemIdentifier) {
 				button = createMaxButton();
-			else if (item.item == minItemIdentifier)
+			} else if (item.item == minItemIdentifier) {
 				button = createMinButton();
-			else if (item.item == rotationItemIdentifier)
+			} else if (item.item == rotationItemIdentifier) {
 				button = createRotationButton();
+			}
 
-			if (button)
-			{
+			if (button) {
 				button.frame = CGRectMake(leftSpace, spacing, buttonSize, buttonSize);
 				leftSpace += button.frame.size.width + (THEMED(windowedMultitaskingBarTitleTextInset) ?: 5);
 			}
 		}
 
-		for (RAWindowBarIconInfo *item in rightIconOrder)
-		{
+		for (RAWindowBarIconInfo *item in rightIconOrder) {
 			UIButton *button = nil;
-			if (item.item == closeItemIdentifier)
+			if (item.item == closeItemIdentifier) {
 				button = createCloseButton();
-			else if (item.item == maxItemIdentifier)
+			} else if (item.item == maxItemIdentifier) {
 				button = createMaxButton();
-			else if (item.item == minItemIdentifier)
+			} else if (item.item == minItemIdentifier) {
 				button = createMinButton();
-			else if (item.item == rotationItemIdentifier)
+			} else if (item.item == rotationItemIdentifier) {
 				button = createRotationButton();
+			}
 
-			if (button)
-			{
+			if (button) {
 				button.frame = CGRectMake(rightSpace, spacing, buttonSize, buttonSize);
 				rightSpace -= button.frame.size.width + (THEMED(windowedMultitaskingBarTitleTextInset) ?: 5);
 			}
@@ -303,8 +299,7 @@ extern BOOL allowOpenApp;
 	self.layer.mask = maskLayer;
 }
 
--(void) drawRect:(CGRect)rect
-{
+- (void)drawRect:(CGRect)rect {
 	CGRect topRect = CGRectMake(0, 0, rect.size.width, height);
 	// Fill the rectangle with grey
 	[barBackgroundColor setFill];
@@ -313,145 +308,130 @@ extern BOOL allowOpenApp;
 	[super drawRect:rect];
 }
 
--(void) close
-{
+- (void)close {
 	[RADesktopManager.sharedInstance removeAppWithIdentifier:self.attachedView.bundleIdentifier animated:YES];
 }
 
--(void) maximize
-{
+- (void)maximize {
 	allowOpenApp = YES;
-	if ([%c(SBUIController) respondsToSelector:@selector(activateApplicationAnimated:)])
+	if ([%c(SBUIController) respondsToSelector:@selector(activateApplicationAnimated:)]) {
 		[[%c(SBUIController) sharedInstance] activateApplicationAnimated:attachedView.app];
-	else
+	} else {
 		[[%c(SBUIController) sharedInstance] activateApplication:attachedView.app];
+	}
 	allowOpenApp = NO;
 }
 
--(void) minimize
-{
+- (void)minimize {
 	[attachedView rotateToOrientation:UIInterfaceOrientationPortrait];
 	[UIView animateWithDuration:0.7 animations:^{
 		self.transform = CGAffineTransformMakeScale(0.25, 0.25);
 	}];
 }
 
--(void) closeButtonTap:(id)arg1
-{
+- (void)closeButtonTap:(id)arg1 {
 	[self close];
 }
 
--(void) maximizeButtonTap:(id)arg1
-{
+- (void)maximizeButtonTap:(id)arg1 {
 	[self maximize];
 }
 
--(void) minimizeButtonTap:(id)arg1
-{
+- (void)minimizeButtonTap:(id)arg1 {
 	[self minimize];
 }
 
--(void) saveWindowInfo
-{
+- (void)saveWindowInfo {
 	[RAWindowStatePreservationSystemManager.sharedInstance saveWindowInformation:self];
-	if (self.desktop)
-	{
+	if (self.desktop) {
 		[self.desktop saveInfo];
 	}
 }
 
--(BOOL) isLocked
-{
-	if ([RASettings.sharedInstance windowRotationLockMode] == 0)
-	{
+- (BOOL)isLocked {
+	if ([RASettings.sharedInstance windowRotationLockMode] == 0) {
 		return sizingLocked;
-	}
-	else
-	{
+	} else {
 		return appRotationLocked;
 	}
 }
 
--(void) sizingLockButtonTap:(id)arg1
-{
-	if ([RASettings.sharedInstance windowRotationLockMode] == 0)
-	{
+- (void)sizingLockButtonTap:(id)arg1 {
+	if ([RASettings.sharedInstance windowRotationLockMode] == 0) {
 		sizingLocked = !sizingLocked;
-	}
-	else
-	{
+	} else {
 		appRotationLocked = !appRotationLocked;
 	}
 
-	if (sizingLocked || appRotationLocked)
-	{
+	if (sizingLocked || appRotationLocked) {
 		[sizingLockButton setImage:[RAResourceImageProvider imageForFilename:@"Lock" size:CGSizeMake(16, 16) tintedTo:THEMED(windowedMultitaskingRotationIconTint)] forState:UIControlStateNormal];
-	}
-	else
-	{
+	} else {
 		[sizingLockButton setImage:[RAResourceImageProvider imageForFilename:@"Unlocked" size:CGSizeMake(16, 16) tintedTo:THEMED(windowedMultitaskingRotationIconTint)] forState:UIControlStateNormal];
 		[self updateClientRotation];
 	}
 }
 
--(void) scaleTo:(CGFloat)scale animated:(BOOL)animate
-{
+- (void)scaleTo:(CGFloat)scale animated:(BOOL)animate {
 	[self scaleTo:scale animated:animate derotate:NO];
 }
 
--(void) scaleTo:(CGFloat)scale animated:(BOOL)animate derotate:(BOOL)derotate
-{
+- (void)scaleTo:(CGFloat)scale animated:(BOOL)animate derotate:(BOOL)derotate {
 	CGFloat rotation = atan2(self.transform.b, self.transform.a);
 
 	CGAffineTransform transform = CGAffineTransformMakeScale(scale, scale);
-	if (!derotate)
+	if (!derotate) {
 		transform = CGAffineTransformRotate(transform, rotation);
+	}
 
-	if (animate)
+	if (animate) {
 		[UIView animateWithDuration:0.2 animations:^{
-	    	[self setTransform:transform];
-	    }];
-	else
+			[self setTransform:transform];
+		}];
+	} else {
 		[self setTransform:transform];
+	}
 
 	[self saveWindowInfo];
 }
 
--(void) addRotation:(CGFloat)rads updateApp:(BOOL)update
-{
-	if (sizingLocked)
+- (void)addRotation:(CGFloat)rads updateApp:(BOOL)update {
+	if (sizingLocked) {
 		return;
+	}
 
-	if (rads != 0)
+	if (rads != 0) {
 		self.transform = CGAffineTransformRotate(self.transform, rads);
+	}
 
-	if (update)
-	{
+	if (update) {
 		CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
 		CGFloat rotateSnapDegrees = 0;
 
-		if (currentRotation < 0)
+		if (currentRotation < 0) {
 			currentRotation = 360 + currentRotation;
+		}
 
-		if (currentRotation >= 315 || currentRotation <= 45)
+		if (currentRotation >= 315 || currentRotation <= 45) {
 			rotateSnapDegrees = 360 - currentRotation;
-		else if (currentRotation > 45 && currentRotation <= 135)
+		} else if (currentRotation > 45 && currentRotation <= 135) {
 			rotateSnapDegrees = 90 - currentRotation;
-		else if (currentRotation > 135 && currentRotation <= 215)
+		} else if (currentRotation > 135 && currentRotation <= 215) {
 			rotateSnapDegrees = 180 - currentRotation;
-		else
+		} else {
 			rotateSnapDegrees = 270 - currentRotation;
+		}
 
-		if ([RASettings.sharedInstance snapRotation])
-	  	[UIView animateWithDuration:0.2 animations:^{
-	    	self.transform = CGAffineTransformRotate(self.transform, DEGREES_TO_RADIANS(rotateSnapDegrees));
-	    }];
+		if ([RASettings.sharedInstance snapRotation]) {
+			[UIView animateWithDuration:0.2 animations:^{
+				self.transform = CGAffineTransformRotate(self.transform, DEGREES_TO_RADIANS(rotateSnapDegrees));
+			}];
+		}
 
-		if (!appRotationLocked)
-	   	[attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
+		if (!appRotationLocked) {
+			[attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
+		}
 
-		if ([RASettings.sharedInstance snapWindows] && [RAWindowSnapDataProvider shouldSnapWindow:self])
-		{
+		if ([RASettings.sharedInstance snapWindows] && [RAWindowSnapDataProvider shouldSnapWindow:self]) {
 			[RAWindowSnapDataProvider snapWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self] animated:YES];
 			isSnapped = YES;
 		}
@@ -460,70 +440,59 @@ extern BOOL allowOpenApp;
 	}
 }
 
--(void) updateClientRotation
-{
-	if (!appRotationLocked)
-	{
-		CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
-		[self updateClientRotation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
+- (void)updateClientRotation {
+	if (appRotationLocked) {
+		return;
 	}
+	CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
+	[self updateClientRotation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
 }
 
--(void) updateClientRotation:(UIInterfaceOrientation)orientation
-{
-	if (!appRotationLocked)
-	{
-		CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
-		[attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
+- (void)updateClientRotation:(UIInterfaceOrientation)orientation {
+	if (appRotationLocked) {
+		return;
 	}
+	CGFloat currentRotation = RADIANS_TO_DEGREES(atan2(self.transform.b, self.transform.a));
+	[attachedView rotateToOrientation:[self.desktop appOrientationRelativeToThisOrientation:currentRotation]];
 }
 
--(void) disableLongPress
-{
+- (void)disableLongPress {
 	enableLongPress = NO;
 	longPressGesture.enabled = NO;
 	longPressGesture.enabled = YES;
 }
 
--(void) enableLongPress
-{
+- (void)enableLongPress {
 	enableLongPress = YES;
 }
 
--(void) swapOrientationButtonTap:(id)arg1
-{
+- (void)swapOrientationButtonTap:(id)arg1 {
 	[self addRotation:DEGREES_TO_RADIANS(90) updateApp:YES];
 }
 
-- (void)handleRotate:(UIRotationGestureRecognizer *)gesture
-{
-	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing)
+- (void)handleRotate:(UIRotationGestureRecognizer *)gesture {
+	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing) {
 		return;
+	}
 
-	if (gesture.state == UIGestureRecognizerStateChanged)
-	{
+	if (gesture.state == UIGestureRecognizerStateChanged) {
 		[self addRotation:gesture.rotation updateApp:NO];
 		//[self setTransform:CGAffineTransformRotate(self.transform, gesture.rotation)];
 		gesture.rotation = 0.0;
-	}
-	else if (gesture.state == UIGestureRecognizerStateEnded)
-	{
+	} else if (gesture.state == UIGestureRecognizerStateEnded) {
 		[self addRotation:0 updateApp:YES];
 	}
 }
 
--(void) handleLongPress:(UILongPressGestureRecognizer*)sender
-{
-	if (!enableLongPress)
-	{
+- (void)handleLongPress:(UILongPressGestureRecognizer*)sender {
+	if (!enableLongPress) {
 		return;
 	}
 
 	[self close];
 }
 
--(void) showOverlay
-{
+- (void)showOverlay {
 	RAWindowOverlayView *overlay = [[RAWindowOverlayView alloc] initWithFrame:CGRectMake(0, height, self.bounds.size.width, self.bounds.size.height - height)];
 	overlay.alpha = 0;
 	overlay.tag = 465982;
@@ -540,8 +509,7 @@ extern BOOL allowOpenApp;
 	}];
 }
 
--(void) hideOverlay
-{
+- (void)hideOverlay {
 	[(RAWindowOverlayView*)[self viewWithTag:465982] dismiss];
 	[UIView animateWithDuration:0.5 animations:^{
 		closeButton.alpha = 1;
@@ -551,52 +519,47 @@ extern BOOL allowOpenApp;
 	}];
 }
 
--(BOOL) isOverlayShowing { return [self viewWithTag:465982] != nil; }
-
--(void) handleTap:(UITapGestureRecognizer*)tap
-{
-	if (!self.isOverlayShowing)
-		[self showOverlay];
+- (BOOL)isOverlayShowing {
+	return [self viewWithTag:465982] != nil;
 }
 
--(void) handleDoubleTap:(UITapGestureRecognizer*)tap
-{
+- (void)handleTap:(UITapGestureRecognizer*)tap {
+	if (self.isOverlayShowing) {
+		return;
+	}
+	[self showOverlay];
+}
+
+- (void)handleDoubleTap:(UITapGestureRecognizer*)tap {
 	[attachedView rotateToOrientation:UIInterfaceOrientationPortrait];
 	[UIView animateWithDuration:0.7 animations:^{
 		self.transform = CGAffineTransformMakeScale(0.6, 0.6);
 	}];
 }
 
--(void) handleTripleTap:(UITapGestureRecognizer*)tap
-{
-	if (IS_IPAD)
-		[RAMessagingServer.sharedInstance forcePhoneMode:![RAFakePhoneMode shouldFakeForAppWithIdentifier:attachedView.app.bundleIdentifier] forIdentifier:attachedView.app.bundleIdentifier andRelaunchApp:YES];
+- (void)handleTripleTap:(UITapGestureRecognizer*)tap {
+	if (!IS_IPAD) {
+		return;
+	}
+	[RAMessagingServer.sharedInstance forcePhoneMode:![RAFakePhoneMode shouldFakeForAppWithIdentifier:attachedView.app.bundleIdentifier] forIdentifier:attachedView.app.bundleIdentifier andRelaunchApp:YES];
 }
 
--(void) handlePan:(UIPanGestureRecognizer*)sender
-{
-	if (!enableDrag)
-	{
+- (void)handlePan:(UIPanGestureRecognizer*)sender {
+	if (!enableDrag) {
 		[self removePotentialSnapShadow];
 		return;
 	}
 
-	if (sender.state == UIGestureRecognizerStateBegan)
-	{
+	if (sender.state == UIGestureRecognizerStateBegan) {
 		[self.superview bringSubviewToFront:self];
 		initialPoint = sender.view.center;
-	}
-	else if (sender.state == UIGestureRecognizerStateChanged)
-	{
+	} else if (sender.state == UIGestureRecognizerStateChanged) {
 		enableLongPress = NO;
-	}
-	else if (sender.state == UIGestureRecognizerStateEnded)
-	{
+	} else if (sender.state == UIGestureRecognizerStateEnded) {
 		enableLongPress = YES;
 		[self saveWindowInfo];
 
-		if ([RASettings.sharedInstance snapWindows] && [RAWindowSnapDataProvider shouldSnapWindow:self])
-		{
+		if ([RASettings.sharedInstance snapWindows] && [RAWindowSnapDataProvider shouldSnapWindow:self]) {
 			[RAWindowSnapDataProvider snapWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self] animated:YES completion:^{
 				[self removePotentialSnapShadow];
 				[self saveWindowInfo];
@@ -606,9 +569,9 @@ extern BOOL allowOpenApp;
 			tapGesture.enabled = NO;
 			tapGesture.enabled = YES;
 			return;
-		}
-		else
+		} else {
 			[self removePotentialSnapShadow];
+		}
 		return;
 	}
 
@@ -622,26 +585,27 @@ extern BOOL allowOpenApp;
 	[self updatePotentialSnapShadow];
 }
 
-- (void)handlePinch:(UIPinchGestureRecognizer *)gesture
-{
-	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing)
+- (void)handlePinch:(UIPinchGestureRecognizer *)gesture {
+	if (![RASettings.sharedInstance alwaysEnableGestures] && !self.isOverlayShowing) {
 		return;
+	}
 
 	switch (gesture.state) {
-	  case UIGestureRecognizerStateBegan:
-	  	enableDrag = NO; enableLongPress = NO;
-	    break;
-	  case UIGestureRecognizerStateChanged:
-	    [self setTransform:CGAffineTransformScale(self.transform, gesture.scale, gesture.scale)];
-	    //self.bounds = (CGRect){ self.bounds.origin, {self.bounds.size.width * gesture.scale, self.bounds.size.height * gesture.scale} };
+	  case UIGestureRecognizerStateBegan: {
+			enableDrag = NO; enableLongPress = NO;
+			break;
+		}
+	  case UIGestureRecognizerStateChanged: {
+			[self setTransform:CGAffineTransformScale(self.transform, gesture.scale, gesture.scale)];
+			//self.bounds = (CGRect){ self.bounds.origin, {self.bounds.size.width * gesture.scale, self.bounds.size.height * gesture.scale} };
 
-	    gesture.scale = 1.0;
-	    break;
-	  case UIGestureRecognizerStateEnded:
+			gesture.scale = 1.0;
+			break;
+		}
+	  case UIGestureRecognizerStateEnded: {
 			enableDrag = YES; enableLongPress = YES;
 
-			if ([RAWindowSnapDataProvider shouldSnapWindow:self])
-			{
+			if ([RAWindowSnapDataProvider shouldSnapWindow:self]) {
 				[RAWindowSnapDataProvider snapWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self] animated:YES];
 				isSnapped = YES;
 				// Force tap to fail
@@ -650,14 +614,14 @@ extern BOOL allowOpenApp;
 				return;
 			}
 			[self saveWindowInfo];
-	     break;
+			break;
+		}
 	  default:
 	    break;
 	}
 }
 
--(void) setTransform:(CGAffineTransform)trans
-{
+- (void)setTransform:(CGAffineTransform)trans {
 	CGFloat scale = sqrt(trans.a * trans.a + trans.c * trans.c);
 	CGFloat max = 1.0;
 	scale = MIN(max, MAX(0.15, scale));
@@ -666,40 +630,21 @@ extern BOOL allowOpenApp;
 
 	[super setTransform:trans];
 
-	if (!isBeingTouched)
-	{
-		if ([RAWindowSnapDataProvider shouldSnapWindow:self])
-			[RAWindowSnapDataProvider snapWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self] animated:YES];
-
-		/*CGPoint origin = self.frame.origin;
-		CGPoint endPoint = CGPointMake(origin.x + self.frame.size.width, origin.y + self.frame.size.height);
-
-		if (endPoint.x > self.desktop.frame.size.width)
-			origin.x -= (endPoint.x - self.desktop.frame.size.width);
-		if (endPoint.y > self.desktop.frame.size.height)
-			origin.y -= (endPoint.y - self.desktop.frame.size.height);
-
-		if (origin.x < 0)
-			origin.x = 0;
-		if (origin.y < 0)
-			origin.y = 0;
-
-		CGRect adjustedFrame = CGRectMake(origin.x, origin.y, self.frame.size.width, self.frame.size.height);
-		self.frame = adjustedFrame;*/
-
+	if (!isBeingTouched && [RAWindowSnapDataProvider shouldSnapWindow:self]) {
+		[RAWindowSnapDataProvider snapWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self] animated:YES];
 	}
 }
 
--(void) updatePotentialSnapShadow
-{
-	if (![RASettings.sharedInstance snapWindows])
+- (void)updatePotentialSnapShadow {
+	if (![RASettings.sharedInstance snapWindows]) {
 		return;
+	}
 
-	if (![RASettings.sharedInstance showSnapHelper])
+	if (![RASettings.sharedInstance showSnapHelper]) {
 		return;
+	}
 
-	if (!snapShadowView)
-	{
+	if (!snapShadowView) {
 		snapShadowView = [[UIView alloc] initWithFrame:self.bounds];
 		snapShadowView.backgroundColor = [UIColor.blackColor colorWithAlphaComponent:0.1]; // [UIColor.blackColor colorWithAlphaComponent:0.5];
 		snapShadowView.layer.borderColor = [UIColor whiteColor].CGColor;
@@ -714,75 +659,68 @@ extern BOOL allowOpenApp;
 		[self.superview insertSubview:snapShadowView belowSubview:self];
 	}
 
-	if ([RAWindowSnapDataProvider shouldSnapWindow:self])
-	{
+	if ([RAWindowSnapDataProvider shouldSnapWindow:self]) {
 		snapShadowView.hidden = NO;
 		snapShadowView.transform = self.transform;
 		snapShadowView.center = [RAWindowSnapDataProvider snapCenterForWindow:self toLocation:[RAWindowSnapDataProvider snapLocationForWindow:self]];
-	}
-	else
-	{
+	} else {
 		snapShadowView.hidden = YES;
 	}
 }
 
--(void) removePotentialSnapShadow
-{
+- (void)removePotentialSnapShadow {
 	[snapShadowView removeFromSuperview];
 	snapShadowView = nil;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	isBeingTouched = YES;
 	RADesktopManager.sharedInstance.lastUsedWindow = self;
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	isBeingTouched = NO;
 }
 
--(void) resignForemostApp
-{
+- (void)resignForemostApp {
 	titleLabel.font = [UIFont systemFontOfSize:18];
 }
 
--(void) becomeForemostApp
-{
+- (void)becomeForemostApp {
 	titleLabel.font = [UIFont boldSystemFontOfSize:20];
 	[self.superview bringSubviewToFront:self];
 }
 
--(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
 	NSEnumerator *objects = [self.subviews reverseObjectEnumerator];
 	UIView *subview;
-	while ((subview = [objects nextObject]))
-	{
+	while (subview = [objects nextObject]) {
 		UIView *success = [subview hitTest:[self convertPoint:point toView:subview] withEvent:event];
-		if (success)
-		  return success;
+		if (success) {
+			return success;
+		}
 	}
 	return [super hitTest:point withEvent:event];
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
 	BOOL isContained = NO;
-	for (UIView *view in self.subviews)
-	{
-		if (CGRectContainsPoint(view.frame, point) || CGRectContainsPoint(view.frame, [view convertPoint:point fromView:self])) // [self convertPoint:point toView:view]))
+	for (UIView *view in self.subviews) {
+		if (CGRectContainsPoint(view.frame, point) || CGRectContainsPoint(view.frame, [view convertPoint:point fromView:self])) { // [self convertPoint:point toView:view]))
 			isContained = YES;
+		}
 	}
 	return isContained || [super pointInside:point withEvent:event];
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-	if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+	if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
 		return NO;
+	}
 	return YES;
 }
--(RAHostedAppView*) attachedView { return attachedView; }
+
+- (RAHostedAppView*)attachedView {
+	return attachedView;
+}
 @end

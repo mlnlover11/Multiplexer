@@ -4,13 +4,13 @@
 #import "RADesktopManager.h"
 
 @implementation RAKeyboardWindow
--(void) setupForKeyboardAndShow:(NSString*)identifier
-{
+- (void)setupForKeyboardAndShow:(NSString*)identifier {
 	self.userInteractionEnabled = YES;
 	self.backgroundColor = UIColor.clearColor;
-	
-	if (kbView)
+
+	if (kbView) {
 		[self removeKeyboard];
+	}
 
 	kbView = [[RARemoteKeyboardView alloc] initWithFrame:UIScreen.mainScreen.bounds];
 	[kbView connectToKeyboardWindowForApp:identifier];
@@ -21,12 +21,13 @@
 	[self makeKeyAndVisible];
 }
 
--(void) removeKeyboard
-{
+- (void)removeKeyboard {
 	[kbView connectToKeyboardWindowForApp:nil];
 	[kbView removeFromSuperview];
 	kbView = nil;
 }
 
--(unsigned int) contextId { return kbView.layerHost.contextId; }
+- (unsigned int)contextId {
+	return kbView.layerHost.contextId;
+}
 @end

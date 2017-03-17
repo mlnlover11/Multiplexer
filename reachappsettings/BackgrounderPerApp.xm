@@ -9,9 +9,9 @@
 #import "BackgroundPerAppDetailsController.h"
 
 @interface PSViewController (SettingsKit2)
--(UINavigationController*)navigationController;
--(void)viewWillAppear:(BOOL)animated;
--(void)viewWillDisappear:(BOOL)animated;
+- (UINavigationController*)navigationController;
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewWillDisappear:(BOOL)animated;
 @end
 
 @interface ALApplicationTableDataSource (Private)
@@ -22,28 +22,27 @@
 @end
 
 @implementation ALLinkCell
--(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
-	if (!(self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) return nil;
-	self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+	self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+	if (self) {
+		self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+	}
 	return self;
 }
 @end
 
 @interface PSViewController (Protean)
--(void) viewDidLoad;
--(void) viewWillDisappear:(BOOL)animated;
+- (void)viewDidLoad;
+- (void)viewWillDisappear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 @end
 
 BOOL reload = NO;
-void RA_BGAppsControllerNeedsToReload()
-{
+void RA_BGAppsControllerNeedsToReload() {
 	reload = YES;
 }
 
-@interface RABGPerAppController : PSViewController <UITableViewDelegate>
-{
+@interface RABGPerAppController : PSViewController <UITableViewDelegate> {
 	UITableView* _tableView;
 	ALApplicationTableDataSource* _dataSource;
 }
@@ -51,25 +50,20 @@ void RA_BGAppsControllerNeedsToReload()
 
 @implementation RABGPerAppController
 
--(void)updateDataSource:(NSString*)searchText
-{
+- (void)updateDataSource:(NSString*)searchText {
 	NSNumber *iconSize = [NSNumber numberWithUnsignedInteger:ALApplicationIconSizeSmall];
 
 	NSString *enabledList = @"";
 
 	CFStringRef appID = CFSTR("com.efrederickson.reachapp.settings");
 	CFArrayRef keyList = CFPreferencesCopyKeyList(appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-	if (keyList)
-	{
+	if (keyList) {
 	  NSDictionary *prefs = (__bridge NSDictionary *)CFPreferencesCopyMultiple(keyList, appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 	  CFRelease(keyList);
-	  if (prefs)
-	  {
+	  if (prefs) {
 	    NSArray *apps = [[ALApplicationList sharedApplicationList] applications].allKeys;
-	  	for (NSString* identifier in apps)
-	  	{
-	      if ([prefs[[NSString stringWithFormat:@"backgrounder-%@-enabled",identifier]] boolValue])
-	      {
+	  	for (NSString* identifier in apps) {
+	      if ([prefs[[NSString stringWithFormat:@"backgrounder-%@-enabled",identifier]] boolValue]) {
 	      	enabledList = [enabledList stringByAppendingString:[NSString stringWithFormat:@"'%@',", identifier]];
 	      }
 	  	}
@@ -78,8 +72,7 @@ void RA_BGAppsControllerNeedsToReload()
 	enabledList = [enabledList stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@","]];
 	NSString* filter = (searchText && searchText.length > 0) ? [NSString stringWithFormat:@"displayName beginsWith[cd] '%@'", searchText] : nil;
 
-	if (filter)
-	{
+	if (filter) {
 		_dataSource.sectionDescriptors = [NSArray arrayWithObjects:
 	                                        [NSDictionary dictionaryWithObjectsAndKeys:
 	                                         @"Search Results", ALSectionDescriptorTitleKey,
@@ -89,67 +82,60 @@ void RA_BGAppsControllerNeedsToReload()
 	                                         filter, ALSectionDescriptorPredicateKey
 	                                         , nil]
 	                                        , nil];
-	}
-	else
-	{
-	      if ([enabledList isEqual:@""])
-	      {
-	          _dataSource.sectionDescriptors = [NSArray arrayWithObjects:
-	                                        [NSDictionary dictionaryWithObjectsAndKeys:
-	                                         @"", ALSectionDescriptorTitleKey,
-	                                         @"ALLinkCell", ALSectionDescriptorCellClassNameKey,
-	                                         iconSize, ALSectionDescriptorIconSizeKey,
-	                                          @YES, ALSectionDescriptorSuppressHiddenAppsKey,
-	                                         [NSString stringWithFormat:@"not bundleIdentifier in {%@}", enabledList],
-	                                         ALSectionDescriptorPredicateKey
-	                                         , nil],
-	                                        nil];
-	      }
-	      else
-	      {
-	          _dataSource.sectionDescriptors = [NSArray arrayWithObjects:
-	                                        [NSDictionary dictionaryWithObjectsAndKeys:
-	                                         @"Enabled Applications", ALSectionDescriptorTitleKey,
-	                                         @"ALLinkCell", ALSectionDescriptorCellClassNameKey,
-	                                         iconSize, ALSectionDescriptorIconSizeKey,
-	                                         @YES, ALSectionDescriptorSuppressHiddenAppsKey,
-	                                         [NSString stringWithFormat:@"bundleIdentifier in {%@}", enabledList],
-	                                         ALSectionDescriptorPredicateKey
-	                                         , nil],
-	                                        [NSDictionary dictionaryWithObjectsAndKeys:
-	                                         @"Other Applications", ALSectionDescriptorTitleKey,
-	                                         @"ALLinkCell", ALSectionDescriptorCellClassNameKey,
-	                                         iconSize, ALSectionDescriptorIconSizeKey,
-	                                         @YES, ALSectionDescriptorSuppressHiddenAppsKey,
-	                                         [NSString stringWithFormat:@"not bundleIdentifier in {%@}", enabledList],
-	                                         ALSectionDescriptorPredicateKey
-	                                         , nil],
-	                                        nil];
-	      }
+	} else {
+	  if ([enabledList isEqual:@""]) {
+	      _dataSource.sectionDescriptors = [NSArray arrayWithObjects:
+	                                    [NSDictionary dictionaryWithObjectsAndKeys:
+	                                     @"", ALSectionDescriptorTitleKey,
+	                                     @"ALLinkCell", ALSectionDescriptorCellClassNameKey,
+	                                     iconSize, ALSectionDescriptorIconSizeKey,
+	                                      @YES, ALSectionDescriptorSuppressHiddenAppsKey,
+	                                     [NSString stringWithFormat:@"not bundleIdentifier in {%@}", enabledList],
+	                                     ALSectionDescriptorPredicateKey
+	                                     , nil],
+	                                    nil];
+	  } else {
+	      _dataSource.sectionDescriptors = [NSArray arrayWithObjects:
+	                                    [NSDictionary dictionaryWithObjectsAndKeys:
+	                                     @"Enabled Applications", ALSectionDescriptorTitleKey,
+	                                     @"ALLinkCell", ALSectionDescriptorCellClassNameKey,
+	                                     iconSize, ALSectionDescriptorIconSizeKey,
+	                                     @YES, ALSectionDescriptorSuppressHiddenAppsKey,
+	                                     [NSString stringWithFormat:@"bundleIdentifier in {%@}", enabledList],
+	                                     ALSectionDescriptorPredicateKey
+	                                     , nil],
+	                                    [NSDictionary dictionaryWithObjectsAndKeys:
+	                                     @"Other Applications", ALSectionDescriptorTitleKey,
+	                                     @"ALLinkCell", ALSectionDescriptorCellClassNameKey,
+	                                     iconSize, ALSectionDescriptorIconSizeKey,
+	                                     @YES, ALSectionDescriptorSuppressHiddenAppsKey,
+	                                     [NSString stringWithFormat:@"not bundleIdentifier in {%@}", enabledList],
+	                                     ALSectionDescriptorPredicateKey
+	                                     , nil],
+	                                    nil];
+	  }
 	}
 	[_tableView reloadData];
 }
 
--(instancetype)init
-{
-	if (!(self = [super init])) return nil;
+- (instancetype)init {
+	self = [super init];
+	if (self) {
+		CGRect bounds = [[UIScreen mainScreen] bounds];
 
-	CGRect bounds = [[UIScreen mainScreen] bounds];
+		_dataSource = [[ALApplicationTableDataSource alloc] init];
 
-	_dataSource = [[ALApplicationTableDataSource alloc] init];
-
-	_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
-	_tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	_tableView.delegate = self;
-	_tableView.dataSource = _dataSource;
-	_dataSource.tableView = _tableView;
-	[self updateDataSource:nil];
-
+		_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
+		_tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		_tableView.delegate = self;
+		_tableView.dataSource = _dataSource;
+		_dataSource.tableView = _tableView;
+		[self updateDataSource:nil];
+	}
 	return self;
 }
 
--(void)viewDidLoad
-{
+- (void)viewDidLoad {
 	((UIViewController *)self).title = @"Applications";
 
 	[self.view addSubview:_tableView];
@@ -157,10 +143,8 @@ void RA_BGAppsControllerNeedsToReload()
 	[super viewDidLoad];
 }
 
--(void) viewWillAppear:(BOOL) animated
-{
-	if (reload)
-	{
+- (void)viewWillAppear:(BOOL)animated {
+	if (reload) {
 	  [self updateDataSource:nil];
 	  reload = NO;
 	}
@@ -172,8 +156,7 @@ void RA_BGAppsControllerNeedsToReload()
 }
 
 
--(void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
-{
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath {
 	UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
 
 	// Need to mimic what PSListController does when it handles didSelectRowAtIndexPath
@@ -186,7 +169,9 @@ void RA_BGAppsControllerNeedsToReload()
 	[tableView deselectRowAtIndexPath:indexPath animated:true];
 }
 
--(UIColor*) tintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
+- (UIColor*)tintColor {
+	return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f];
+}
 
 - (void)viewWillDisappear:(BOOL)animated {
 	[super viewWillDisappear:animated];

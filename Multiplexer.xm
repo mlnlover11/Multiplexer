@@ -6,18 +6,20 @@
 @end
 
 @implementation Multiplexer
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(Multiplexer, sharedInstance->activeExtensions = [NSMutableArray array]);
 }
 
--(NSString*) currentVersion { return @"1.0"; }
--(BOOL) isOnSupportedOS { return IS_IOS_BETWEEN(iOS_8_0, iOS_10_2); }
+- (NSString*)currentVersion {
+	return @"1.0";
+}
 
--(void) registerExtension:(NSString*)name forMultiplexerVersion:(NSString*)version
-{
-	if ([self.currentVersion compare:version options:NSNumericSearch] == NSOrderedDescending)
-	{
+- (BOOL)isOnSupportedOS {
+	return IS_IOS_BETWEEN(iOS_8_0, iOS_10_2);
+}
+
+- (void)registerExtension:(NSString*)name forMultiplexerVersion:(NSString*)version {
+	if ([self.currentVersion compare:version options:NSNumericSearch] == NSOrderedDescending) {
 		[RACompatibilitySystem showWarning:[NSString stringWithFormat:@"Extension %@ was built for Multiplexer version %@, which is above the current version. Compliancy issues may occur.", name, version]];
 	}
 
@@ -27,14 +29,10 @@
 	[activeExtensions addObject:ext];
 }
 
-+ (SBAppToAppWorkspaceTransaction*)createSBAppToAppWorkspaceTransactionForExitingApp:(SBApplication*)app
-{
-	if ([%c(SBAppToAppWorkspaceTransaction) respondsToSelector:@selector(initWithAlertManager:exitedApp:)])
-	{
++ (SBAppToAppWorkspaceTransaction*)createSBAppToAppWorkspaceTransactionForExitingApp:(SBApplication*)app {
+	if ([%c(SBAppToAppWorkspaceTransaction) respondsToSelector:@selector(initWithAlertManager:exitedApp:)]) {
 		return [[%c(SBAppToAppWorkspaceTransaction) alloc] initWithAlertManager:nil exitedApp:app];
-	}
-	else
-	{
+	} else {
 	// ** below code from Mirmir (https://github.com/EthanArbuckle/Mirmir/blob/lamo_no_ms/Lamo/CDTLamo.mm#L114-L138)
 		SBWorkspaceApplicationTransitionContext *transitionContext = [[%c(SBWorkspaceApplicationTransitionContext) alloc] init];
 
@@ -57,10 +55,10 @@
 	}
 }
 
-+(BOOL) shouldShowControlCenterGrabberOnFirstSwipe
-{
-	if ([%c(SBUIController) respondsToSelector:@selector(shouldShowControlCenterTabControlOnFirstSwipe)])
++ (BOOL)shouldShowControlCenterGrabberOnFirstSwipe {
+	if ([%c(SBUIController) respondsToSelector:@selector(shouldShowControlCenterTabControlOnFirstSwipe)]) {
 		[[%c(SBUIController) sharedInstance] shouldShowControlCenterTabControlOnFirstSwipe];
+	}
 	return [[%c(SBControlCenterController) sharedInstance] _shouldShowGrabberOnFirstSwipe];
 }
 @end

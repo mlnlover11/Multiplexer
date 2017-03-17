@@ -12,83 +12,70 @@ BOOL willShowMissionControl = NO;
 BOOL toggleOrActivate = NO;
 
 %hook SBUIController
-- (void)_showNotificationsGestureBeganWithLocation:(CGPoint)arg1
-{
-	if ([[[%c(SBUIController) sharedInstance] switcherWindow] isKeyWindow] && CGRectContainsPoint([[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].frame, arg1))
+- (void)_showNotificationsGestureBeganWithLocation:(CGPoint)arg1 {
+	if ([[[%c(SBUIController) sharedInstance] switcherWindow] isKeyWindow] && CGRectContainsPoint([[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].frame, arg1)) {
 		return;
+	}
 
-	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && self.isAppSwitcherShowing)
+	if ([[%c(RASettings) sharedInstance] missionControlEnabled] && self.isAppSwitcherShowing) {
 		return;
+	}
 
 	%orig;
 }
 
-- (_Bool)_activateAppSwitcher
-{
+- (_Bool)_activateAppSwitcher {
 	statusBarVisibility = UIApplication.sharedApplication.statusBarHidden;
 	willShowMissionControl = NO;
 
-	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled])
-	{
-		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl)
-		{
+	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled]) {
+		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl) {
 			[RAMissionControlManager.sharedInstance showMissionControl:YES];
-		}
-		else
+		} else {
 			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
 
 		return YES;
-	}
-	else
-	{
-		if ([RAMissionControlManager.sharedInstance isShowingMissionControl])
-		{
+	} else {
+		if ([RAMissionControlManager.sharedInstance isShowingMissionControl]) {
 			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
 		}
 	}
 
 	BOOL s = %orig;
-	if (s && [[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999])
-	{
+	if (s && [[%c(RASettings) sharedInstance] missionControlEnabled] && [[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999]) {
 		[UIView animateWithDuration:0.3 animations:^{
 			[[[%c(SBUIController) sharedInstance] switcherWindow] viewWithTag:999].alpha = 1;
 		}];
 	}
-	if (s)
-	{
+	if (s) {
 		[[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO];
 		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] unloadApps];
 	}
 	return s;
 }
 
-- (void)_hideNotificationsGestureCancelled
-{
+- (void)_hideNotificationsGestureCancelled {
 	%orig;
 	RAMissionControlManager.sharedInstance.inhibitDismissalGesture = NO;
 }
 
-- (void)_hideNotificationsGestureEndedWithCompletionType:(long long)arg1 velocity:(CGPoint)arg2
-{
+- (void)_hideNotificationsGestureEndedWithCompletionType:(long long)arg1 velocity:(CGPoint)arg2 {
 	%orig;
 	RAMissionControlManager.sharedInstance.inhibitDismissalGesture = NO;
 }
 
-- (void)_hideNotificationsGestureBegan:(CGFloat)arg1
-{
+- (void)_hideNotificationsGestureBegan:(CGFloat)arg1 {
 	RAMissionControlManager.sharedInstance.inhibitDismissalGesture = YES;
 	%orig;
 }
 
-- (_Bool)isAppSwitcherShowing
-{
+- (_Bool)isAppSwitcherShowing {
 	return %orig || RAMissionControlManager.sharedInstance.isShowingMissionControl;
 }
 
--(void) _dismissSwitcherAnimated:(_Bool)arg1
-{
-	if (RAMissionControlManager.sharedInstance.isShowingMissionControl)
-	{
+-(void) _dismissSwitcherAnimated:(_Bool)arg1 {
+	if (RAMissionControlManager.sharedInstance.isShowingMissionControl) {
 		[RAMissionControlManager.sharedInstance hideMissionControl:arg1];
 	}
 
@@ -109,10 +96,8 @@ BOOL toggleOrActivate = NO;
 
 %hook SBAppSwitcherController
 // iOS 8
-- (void)switcherWillBeDismissed:(_Bool)arg1
-{
-	if (!willShowMissionControl)
-	{
+- (void)switcherWillBeDismissed:(_Bool)arg1 {
+	if (!willShowMissionControl) {
 		[[%c(RADesktopManager) sharedInstance] reshowDesktop];
 		//[[[%c(RADesktopManager) sharedInstance] currentDesktop] loadApps];
 	}
@@ -124,8 +109,7 @@ BOOL toggleOrActivate = NO;
 	%orig;
 }
 
-- (void)switcherScroller:(id)arg1 itemTapped:(__unsafe_unretained SBDisplayLayout*)arg2
-{
+- (void)switcherScroller:(id)arg1 itemTapped:(__unsafe_unretained SBDisplayLayout*)arg2 {
 	SBDisplayItem *item = [arg2 displayItems][0];
 	NSString *identifier = item.displayIdentifier;
 
@@ -136,26 +120,23 @@ BOOL toggleOrActivate = NO;
 %end
 
 @interface SBAppSwitcherController ()
--(UIView*) view;
+- (UIView*)view;
 @end
 
 //%hook SBAppSwitcherWindow
 %hook SBAppSwitcherController
 //-(void) addSubview:(UIView*)view
 
-- (void)_layoutInOrientation:(long long)arg1
-{
+- (void)_layoutInOrientation:(long long)arg1 {
 	%orig;
 
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
 
-	if (![view viewWithTag:999] && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
-	{
+	if (![view viewWithTag:999] && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
 		CGFloat width = 50, height = 30;
-		if (IS_IPAD)
-		{
+		if (IS_IPAD) {
 			width = 60;
-		    height = 40;
+			height = 40;
 		}
 		SBControlCenterGrabberView *grabber = [[%c(SBControlCenterGrabberView) alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 		grabber.center = CGPointMake(view.frame.size.width / 2, 20/2);
@@ -176,22 +157,19 @@ BOOL toggleOrActivate = NO;
 		[view addSubview:grabber];
 
 		[[%c(RAGestureManager) sharedInstance] addGestureRecognizerWithTarget:(NSObject<RAGestureCallbackProtocol> *)self forEdge:UIRectEdgeTop identifier:@"com.efrederickson.reachapp.appswitchergrabber"];
-	}
-	else
+	} else {
 		((UIView*)[view viewWithTag:999]).center = CGPointMake(view.frame.size.width / 2, 20/2);
+	}
 }
 
 // iOS 8
--(void)viewDidAppear:(BOOL)a
-{
+- (void)viewDidAppear:(BOOL)a {
 	%orig;
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
 
-	if (![view viewWithTag:999] && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC]))
-	{
+	if (![view viewWithTag:999] && ([[%c(RASettings) sharedInstance] missionControlEnabled] && ![[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC])) {
 		CGFloat width = 50, height = 30;
-		if (IS_IPAD)
-		{
+		if (IS_IPAD) {
 			width = 60;
 		  height = 40;
 		}
@@ -219,18 +197,16 @@ BOOL toggleOrActivate = NO;
 		[view addSubview:grabber];
 
 		[[%c(RAGestureManager) sharedInstance] addGestureRecognizerWithTarget:(NSObject<RAGestureCallbackProtocol> *)self forEdge:UIRectEdgeTop identifier:@"com.efrederickson.reachapp.appswitchergrabber"];
-	}
-	else
+	} else {
 		((UIView*)[view viewWithTag:999]).center = CGPointMake(view.frame.size.width / 2, 20/2);
+	}
 }
 
-%new -(BOOL) RAGestureCallback_canHandle:(CGPoint)point velocity:(CGPoint)velocity
-{
+%new - (BOOL)RAGestureCallback_canHandle:(CGPoint)point velocity:(CGPoint)velocity {
 	return allowMissionControlActivationFromSwitcher && [[%c(RASettings) sharedInstance] missionControlEnabled] && self.view.window.isKeyWindow;
 }
 
-%new -(RAGestureCallbackResult) RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge
-{
+%new - (RAGestureCallbackResult) RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge {
 	if ([%c(SBUIController) respondsToSelector:@selector(_showNotificationsGestureFailed)]) {
 		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureFailed)];
 		[[%c(SBUIController) sharedInstance] performSelector:@selector(_showNotificationsGestureCancelled)];
@@ -243,18 +219,14 @@ BOOL toggleOrActivate = NO;
 	static UIView *fakeView;
 	UIView *view = MSHookIvar<UIView*>(self, "_contentView");
 
-	if (!fakeView)
-	{
+	if (!fakeView) {
 		UIImage *snapshot = [[%c(RASnapshotProvider) sharedInstance] storedSnapshotOfMissionControl];
 
-		if (snapshot)
-		{
+		if (snapshot) {
 			fakeView = [[UIImageView alloc] initWithFrame:view.frame];
 			((UIImageView*)fakeView).image = snapshot;
 			[view addSubview:fakeView];
-		}
-		else
-		{
+		} else {
 			fakeView = [[UIView alloc] initWithFrame:view.frame];
 
 			CGFloat width = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 4.5714;
@@ -322,23 +294,21 @@ BOOL toggleOrActivate = NO;
 		}
 	}
 
-	if (origY == -1)
-	{
+	if (origY == -1) {
 		CGRect f = fakeView.frame;
 		f.origin.y = -f.size.height;
 		fakeView.frame = f;
 		origY = fakeView.center.y;
 	}
 
-	if (state == UIGestureRecognizerStateChanged)
+	if (state == UIGestureRecognizerStateChanged) {
 		fakeView.center = (CGPoint) { fakeView.center.x, origY + location.y };
+	}
 
-	if (state == UIGestureRecognizerStateEnded)
-	{
+	if (state == UIGestureRecognizerStateEnded) {
 		//NSLog(@"[ReachApp] %@ + %@ = %@ > %@", NSStringFromCGPoint(fakeView.frame.origin), NSStringFromCGPoint(velocity), @(fakeView.frame.origin.y + velocity.y), @(-(UIScreen.mainScreen.bounds.size.height / 2)));
 
-		if (fakeView.frame.origin.y + velocity.y > -(UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 2))
-		{
+		if (fakeView.frame.origin.y + velocity.y > -(UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 2)) {
 			willShowMissionControl = YES;
 			CGFloat distance = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - (fakeView.frame.origin.y + fakeView.frame.size.height);
 			CGFloat duration = MIN(distance / velocity.y, 0.3);
@@ -360,9 +330,7 @@ BOOL toggleOrActivate = NO;
 				//	((UIWindow*)[[%c(SBUIController) sharedInstance] switcherWindow]).alpha = 1;
 				//});
 			}];
-		}
-		else
-		{
+		} else {
 			CGFloat distance = fakeView.frame.size.height + fakeView.frame.origin.y /* origin.y is less than 0 so the + is actually a - operation */;
 			CGFloat duration = MIN(distance / velocity.y, 0.3);
 
@@ -544,8 +512,9 @@ BOOL toggleOrActivate = NO;
 		origY = fakeView.center.y;
 	}
 
-	if (state == UIGestureRecognizerStateChanged)
+	if (state == UIGestureRecognizerStateChanged) {
 		fakeView.center = CGPointMake(fakeView.center.x, origY + location.y);
+	}
 
 	if (state == UIGestureRecognizerStateEnded) {
 		//NSLog(@"[ReachApp] %@ + %@ = %@ > %@", NSStringFromCGPoint(fakeView.frame.origin), NSStringFromCGPoint(velocity), @(fakeView.frame.origin.y + velocity.y), @(-(UIScreen.mainScreen.bounds.size.height / 2)));
@@ -661,21 +630,16 @@ BOOL toggleOrActivate = NO;
 }
 
 - (BOOL)activateSwitcherNoninteractively {
-	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled])
-	{
-		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl)
-		{
+	if ([[%c(RASettings) sharedInstance] replaceAppSwitcherWithMC] && [[%c(RASettings) sharedInstance] missionControlEnabled]) {
+		if (!RAMissionControlManager.sharedInstance.isShowingMissionControl) {
 			[RAMissionControlManager.sharedInstance showMissionControl:YES];
-			}
-			else
-				[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		} else {
+			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
+		}
 
 		return YES;
-	}
-	else
-	{
-		if ([RAMissionControlManager.sharedInstance isShowingMissionControl])
-		{
+	} else {
+		if ([RAMissionControlManager.sharedInstance isShowingMissionControl]) {
 			[RAMissionControlManager.sharedInstance hideMissionControl:YES];
 		}
 	}

@@ -5,12 +5,12 @@
 	NSMutableDictionary *_sections;
 }
 
-+(instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
--(void) registerSection:(RAWidgetSection*)section;
+- (void)registerSection:(RAWidgetSection*)section;
 
--(NSArray*) sections;
--(NSArray*) enabledSections;
+- (NSArray*)sections;
+- (NSArray*)enabledSections;
 
--(UIView*) createViewForEnabledSectionsWithBaseFrame:(CGRect)frame preferredIconSize:(CGSize)size iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing;
+- (UIView*)createViewForEnabledSectionsWithBaseFrame:(CGRect)frame preferredIconSize:(CGSize)size iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing;
 @end

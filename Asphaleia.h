@@ -37,12 +37,13 @@ typedef void (^ASCommonAuthenticationHandler) (BOOL wasCancelled);
 #define IF_ASPHALEIA  if (HAS_ASPHALEIA)
 
 #define ASPHALEIA_AUTHENTICATE_APP(ident, success, failure_) \
-    BOOL isAppProtected = [[objc_getClass("ASCommon") sharedInstance] authenticateAppWithDisplayIdentifier:ident customMessage:nil dismissedHandler:^(BOOL wasCancelled) { \
-        if (!wasCancelled) \
-            success(); \
-        else \
-            failure_(); \
-    }]; \
-    if (!isAppProtected) { \
-        success(); \
-    }
+	BOOL isAppProtected = [[objc_getClass("ASCommon") sharedInstance] authenticateAppWithDisplayIdentifier:ident customMessage:nil dismissedHandler:^(BOOL wasCancelled) { \
+	  if (!wasCancelled) { \
+			success(); \
+		} else { \
+			failure_(); \
+		} \
+	}]; \
+	if (!isAppProtected) { \
+	  success(); \
+	}

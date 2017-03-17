@@ -4,16 +4,13 @@
 BOOL allowClosingReachabilityNatively = NO;
 
 %hook UIApplication
-- (void)_deactivateReachability
-{
-  if (!allowClosingReachabilityNatively)
-  {
+- (void)_deactivateReachability {
+  if (!allowClosingReachabilityNatively) {
     LogDebug(@"[ReachApp] attempting to close reachability but not allowed to.");
     return;
   }
 
-  if ([RAMessagingClient.sharedInstance isBeingHosted])
-  {
+  if ([RAMessagingClient.sharedInstance isBeingHosted]) {
     LogDebug(@"[ReachApp] stopping reachability from closing because hosted");
     return;
   }

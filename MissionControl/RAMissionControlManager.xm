@@ -29,16 +29,12 @@
 }
 @end
 
-CGRect swappedForOrientation(CGRect in)
-{
-	if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft)
-	{
+CGRect swappedForOrientation(CGRect in) {
+	if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
 		CGFloat x = in.origin.x;
 		in.origin.x = in.origin.y;
 		in.origin.y = x;
-	}
-	else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
-	{
+	} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
 		CGFloat x = in.origin.x;
 		in.origin.x = fabs(in.origin.y) + UIScreen.mainScreen.bounds.size.width;
 		in.origin.y = x;
@@ -47,16 +43,12 @@ CGRect swappedForOrientation(CGRect in)
 	return in;
 }
 
-CGRect swappedForOrientation2(CGRect in)
-{
-	if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft)
-	{
+CGRect swappedForOrientation2(CGRect in) {
+	if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
 		CGFloat x = in.origin.x;
 		in.origin.x = in.origin.y;
 		in.origin.y = x;
-	}
-	else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
-	{
+	} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
 		CGFloat x = in.origin.x;
 		in.origin.x = -in.size.width;
 		in.origin.y = x;
@@ -66,8 +58,7 @@ CGRect swappedForOrientation2(CGRect in)
 }
 
 @implementation RAMissionControlManager
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(RAMissionControlManager,
 		sharedInstance->originalAppView = nil;
 		sharedInstance.inhibitDismissalGesture = NO;
@@ -75,46 +66,46 @@ CGRect swappedForOrientation2(CGRect in)
 	);
 }
 
--(void) showMissionControl:(BOOL)animated
-{
-	if (![NSThread isMainThread])
-	{
-		dispatch_sync(dispatch_get_main_queue(), ^{ [self showMissionControl:animated]; });
+- (void)showMissionControl:(BOOL)animated {
+	if (![NSThread isMainThread]) {
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[self showMissionControl:animated];
+		});
 		return;
 	}
 
 	_isShowingMissionControl = YES;
 
 	SBApplication *app = UIApplication.sharedApplication._accessibilityFrontMostApplication;
-	if (app)
+	if (app) {
 		lastOpenedApp = app;
+	}
 
 	[self createWindow];
 
-	if (animated)
-		//window.alpha = 0;
+	if (animated) {
 		window.frame = swappedForOrientation(CGRectMake(0, -window.frame.size.height, window.frame.size.width, window.frame.size.height));
+	}
+		//window.alpha = 0;
 
 	[window makeKeyAndVisible];
 
-	if (lastOpenedApp && lastOpenedApp.isRunning)
-	{
+	if (lastOpenedApp && lastOpenedApp.isRunning) {
 		originalAppView = [%c(RAHostManager) systemHostViewForApplication:lastOpenedApp].superview;
 		originalAppFrame = originalAppView.frame;
 	}
 
-	if (animated)
-	{
+	if (animated) {
 		//[UIView animateWithDuration:0.5 animations:^{ window.alpha = 1; }];
 		[UIView animateWithDuration:0.5 animations:^{
 			window.frame = CGRectMake(0, 0, window.frame.size.width, window.frame.size.height);
 
-			if (originalAppView)
+			if (originalAppView) {
 				originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppFrame.origin.x, originalAppView.frame.size.height, originalAppFrame.size.width, originalAppFrame.size.height));
+
+			}
 		} completion:nil];
-	}
-	else if (originalAppView) // dismiss even if not animating open
-	{
+	} else if (originalAppView) {  // dismiss even if not animating open
 		originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppFrame.origin.x, originalAppView.frame.size.height, originalAppFrame.size.width, originalAppFrame.size.height));
 	}
 
@@ -129,18 +120,18 @@ CGRect swappedForOrientation2(CGRect in)
 	self.inhibitDismissalGesture = NO;
 	[%c(RAControlCenterInhibitor) setInhibited:YES];
 
-	if ([[%c(SBControlCenterController) sharedInstance] isVisible])
+	if ([[%c(SBControlCenterController) sharedInstance] isVisible]) {
 		[[%c(SBControlCenterController) sharedInstance] dismissAnimated:YES];
+	}
 
 	didStoreSnapshot = NO;
 }
 
--(void) createWindow
-{
-	if (window)
-	{
-		if (originalAppView)
+- (void)createWindow {
+	if (window) {
+		if (originalAppView) {
 			originalAppView.frame = originalAppFrame;
+		}
 		window.hidden = YES;
 		window = nil;
 	}
@@ -174,25 +165,22 @@ CGRect swappedForOrientation2(CGRect in)
 	[self reloadOtherAppsSection];
 }
 
--(void) reloadDesktopSection
-{
+- (void)reloadDesktopSection {
 	[window reloadDesktopSection];
 }
 
--(void) reloadWindowedAppsSection
-{
+- (void)reloadWindowedAppsSection {
 	[window reloadWindowedAppsSection:[[%c(RARunningAppsProvider) sharedInstance] runningApplications]];
 }
 
--(void) reloadOtherAppsSection
-{
+- (void)reloadOtherAppsSection {
 	[window reloadOtherAppsSection];
 }
 
--(void) hideMissionControl:(BOOL)animated
-{
-	if (!didStoreSnapshot)
+- (void)hideMissionControl:(BOOL)animated {
+	if (!didStoreSnapshot) {
 		[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
+	}
 	[[%c(RARunningAppsProvider) sharedInstance] removeTarget:window];
 
 	void (^destructor)() = ^{
@@ -201,24 +189,26 @@ CGRect swappedForOrientation2(CGRect in)
 		window = nil;
 
 		// This goes here to prevent the wallpaper from appearing black when dismissing
+		//once again not needed on 10.x but not sure of older versions
 		if (IS_IOS_OR_OLDER(iOS_10_0)) {
 			[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"RAMissionControlManager"];
 		}
 	};
 
-	if (animated)
-	{
+	if (animated) {
 		[UIView animateWithDuration:0.5 animations:^{
 			window.frame = swappedForOrientation(CGRectMake(0, -window.frame.size.height, window.frame.size.width, window.frame.size.height));
 
-			if (originalAppView)
-					originalAppView.frame = originalAppFrame;
-		} completion:^(BOOL _) { destructor(); }];
-	}
-	else
-	{
-		if (originalAppView)
+			if (originalAppView) {
+				originalAppView.frame = originalAppFrame;
+			}
+		} completion:^(BOOL _) {
+			destructor();
+		}];
+	} else {
+		if (originalAppView) {
 			originalAppView.frame = originalAppFrame;
+		}
 		destructor();
 	}
 
@@ -240,133 +230,118 @@ CGRect swappedForOrientation2(CGRect in)
 	lastOpenedApp = nil; // Fix it opening the same app later if on the Homescreen
 }
 
--(void) toggleMissionControl:(BOOL)animated
-{
-	if (_isShowingMissionControl)
+- (void)toggleMissionControl:(BOOL)animated {
+	if (_isShowingMissionControl) {
 		[self hideMissionControl:animated];
-	else
+	} else {
 		[self showMissionControl:animated];
+	}
 }
 
--(BOOL) RAGestureCallback_canHandle:(CGPoint)point velocity:(CGPoint)velocity
-{
+- (BOOL)RAGestureCallback_canHandle:(CGPoint)point velocity:(CGPoint)velocity {
 	return self.isShowingMissionControl && !self.inhibitDismissalGesture;
 }
 
--(RAGestureCallbackResult) RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge
-{
+- (RAGestureCallbackResult)RAGestureCallback_handle:(UIGestureRecognizerState)state withPoint:(CGPoint)location velocity:(CGPoint)velocity forEdge:(UIRectEdge)edge {
 	static CGPoint initialCenter;
 	static CGRect initialAppFrame;
 
-	if (state == UIGestureRecognizerStateEnded)
-	{
+	if (state == UIGestureRecognizerStateEnded) {
 		hasMoved = NO;
 		[%c(RAControlCenterInhibitor) setInhibited:NO];
 
 		BOOL dismiss = NO;
-		if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
-		{
+		if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
 			dismiss = window.frame.origin.x + velocity.y > UIScreen.mainScreen.bounds.size.width / 2.0;
-		}
-		else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft)
-		{
+		} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
 			dismiss = window.frame.origin.x + window.frame.size.width < UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2.0;
-		}
-		else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait)
+		} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait) {
 			dismiss = window.frame.origin.y + window.frame.size.height + velocity.y < UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 2;
+		}
 
-		if (dismiss)
-		{
+		if (dismiss) {
 			// Close
 			CGFloat distance = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - (window.frame.origin.y + window.frame.size.height);
 			CGFloat duration = MIN(distance / velocity.y, 0.3);
 
 			[UIView animateWithDuration:duration animations:^{
-				if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait)
+				if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait) {
 					window.center = CGPointMake(window.center.x, -initialCenter.y);
-				if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
-				{
+				}
+				if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
 					CGRect f = window.frame;
 					f.origin.x = UIScreen.mainScreen.bounds.size.width;
 					window.frame = f;
-				}
-				else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft)
-				{
+				} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
 					CGRect f = window.frame;
 					f.origin.x = -UIScreen.mainScreen.bounds.size.width;
 					window.frame = f;
 				}
 
-				if (originalAppView)
+				if (originalAppView) {
 					originalAppView.frame = originalAppFrame;
+				}
 			} completion:^(BOOL _) {
 				[self hideMissionControl:NO];
 			}];
-		}
-		else
-		{
+		} else {
 			CGFloat distance = window.center.y + window.frame.origin.y /* origin.y is less than 0 so the + is actually a - operation */;
 			CGFloat duration = MIN(distance / velocity.y, 0.3);
 
 			[UIView animateWithDuration:duration animations:^{
 				window.center = initialCenter;
-				if (originalAppView)
+				if (originalAppView) {
 					originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppFrame.origin.x, originalAppView.frame.size.height, originalAppFrame.size.width, originalAppFrame.size.height));
+				}
 			}];
 		}
-	}
-	else if (state == UIGestureRecognizerStateBegan)
-	{
+	} else if (state == UIGestureRecognizerStateBegan) {
 		//[[%c(RASnapshotProvider) sharedInstance] storeSnapshotOfMissionControl:window];
 		didStoreSnapshot = YES;
 		hasMoved = YES;
 		[%c(RAControlCenterInhibitor) setInhibited:YES];
 		initialCenter = window.center;
-		if (originalAppView)
+		if (originalAppView) {
 			initialAppFrame = initialAppFrame;
-	}
-	else
-	{
-		if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
-		{
+		}
+	} else {
+		if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
 			CGRect f = window.frame;
 			f.origin.x = UIScreen.mainScreen.bounds.size.width - location.y;
 			window.frame = f;
-		}
-		else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft)
-		{
+		} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
 			CGRect f = window.frame;
 			f.origin.x = -UIScreen.mainScreen.bounds.size.width + location.y;
 			window.frame = f;
-		}
-		else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait)
+		} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait) {
 			window.center = CGPointMake(window.center.x, location.y - initialCenter.y);
+		}
 
-		if (originalAppView)
+		if (originalAppView) {
 			originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppView.frame.origin.x, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - location.y), originalAppFrame.size.width, originalAppFrame.size.height));
+		}
 	}
 	return RAGestureCallbackResultSuccess;
 }
 
--(RAMissionControlWindow*) missionControlWindow { return window; }
+- (RAMissionControlWindow*)missionControlWindow {
+	return window;
+}
 
--(void) setInhibitDismissalGesture:(BOOL)value
-{
+- (void)setInhibitDismissalGesture:(BOOL)value {
 	_inhibitDismissalGesture = value;
-	if (value && hasMoved)
-	{
+	if (value && hasMoved) {
 		[self RAGestureCallback_handle:UIGestureRecognizerStateEnded withPoint:CGPointZero velocity:CGPointZero forEdge:UIRectEdgeBottom];
 	}
 }
 @end
 
 %hook SBLockStateAggregator
--(void) _updateLockState
-{
+- (void)_updateLockState {
 	%orig;
 
-	if ([self hasAnyLockState])
-		if (RAMissionControlManager.sharedInstance.isShowingMissionControl)
-			[RAMissionControlManager.sharedInstance hideMissionControl:NO];
+	if ([self hasAnyLockState] && [RAMissionControlManager sharedInstance].isShowingMissionControl) {
+		[RAMissionControlManager.sharedInstance hideMissionControl:NO];
+	}
 }
 %end

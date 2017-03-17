@@ -20,15 +20,15 @@
 #import "RASettings.h"
 
 @interface PSViewController (Protean)
--(void) viewDidLoad;
--(void) viewWillDisappear:(BOOL)animated;
+- (void)viewDidLoad;
+- (void)viewWillDisappear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 @end
 
 @interface PSViewController (SettingsKit2)
--(UINavigationController*)navigationController;
--(void)viewWillAppear:(BOOL)animated;
--(void)viewWillDisappear:(BOOL)animated;
+- (UINavigationController*)navigationController;
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewWillDisappear:(BOOL)animated;
 @end
 
 @interface ALApplicationTableDataSource (Private)
@@ -39,18 +39,18 @@
 @end
 
 @implementation ReachAppSettingsListController
--(UIView*) headerView
-{
+- (UIView*)headerView {
   RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 95)];
   header.colors = @[
     (id) [UIColor colorWithRed:234/255.0f green:152/255.0f blue:115/255.0f alpha:1.0f].CGColor,
     (id) [UIColor colorWithRed:190/255.0f green:83/255.0f blue:184/255.0f alpha:1.0f].CGColor
   ];
 #if DEBUG
-  if (arc4random_uniform(1000000) == 11)
+  if (arc4random_uniform(1000000) == 11) {
     header.title = @"卐卐 TWEAK SUPREMACY 卍卍";
-  else if (arc4random_uniform(1000000) >= 300000)
+  } else if (arc4random_uniform(1000000) >= 300000) {
     header.title = @"dank memes";
+  }
 #endif
   header.blendMode = kCGBlendModeSoftLight;
   header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/MainHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(109.33, 41)]];
@@ -61,13 +61,23 @@
   return notHeader;
 }
 
--(UIColor*) navigationTintColor { return [UIColor colorWithRed:190/255.0f green:83/255.0f blue:184/255.0f alpha:1.0f]; }
--(NSString*) customTitle { return @"Multiplexer"; }
--(BOOL) showHeartImage { return YES; }
--(NSString*) shareMessage { return @"I'm multitasking with Multiplexer, by @daementor and @drewplex"; }
+- (UIColor*)navigationTintColor {
+  return [UIColor colorWithRed:190/255.0f green:83/255.0f blue:184/255.0f alpha:1.0f];
+}
 
--(NSArray*) customSpecifiers
-{
+- (NSString*)customTitle {
+  return @"Multiplexer";
+}
+
+- (BOOL)showHeartImage {
+  return YES;
+}
+
+- (NSString*)shareMessage {
+  return @"I'm multitasking with Multiplexer, by @daementor and @drewplex";
+}
+
+- (NSArray*)customSpecifiers {
   return @[
            @{ @"footerText": @"Quickly enable or disable Multiplexer." },
            @{
@@ -200,8 +210,7 @@
            ];
 }
 
--(void) resetData
-{
+- (void)resetData {
   UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer") message:@"Please confirm your choice to reset all settings & respring.." preferredStyle:UIAlertControllerStyleAlert];
   UIAlertAction *resetAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.resetSettings"), nil, nil, YES);
@@ -213,34 +222,31 @@
   [self presentViewController:alert animated:YES completion:nil];
 }
 
--(void) openThemingDocumentation
-{
+- (void)openThemingDocumentation {
   [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://elijahandandrew.com/multiplexer/ThemingDocumentation.html"]];
 }
 
--(NSArray*) getThemeTitles:(id)target
-{
+- (NSArray*)getThemeTitles:(id)target {
   NSArray *themes = [RAThemeManager.sharedInstance allThemes];
   NSMutableArray *ret = [NSMutableArray array];
-  for (RATheme *theme in themes)
+  for (RATheme *theme in themes) {
     [ret addObject:theme.themeName];
+  }
   return ret;
 }
 
--(NSArray*) getThemeValues:(id)target
-{
+- (NSArray*)getThemeValues:(id)target {
   NSArray *themes = [RAThemeManager.sharedInstance allThemes];
   NSMutableArray *ret = [NSMutableArray array];
-  for (RATheme *theme in themes)
+  for (RATheme *theme in themes) {
     [ret addObject:theme.themeIdentifier];
+  }
   return ret;
 }
 
--(void) showSupportDialog
-{
+- (void)showSupportDialog {
   MFMailComposeViewController *mailViewController;
-  if ([MFMailComposeViewController canSendMail])
-  {
+  if ([MFMailComposeViewController canSendMail]) {
     mailViewController = [[MFMailComposeViewController alloc] init];
     mailViewController.mailComposeDelegate = self;
     [mailViewController setSubject:@"Multiplexer"];
@@ -257,14 +263,12 @@
   }
 }
 
--(void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier
-{
+- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
   [super setPreferenceValue:value specifier:specifier];
   [self reloadSpecifiers];
 }
 
--(BOOL) getEnabled
-{
+- (BOOL)getEnabled {
   CFStringRef appID = CFSTR("com.efrederickson.reachapp.settings");
   CFArrayRef keyList = CFPreferencesCopyKeyList(appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
   if (!keyList) {
@@ -279,12 +283,11 @@
   return ![_settings objectForKey:@"enabled"] ? YES : [_settings[@"enabled"] boolValue];
 }
 
--(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error{
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
   [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
--(void) showTutorial
-{
+- (void)showTutorial {
   [UIApplication.sharedApplication launchApplicationWithIdentifier:@"com.andrewabosh.Multiplexer" suspended:NO];
 }
 @end

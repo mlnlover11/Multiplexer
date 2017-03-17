@@ -5,8 +5,7 @@
 BOOL overrideUIWindow = NO;
 
 @implementation RADesktopManager
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(RADesktopManager,
 		sharedInstance->windows = [NSMutableArray array];
 		[sharedInstance addDesktop:YES];
@@ -14,23 +13,24 @@ BOOL overrideUIWindow = NO;
 	);
 }
 
--(void) addDesktop:(BOOL)switchTo
-{
+- (void)addDesktop:(BOOL)switchTo {
 	RADesktopWindow *desktopWindow = [[RADesktopWindow alloc] initWithFrame:UIScreen.mainScreen._referenceBounds];
 
 	[windows addObject:desktopWindow];
-	if (switchTo)
+	if (switchTo) {
 		[self switchToDesktop:windows.count - 1];
+	}
 	[desktopWindow loadInfo:[windows indexOfObject:desktopWindow]];
 }
 
--(void) removeDesktopAtIndex:(NSUInteger)index
-{
-	if (windows.count == 1 && index == 0)
+- (void)removeDesktopAtIndex:(NSUInteger)index {
+	if (windows.count == 1 && index == 0) {
 		return;
+	}
 
-	if (currentDesktopIndex == index)
+	if (currentDesktopIndex == index) {
 		[self switchToDesktop:0];
+	}
 
 	RADesktopWindow *window = windows[index];
 	[window saveInfo];
@@ -38,26 +38,24 @@ BOOL overrideUIWindow = NO;
 	[windows removeObjectAtIndex:index];
 }
 
--(BOOL) isAppOpened:(NSString*)identifier
-{
-	for (RADesktopWindow *desktop in windows)
-		if ([desktop isAppOpened:identifier])
+- (BOOL)isAppOpened:(NSString*)identifier {
+	for (RADesktopWindow *desktop in windows) {
+		if ([desktop isAppOpened:identifier]) {
 			return YES;
+		}
+	}
 	return NO;
 }
 
--(NSUInteger) numberOfDesktops
-{
+- (NSUInteger)numberOfDesktops {
 	return windows.count;
 }
 
--(void) switchToDesktop:(NSUInteger)index
-{
+- (void)switchToDesktop:(NSUInteger)index {
 	[self switchToDesktop:index actuallyShow:YES];
 }
 
--(void) switchToDesktop:(NSUInteger)index actuallyShow:(BOOL)show
-{
+- (void)switchToDesktop:(NSUInteger)index actuallyShow:(BOOL)show {
 	RADesktopWindow *newDesktop = windows[index];
 
 	currentDesktop.hidden = YES;
@@ -65,80 +63,73 @@ BOOL overrideUIWindow = NO;
 	[currentDesktop unloadApps];
 	[newDesktop loadApps];
 
-	if (!show)
+	if (!show) {
 		newDesktop.hidden = YES;
+	}
 	overrideUIWindow = NO;
 	[newDesktop makeKeyAndVisible];
 	overrideUIWindow = YES;
-	if (!show)
+	if (!show) {
 		newDesktop.hidden = YES;
+	}
 
 	currentDesktopIndex = index;
 	currentDesktop = newDesktop;
 	//[newDesktop updateForOrientation:UIApplication.sharedApplication.statusBarOrientation];
 }
 
--(void) removeAppWithIdentifier:(NSString*)bundleIdentifier animated:(BOOL)animated
-{
+- (void)removeAppWithIdentifier:(NSString*)bundleIdentifier animated:(BOOL)animated {
 	[self removeAppWithIdentifier:bundleIdentifier animated:animated forceImmediateUnload:NO];
 }
 
--(void) removeAppWithIdentifier:(NSString*)bundleIdentifier animated:(BOOL)animated forceImmediateUnload:(BOOL)force
-{
-	for (RADesktopWindow *window in windows)
-	{
+- (void)removeAppWithIdentifier:(NSString*)bundleIdentifier animated:(BOOL)animated forceImmediateUnload:(BOOL)force {
+	for (RADesktopWindow *window in windows) {
 		[window removeAppWithIdentifier:bundleIdentifier animated:animated forceImmediateUnload:force];
 	}
 }
 
--(RAWindowBar*) windowForIdentifier:(NSString*)identifier
-{
-	for (RADesktopWindow *desktop in windows)
-		if ([desktop isAppOpened:identifier])
+- (RAWindowBar*)windowForIdentifier:(NSString*)identifier {
+	for (RADesktopWindow *desktop in windows) {
+		if ([desktop isAppOpened:identifier]) {
 			return [desktop windowForIdentifier:identifier];
+		}
+	}
 	return nil;
 }
 
--(void) hideDesktop
-{
+- (void)hideDesktop {
 	currentDesktop.hidden = YES;
 }
 
--(void) reshowDesktop
-{
+- (void)reshowDesktop {
 	currentDesktop.hidden = NO;
 }
 
--(void) updateRotationOnClients:(UIInterfaceOrientation)orientation
-{
-	for (RADesktopWindow *w in windows)
+- (void)updateRotationOnClients:(UIInterfaceOrientation)orientation {
+	for (RADesktopWindow *w in windows) {
 		[w updateRotationOnClients:orientation];
+	}
 }
 
--(void) updateWindowSizeForApplication:(NSString*)identifier
-{
-	for (RADesktopManager *w in windows)
+- (void)updateWindowSizeForApplication:(NSString*)identifier {
+	for (RADesktopManager *w in windows) {
 		[w updateWindowSizeForApplication:identifier];
+	}
 }
 
--(void) setLastUsedWindow:(RAWindowBar*)window
-{
-	if (_lastUsedWindow)
-	{
+- (void)setLastUsedWindow:(RAWindowBar*)window {
+	if (_lastUsedWindow) {
 		[_lastUsedWindow resignForemostApp];
 	}
 	_lastUsedWindow = window;
 	[_lastUsedWindow becomeForemostApp];
 }
 
--(void) findNewForemostApp
-{
+- (void)findNewForemostApp {
 	RADesktopWindow *desktop = [self currentDesktop];
-	for (RAHostedAppView *hostedApp in desktop.hostedWindows)
-	{
+	for (RAHostedAppView *hostedApp in desktop.hostedWindows) {
 		RAWindowBar *bar = [desktop windowForIdentifier:hostedApp.app.bundleIdentifier];
-		if (bar)
-		{
+		if (bar) {
 			self.lastUsedWindow = bar;
 			return;
 		}
@@ -146,10 +137,21 @@ BOOL overrideUIWindow = NO;
 	//self.lastUsedWindow = nil;
 }
 
--(RADesktopWindow*) desktopAtIndex:(NSUInteger)index { return windows[index]; }
--(NSArray*) availableDesktops { return windows; }
--(NSUInteger) currentDesktopIndex { return currentDesktopIndex; }
--(RADesktopWindow*) currentDesktop { return currentDesktop; }
+- (RADesktopWindow*)desktopAtIndex:(NSUInteger)index {
+	return windows[index];
+}
+
+- (NSArray*)availableDesktops {
+	return windows;
+}
+
+- (NSUInteger)currentDesktopIndex {
+	return currentDesktopIndex;
+}
+
+- (RADesktopWindow*)currentDesktop {
+	return currentDesktop;
+}
 @end
 
 /*

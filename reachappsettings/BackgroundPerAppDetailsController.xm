@@ -6,24 +6,29 @@
 extern void RA_BGAppsControllerNeedsToReload();
 
 @implementation RABGPerAppDetailsController
--(instancetype)initWithAppName:(NSString*)appName identifier:(NSString*)identifier
-{
+- (instancetype)initWithAppName:(NSString*)appName identifier:(NSString*)identifier {
 	_appName = appName;
 	_identifier = identifier;
 	return [self init];
 }
 
--(NSString*) customTitle { return _appName; }
--(BOOL) showHeartImage { return NO; }
--(UIColor*) navigationTintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
+- (NSString*)customTitle {
+	return _appName;
+}
 
--(id) isBackgroundModeActive:(NSString*)mode withAppInfo:(NSArray*)info
-{
+- (BOOL)showHeartImage {
+	return NO;
+}
+
+- (UIColor*)navigationTintColor {
+	return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f];
+}
+
+- (id)isBackgroundModeActive:(NSString*)mode withAppInfo:(NSArray*)info {
 	return [info containsObject:mode] ? @YES : @NO;
 }
 
--(NSArray*) customSpecifiers
-{
+- (NSArray*)customSpecifiers {
 	LSApplicationProxy *appInfo = [%c(LSApplicationProxy) applicationProxyForIdentifier:_identifier];
 	NSArray *bgModes = appInfo.UIBackgroundModes;
 
@@ -189,28 +194,26 @@ extern void RA_BGAppsControllerNeedsToReload();
 					 ];
 }
 
--(void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier
-{
+- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
 	//[super setPreferenceValue:value specifier:specifier];
 
-	if ([[specifier propertyForKey:@"key"] isEqualToString:@"UIApplicationExitsOnSuspend"])
-	{
+	if ([[specifier propertyForKey:@"key"] isEqualToString:@"UIApplicationExitsOnSuspend"]) {
 		LSApplicationProxy *appInfo = [%c(LSApplicationProxy) applicationProxyForIdentifier:_identifier];
 		NSString *path = [NSString stringWithFormat:@"%@/Info.plist",appInfo.bundleURL.absoluteString];
 		NSMutableDictionary *infoPlist = [NSMutableDictionary dictionaryWithContentsOfURL:[NSURL URLWithString:path]];
 		infoPlist[@"UIApplicationExitsOnSuspend"] = value;
 		BOOL success = [infoPlist writeToURL:[NSURL URLWithString:path] atomically:YES];
 
-		if (!success)
-		{
+		if (!success) {
 	    NSMutableDictionary *daemonDict = [NSMutableDictionary dictionary];
 	    daemonDict[@"bundleIdentifier"] = _identifier;
 	    daemonDict[@"UIApplicationExitsOnSuspend"] = value;
 	    [daemonDict writeToFile:@"/var/mobile/Library/.reachapp.uiappexitsonsuspend.wantstochangerootapp" atomically:YES];
 		}
 
-		if ([[specifier propertyForKey:@"reloadSpecifiers"] boolValue])
+		if ([[specifier propertyForKey:@"reloadSpecifiers"] boolValue]) {
 			[self reloadSpecifiers];
+		}
 
 		return;
 	}
@@ -218,20 +221,21 @@ extern void RA_BGAppsControllerNeedsToReload();
 	CFStringRef appID = CFSTR("com.efrederickson.reachapp.settings");
 
 	NSString *key = [NSString stringWithFormat:@"backgrounder-%@-%@",_identifier,[specifier propertyForKey:@"key"]];
-	if ([specifier propertyForKey:@"prefix"])
+	if ([specifier propertyForKey:@"prefix"]) {
 		key = [NSString stringWithFormat:@"backgrounder-%@-%@-%@",_identifier,[specifier propertyForKey:@"prefix"],[specifier propertyForKey:@"key"]];
+	}
 	CFPreferencesSetAppValue((__bridge CFStringRef)key, (const void*)value, appID);
 
 	CFPreferencesAppSynchronize(appID);
 	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.reachapp.settings/reloadSettings"), nil, nil, YES);
 	RA_BGAppsControllerNeedsToReload();
 
-	if ([[specifier propertyForKey:@"reloadSpecifiers"] boolValue])
+	if ([[specifier propertyForKey:@"reloadSpecifiers"] boolValue]) {
 		[self reloadSpecifiers];
+	}
 }
 
--(id) getActualPrefValue:(NSString*)basename
-{
+- (id)getActualPrefValue:(NSString*)basename {
 	CFStringRef appID = CFSTR("com.efrederickson.reachapp.settings");
 	NSString *key = [NSString stringWithFormat:@"backgrounder-%@-%@",_identifier,basename];
 
@@ -240,8 +244,7 @@ extern void RA_BGAppsControllerNeedsToReload();
 	return (__bridge id)value;
 }
 
--(id)readPreferenceValue:(PSSpecifier*)specifier
-{
+- (id)readPreferenceValue:(PSSpecifier*)specifier {
 	CFStringRef appID = CFSTR("com.efrederickson.reachapp.settings");
 	CFArrayRef keyList = CFPreferencesCopyKeyList(appID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 	if (!keyList) {

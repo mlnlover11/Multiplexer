@@ -5,17 +5,14 @@ extern BOOL allowClosingReachabilityNatively;
 
 #define IS_PROCESS(x) (strcmp(__progname, x) == 0)
 
-@interface RAMessagingClient () {
-}
-
+@interface RAMessagingClient ()
 @property (nonatomic) BOOL allowedProcess;
 @end
 
 @implementation RAMessagingClient
 @synthesize allowedProcess;
 
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	IF_SPRINGBOARD {
 		@throw [NSException exceptionWithName:@"IsSpringBoardException" reason:@"Cannot use RAMessagingClient in SpringBoard" userInfo:nil];
 	}
@@ -39,8 +36,7 @@ extern BOOL allowClosingReachabilityNatively;
 	);
 }
 
--(void) loadMessagingCenter
-{
+- (void)loadMessagingCenter {
 	RAMessageAppData data;
 
 	data.shouldForceSize = NO;
@@ -62,21 +58,18 @@ extern BOOL allowClosingReachabilityNatively;
 	serverCenter = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
 	void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-	if (handle)
-	{
+	if (handle) {
 		void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
 		rocketbootstrap_distributedmessagingcenter_apply(serverCenter);
 		dlclose(handle);
 	}
 }
 
--(void) alertUser:(NSString*)description
-{
+- (void)alertUser:(NSString*)description {
 	LogError(@"%@", description);
 }
 
--(void) _requestUpdateFromServerWithTries:(int)tries
-{
+- (void)_requestUpdateFromServerWithTries:(int)tries {
 	/*if (!NSBundle.mainBundle.bundleIdentifier ||
 		IS_PROCESS("assertiond") ||  // Don't need to load into this anyway
 		IS_PROCESS("searchd") ||  // safe-mode crash fix
@@ -85,8 +78,7 @@ extern BOOL allowClosingReachabilityNatively;
 		IS_PROCESS("backboardd") // Backboardd uses its own messaging center for what it does.
 		)*/
 
-	if (!allowedProcess)
-	{
+	if (!allowedProcess) {
 		// Anything that's not a UIApp (system app or user app) doesn't need this messaging client
 		// Attempting to reach out will either:
 		// 1. hang the process
@@ -98,31 +90,25 @@ extern BOOL allowClosingReachabilityNatively;
 
 	NSDictionary *dict = @{ @"bundleIdentifier": NSBundle.mainBundle.bundleIdentifier };
 	NSDictionary *data = [serverCenter sendMessageAndReceiveReplyName:RAMessagingUpdateAppInfoMessageName userInfo:dict];
-	if (data && [data objectForKey:@"data"])
-	{
+	if (data && [data objectForKey:@"data"]) {
 		RAMessageAppData actualData;
 		[data[@"data"] getBytes:&actualData length:sizeof(actualData)];
 		[self updateWithData:actualData];
 		self.hasRecievedData = YES;
-	}
-	else
-	{
-		if (tries <= 4)
+	} else {
+		if (tries <= 4) {
 			[self _requestUpdateFromServerWithTries:tries + 1];
-		else
-		{
+		} else {
 			[self alertUser:[NSString stringWithFormat:@"App \"%@\" is unable to communicate with messaging server", [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey:@"CFBundleDisplayName"] ?: NSBundle.mainBundle.bundleIdentifier]];
 		}
 	}
 }
 
--(void) requestUpdateFromServer
-{
+- (void)requestUpdateFromServer {
 	[self _requestUpdateFromServerWithTries:0];
 }
 
--(void) updateWithData:(RAMessageAppData)data
-{
+- (void)updateWithData:(RAMessageAppData)data {
 	BOOL didStatusBarVisibilityChange = _currentData.shouldForceStatusBar != data.shouldForceStatusBar;
 	BOOL didOrientationChange = _currentData.shouldForceOrientation != data.shouldForceOrientation;
 	BOOL didSizingChange  =_currentData.shouldForceSize != data.shouldForceSize;
@@ -130,49 +116,47 @@ extern BOOL allowClosingReachabilityNatively;
 	/* THE REAL IMPORTANT BIT */
 	_currentData = data;
 
-	if (didStatusBarVisibilityChange && !data.shouldForceStatusBar)
+	if (didStatusBarVisibilityChange && !data.shouldForceStatusBar) {
 		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:YES];
-	else if (data.shouldForceStatusBar)
+	} else if (data.shouldForceStatusBar) {
 		[UIApplication.sharedApplication RA_forceStatusBarVisibility:_currentData.statusBarVisibility orRevert:NO];
+	}
 
-	if (didSizingChange && !data.shouldForceSize)
-	   	[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:YES];
-	else if (data.shouldForceSize)
-	   	[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:NO];
+	if (didSizingChange && !data.shouldForceSize) {
+		[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:YES];
+	} else if (data.shouldForceSize) {
+		[UIApplication.sharedApplication RA_updateWindowsForSizeChange:CGSizeMake(data.wantedClientWidth, data.wantedClientHeight) isReverting:NO];
+	}
 
-	if (didOrientationChange && !data.shouldForceOrientation)
+	if (didOrientationChange && !data.shouldForceOrientation) {
 		[UIApplication.sharedApplication RA_forceRotationToInterfaceOrientation:data.forcedOrientation isReverting:YES];
-	else if (data.shouldForceOrientation)
+	} else if (data.shouldForceOrientation) {
 		[UIApplication.sharedApplication RA_forceRotationToInterfaceOrientation:data.forcedOrientation isReverting:NO];
+	}
 
 	allowClosingReachabilityNatively = YES;
 }
 
--(void) notifyServerWithKeyboardContextId:(unsigned int)cid
-{
+- (void)notifyServerWithKeyboardContextId:(unsigned int)cid {
 	NSDictionary *dict = @{ @"contextId": @(cid), @"bundleIdentifier": NSBundle.mainBundle.bundleIdentifier };
 	[serverCenter sendMessageName:RAMessagingUpdateKeyboardContextIdMessageName userInfo:dict];
 }
 
--(void) notifyServerToShowKeyboard
-{
+- (void)notifyServerToShowKeyboard {
 	NSDictionary *dict = @{ @"bundleIdentifier": NSBundle.mainBundle.bundleIdentifier };
 	[serverCenter sendMessageName:RAMessagingShowKeyboardMessageName userInfo:dict];
 }
 
--(void) notifyServerToHideKeyboard
-{
+- (void)notifyServerToHideKeyboard {
 	[serverCenter sendMessageName:RAMessagingHideKeyboardMessageName userInfo:nil];
 }
 
--(void) notifyServerOfKeyboardSizeUpdate:(CGSize)size
-{
+- (void)notifyServerOfKeyboardSizeUpdate:(CGSize)size {
 	NSDictionary *dict = @{ @"size": NSStringFromCGSize(size) };
 	[serverCenter sendMessageName:RAMessagingUpdateKeyboardSizeMessageName userInfo:dict];
 }
 
--(BOOL) notifyServerToOpenURL:(NSURL*)url openInWindow:(BOOL)openWindow
-{
+- (BOOL)notifyServerToOpenURL:(NSURL*)url openInWindow:(BOOL)openWindow {
 	NSDictionary *dict = @{
 		@"url": url.absoluteString,
 		@"openInWindow": @(openWindow)
@@ -180,42 +164,56 @@ extern BOOL allowClosingReachabilityNatively;
 	return [[serverCenter sendMessageAndReceiveReplyName:RAMessagingOpenURLKMessageName userInfo:dict][@"success"] boolValue];
 }
 
--(void) notifySpringBoardOfFrontAppChangeToSelf
-{
+- (void)notifySpringBoardOfFrontAppChangeToSelf {
 	NSString *ident = NSBundle.mainBundle.bundleIdentifier;
-	if (!ident)
+	if (!ident) {
 		return;
+	}
 
-	if ([self isBeingHosted] && (!self.knownFrontmostApp || ![self.knownFrontmostApp isEqual:ident]))
+	if ([self isBeingHosted] && (!self.knownFrontmostApp || ![self.knownFrontmostApp isEqual:ident])) {
 		[serverCenter sendMessageName:RAMessagingChangeFrontMostAppMessageName userInfo:@{ @"bundleIdentifier": ident }];
+	}
 }
 
--(BOOL) shouldUseExternalKeyboard { return _currentData.shouldUseExternalKeyboard; }
--(BOOL) shouldResize { return _currentData.shouldForceSize; }
--(CGSize) resizeSize { return CGSizeMake(_currentData.wantedClientWidth, _currentData.wantedClientHeight); }
--(BOOL) shouldHideStatusBar { return _currentData.shouldForceStatusBar && !_currentData.statusBarVisibility; }
--(BOOL) shouldShowStatusBar { return _currentData.shouldForceStatusBar && _currentData.statusBarVisibility; }
--(UIInterfaceOrientation) forcedOrientation { return _currentData.forcedOrientation; }
--(BOOL) shouldForceOrientation { return _currentData.shouldForceOrientation; }
--(BOOL) isBeingHosted { return _currentData.isBeingHosted; }
+- (BOOL)shouldUseExternalKeyboard {
+	return _currentData.shouldUseExternalKeyboard;
+}
+- (BOOL)shouldResize {
+	return _currentData.shouldForceSize;
+}
+- (CGSize)resizeSize {
+	return CGSizeMake(_currentData.wantedClientWidth, _currentData.wantedClientHeight);
+}
+- (BOOL)shouldHideStatusBar {
+	return _currentData.shouldForceStatusBar && !_currentData.statusBarVisibility;
+}
+- (BOOL)shouldShowStatusBar {
+	return _currentData.shouldForceStatusBar && _currentData.statusBarVisibility;
+}
+- (UIInterfaceOrientation)forcedOrientation {
+	return _currentData.forcedOrientation;
+}
+- (BOOL)shouldForceOrientation {
+	return _currentData.shouldForceOrientation;
+}
+- (BOOL)isBeingHosted {
+	return _currentData.isBeingHosted;
+}
 @end
 
-void reloadClientData(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
+void reloadClientData(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
 	[[RAMessagingClient sharedInstance] requestUpdateFromServer];
 }
 
-void updateFrontmostApp(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
+void updateFrontmostApp(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
 	RAMessagingClient.sharedInstance.knownFrontmostApp = ((__bridge NSDictionary*)userInfo)[@"bundleIdentifier"];
 }
 
-%ctor
-{
-	IF_NOT_SPRINGBOARD
-	{
-		[RAMessagingClient sharedInstance];
-		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reloadClientData, (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",NSBundle.mainBundle.bundleIdentifier], NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-		CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), NULL, &updateFrontmostApp, CFSTR("com.efrederickson.reachapp.frontmostAppDidUpdate"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+%ctor {
+	IF_SPRINGBOARD {
+		return;
 	}
+	[RAMessagingClient sharedInstance];
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &reloadClientData, (__bridge CFStringRef)[NSString stringWithFormat:@"com.efrederickson.reachapp.clientupdate-%@",NSBundle.mainBundle.bundleIdentifier], NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), NULL, &updateFrontmostApp, CFSTR("com.efrederickson.reachapp.frontmostAppDidUpdate"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 }

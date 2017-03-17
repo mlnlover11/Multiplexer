@@ -6,8 +6,8 @@
 @end
 
 @interface RANCViewController : SBNCColumnViewController
-+(instancetype) sharedViewController;
++ (instancetype)sharedViewController;
 
--(RAHostedAppView*) hostedApp;
--(void) forceReloadAppLikelyBecauseTheSettingChanged;
+- (RAHostedAppView*)hostedApp;
+- (void)forceReloadAppLikelyBecauseTheSettingChanged;
 @end

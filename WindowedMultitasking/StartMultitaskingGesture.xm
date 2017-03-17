@@ -9,12 +9,12 @@
 #import "RAControlCenterInhibitor.h"
 #import "Multiplexer.h"
 
-BOOL locationIsInValidArea(CGFloat x)
-{
-  if (x == 0) return YES; // more than likely, UIGestureRecognizerStateEnded
+BOOL locationIsInValidArea(CGFloat x) {
+  if (x == 0) { // more than likely, UIGestureRecognizerStateEnded
+    return YES;
+  }
 
-  switch ([RASettings.sharedInstance windowedMultitaskingGrabArea])
-  {
+  switch ([RASettings.sharedInstance windowedMultitaskingGrabArea]) {
     case RAGrabAreaBottomLeftThird:
       LogDebug(@"[ReachApp] StartMultitaskingGesture: %f %f", x, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width);
       return x <= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 3.0;
@@ -27,10 +27,10 @@ BOOL locationIsInValidArea(CGFloat x)
   }
 }
 
-%ctor
-{
-  IF_NOT_SPRINGBOARD
-      return;
+%ctor {
+  IF_NOT_SPRINGBOARD {
+    return;
+  }
   __weak __block UIView *appView = nil;
   __block CGFloat lastY = 0;
   __block CGPoint originalCenter;
@@ -40,8 +40,7 @@ BOOL locationIsInValidArea(CGFloat x)
     // Dismiss potential CC
     //[[%c(SBUIController) sharedInstance] _showControlCenterGestureEndedWithLocation:CGPointMake(0, UIScreen.mainScreen.bounds.size.height - 1) velocity:CGPointZero];
 
-    if (state == UIGestureRecognizerStateBegan)
-    {
+    if (state == UIGestureRecognizerStateBegan) {
       [RAControlCenterInhibitor setInhibited:YES];
 
       // Show HS/Wallpaper
@@ -50,17 +49,15 @@ BOOL locationIsInValidArea(CGFloat x)
 
       // Assign view
       appView = [RAHostManager systemHostViewForApplication:topApp].superview;
-      if (IS_IOS_OR_NEWER(iOS_9_0))
+      if (IS_IOS_OR_NEWER(iOS_9_0)) {
         appView = appView.superview;
+      }
       originalCenter = appView.center;
-    }
-    else if (state == UIGestureRecognizerStateChanged)
-    {
+    } else if (state == UIGestureRecognizerStateChanged) {
       lastY = location.y;
       CGFloat scale = location.y / UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height;
 
-      if ([RAWindowStatePreservationSystemManager.sharedInstance hasWindowInformationForIdentifier:topApp.bundleIdentifier])
-      {
+      if ([RAWindowStatePreservationSystemManager.sharedInstance hasWindowInformationForIdentifier:topApp.bundleIdentifier]) {
         scale = MIN(MAX(scale, 0.01), 1);
         CGFloat actualScale = scale;
         scale = 1 - scale;
@@ -83,28 +80,20 @@ BOOL locationIsInValidArea(CGFloat x)
 
         appView.center = center;
         appView.transform = transform;
-      }
-      else
-      {
+      } else {
         scale = MIN(MAX(scale, 0.3), 1);
         appView.transform = CGAffineTransformMakeScale(scale, scale);
       }
-    }
-    else if (state == UIGestureRecognizerStateEnded)
-    {
+    } else if (state == UIGestureRecognizerStateEnded) {
       [RAControlCenterInhibitor setInhibited:NO];
 
-      if (lastY <= (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 4) * 3 && lastY != 0) // 75% down, 0 == gesture ended in most situations
-      {
+      if (lastY <= (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 4) * 3 && lastY != 0) { // 75% down, 0 == gesture ended in most situations
         [UIView animateWithDuration:.3 animations:^{
-          if ([RAWindowStatePreservationSystemManager.sharedInstance hasWindowInformationForIdentifier:topApp.bundleIdentifier])
-          {
+          if ([RAWindowStatePreservationSystemManager.sharedInstance hasWindowInformationForIdentifier:topApp.bundleIdentifier]) {
             RAPreservedWindowInformation info = [RAWindowStatePreservationSystemManager.sharedInstance windowInformationForAppIdentifier:topApp.bundleIdentifier];
             appView.center = info.center;
             appView.transform = info.transform;
-          }
-          else
-          {
+          } else {
             appView.transform = CGAffineTransformMakeScale(0.5, 0.5);
             appView.center = originalCenter;
           }
@@ -124,8 +113,9 @@ BOOL locationIsInValidArea(CGFloat x)
 
             // Open in window
             RAWindowBar *windowBar = [RADesktopManager.sharedInstance.currentDesktop createAppWindowForSBApplication:topApp animated:YES];
-            if (!RADesktopManager.sharedInstance.lastUsedWindow)
+            if (!RADesktopManager.sharedInstance.lastUsedWindow) {
               RADesktopManager.sharedInstance.lastUsedWindow = windowBar;
+            }
           }];
           [(FBWorkspaceEventQueue*)[%c(FBWorkspaceEventQueue) sharedInstance] executeOrAppendEvent:event];
           [[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];
@@ -135,9 +125,7 @@ BOOL locationIsInValidArea(CGFloat x)
           [[%c(RABackgrounder) sharedInstance] removeTemporaryOverrideForIdentifier:topApp.bundleIdentifier];
           [[%c(RABackgrounder) sharedInstance] updateIconIndicatorForIdentifier:topApp.bundleIdentifier withInfo:indicatorInfo];
         }];
-      }
-      else
-      {
+      } else {
         appView.center = originalCenter;
         [UIView animateWithDuration:0.2 animations:^{ appView.transform = CGAffineTransformIdentity; } completion:^(BOOL _) {
           [[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];

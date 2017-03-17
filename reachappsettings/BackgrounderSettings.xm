@@ -17,15 +17,15 @@
 #define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.reachapp.settings.plist"
 
 @interface PSViewController (Protean)
--(void) viewDidLoad;
--(void) viewWillDisappear:(BOOL)animated;
+- (void)viewDidLoad;
+- (void)viewWillDisappear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 @end
 
 @interface PSViewController (SettingsKit2)
--(UINavigationController*)navigationController;
--(void)viewWillAppear:(BOOL)animated;
--(void)viewWillDisappear:(BOOL)animated;
+- (UINavigationController*)navigationController;
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewWillDisappear:(BOOL)animated;
 @end
 
 @interface ALApplicationTableDataSource (Private)
@@ -36,12 +36,11 @@
 @end
 
 @implementation ReachAppBackgrounderSettingsListController
--(UIView*) headerView
-{
+- (UIView*)headerView {
   RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
   header.colors = @[
-      (id) [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f].CGColor,
-      (id) [UIColor colorWithRed:255/255.0f green:111/255.0f blue:124/255.0f alpha:1.0f].CGColor
+    (id) [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f].CGColor,
+    (id) [UIColor colorWithRed:255/255.0f green:111/255.0f blue:124/255.0f alpha:1.0f].CGColor
   ];
   header.shouldBlend = NO;
   header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/BackgrounderHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(15, 33)]];
@@ -52,20 +51,28 @@
   return notHeader;
 }
 
--(UIColor*) tintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
--(UIColor*) switchTintColor { return [[UISwitch alloc] init].tintColor; }
-
--(NSString*) customTitle { return @"Aura"; }
--(BOOL) showHeartImage { return NO; }
-
--(void) viewDidAppear:(BOOL)arg1
-{
-    [super viewDidAppear:arg1];
-    [super performSelector:@selector(setupHeader)];
+- (UIColor*)tintColor {
+  return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f];
 }
 
--(NSArray*) customSpecifiers
-{
+- (UIColor*)switchTintColor {
+  return [[UISwitch alloc] init].tintColor;
+}
+
+- (NSString*)customTitle {
+  return @"Aura";
+}
+
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  [super performSelector:@selector(setupHeader)];
+}
+
+- (NSArray*)customSpecifiers {
   return @[
            @{ @"footerText": @"Quickly enable or disable Aura. Relaunch apps to apply changes." },
            @{
@@ -128,18 +135,14 @@
            ];
 }
 
--(void) showActivatorAction
-{
+- (void)showActivatorAction {
   id activator = %c(LAListenerSettingsViewController);
-  if (!activator)
-  {
+  if (!activator) {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
     [alert addAction:cancelAction];
     [self presentViewController:alert animated:YES completion:nil];
-  }
-  else
-  {
+  } else {
     LAListenerSettingsViewController *vc = [[%c(LAListenerSettingsViewController) alloc] init];
     vc.listenerName = @"com.efrederickson.reachapp.backgrounder.togglemode";
     [self.rootController pushController:vc animate:YES];
@@ -151,10 +154,15 @@
 @end
 
 @implementation RABackgrounderIconIndicatorOptionsListController
--(UIColor*) navigationTintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
--(BOOL) showHeartImage { return NO; }
--(NSArray*) customSpecifiers
-{
+- (UIColor*)navigationTintColor {
+  return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f];
+}
+
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (NSArray*)customSpecifiers {
   return @[
            @{
               @"cell": @"PSSwitchCell",
@@ -180,10 +188,15 @@
 @end
 
 @implementation RABackgrounderStatusbarOptionsListController
--(UIColor*) navigationTintColor { return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f]; }
--(BOOL) showHeartImage { return NO; }
--(NSArray*) customSpecifiers
-{
+- (UIColor*)navigationTintColor {
+  return [UIColor colorWithRed:248/255.0f green:73/255.0f blue:88/255.0f alpha:1.0f];
+}
+
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (NSArray*)customSpecifiers {
   return @[
            @{
               @"cell": @"PSSwitchCell",

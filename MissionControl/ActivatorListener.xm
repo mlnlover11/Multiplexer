@@ -8,8 +8,7 @@
 static RAActivatorListener *sharedInstance;
 
 @implementation RAActivatorListener
-- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
-{
+- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event {
 	if ([[%c(SBLockScreenManager) sharedInstance] isUILocked]) {
 		return;
 	} else if ([[%c(RASettings) sharedInstance] missionControlEnabled]) {
@@ -24,11 +23,10 @@ static RAActivatorListener *sharedInstance;
 }
 @end
 
-%ctor
-{
-	IF_SPRINGBOARD
-	{
-		sharedInstance = [[RAActivatorListener alloc] init];
-		[[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];
+%ctor {
+	IF_NOT_SPRINGBOARD {
+		return;
 	}
+	sharedInstance = [[RAActivatorListener alloc] init];
+	[[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];
 }

@@ -32,59 +32,39 @@ CPDistributedMessagingCenter *center;
 // TODO: Ensure all keyboard commands do not conflict with
 // https://support.apple.com/en-us/HT201236
 
-void handle_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event)
-{
-	if (IOHIDEventGetType(event) == kIOHIDEventTypeKeyboard)
-	{
+void handle_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event) {
+	if (IOHIDEventGetType(event) == kIOHIDEventTypeKeyboard) {
 		IOHIDEventRef event2 = IOHIDEventCreateCopy(kCFAllocatorDefault, event);
 
 		BOOL isDown = IOHIDEventGetIntegerValue(event2, kIOHIDEventFieldKeyboardDown);
 		int key = IOHIDEventGetIntegerValue(event2, kIOHIDEventFieldKeyboardUsage);
 
-		if (key == CTRL_KEY)
+		if (key == CTRL_KEY) {
 			isControlKeyDown = isDown;
-		else if (key == CMD_KEY || key == CMD_KEY2)
+		} else if (key == CMD_KEY || key == CMD_KEY2) {
 			isWindowsKeyDown = isDown;
-		else if (key == SHIFT_KEY || key == SHIFT_KEY2)
+		} else if (key == SHIFT_KEY || key == SHIFT_KEY2) {
 			isShiftKeyDown = isDown;
-		else if (key == ALT_KEY || key == ALT_KEY2)
+		} else if (key == ALT_KEY || key == ALT_KEY2) {
 			isAltKeyDown = isDown;
-		else if (isDown && isWindowsKeyDown && isControlKeyDown)
-		{
-			if (key == ARROW_LEFT_KEY)
-			{
+		} else if (isDown && isWindowsKeyDown && isControlKeyDown) {
+			if (key == ARROW_LEFT_KEY) {
 				[center sendMessageName:RAMessagingGoToDesktopOnTheLeftMessageName userInfo:nil];
-			}
-			else if (key == ARROW_RIGHT_KEY)
-			{
+			} else if (key == ARROW_RIGHT_KEY) {
 				[center sendMessageName:RAMessagingGoToDesktopOnTheRightMessageName userInfo:nil];
-			}
-			else if (key == BKSPCE_KEY)
-			{
+			} else if (key == BKSPCE_KEY) {
 				[center sendMessageName:RAMessagingDetachCurrentAppMessageName userInfo:nil];
-			}
-			else if (key == D_KEY || key == EQUALS_OR_PLUS_KEY)
-			{
-
+			} else if (key == D_KEY || key == EQUALS_OR_PLUS_KEY) {
 				[center sendMessageName:RAMessagingAddNewDesktopMessageName userInfo:nil];
 			}
-		}
-		else if (isDown && isWindowsKeyDown && isAltKeyDown)
-		{
-			if (key == ARROW_LEFT_KEY)
-			{
+		} else if (isDown && isWindowsKeyDown && isAltKeyDown) {
+			if (key == ARROW_LEFT_KEY) {
 				[center sendMessageName:RAMessagingSnapFrontMostWindowLeftMessageName userInfo:nil];
-			}
-			else if (key == ARROW_RIGHT_KEY)
-			{
+			} else if (key == ARROW_RIGHT_KEY) {
 				[center sendMessageName:RAMessagingSnapFrontMostWindowRightMessageName userInfo:nil];
-			}
-			else if (key == ARROW_UP_KEY)
-			{
+			} else if (key == ARROW_UP_KEY) {
 				[center sendMessageName:RAMessagingMaximizeAppMessageName userInfo:nil];
-			}
-			else if (key == ARROW_DOWN_KEY)
-			{
+			} else if (key == ARROW_DOWN_KEY) {
 				[center sendMessageName:RAMessagingCloseAppMessageName userInfo:nil];
 			}
 		}
@@ -100,20 +80,19 @@ void handle_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEven
 
 %hook BKEventFocusManager
 @interface BKEventDestination
--(id ) initWithPid:(unsigned int)arg1 clientID:(NSString*)arg2;
+- (instancetype)initWithPid:(NSUInteger)arg1 clientID:(NSString*)arg2;
 @end
 
--(id) destinationForFocusedEventWithDisplay:(__unsafe_unretained id)arg1
-{
+- (id)destinationForFocusedEventWithDisplay:(__unsafe_unretained id)arg1 {
 	NSDictionary *response = [center sendMessageAndReceiveReplyName:RAMessagingGetFrontMostAppInfoMessageName userInfo:nil];
 
-	if (response)
-	{
+	if (response) {
 		int pid = [response[@"pid"] unsignedIntValue];
 		NSString *clientId = response[@"bundleIdentifier"];
 
-		if (pid && clientId)
+		if (pid && clientId) {
 			return [[[%c(BKEventDestination) alloc] initWithPid:pid clientID:clientId] autorelease];
+		}
 	}
 	return %orig;
 }
@@ -153,13 +132,11 @@ void handle_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEven
 %end
 */
 
-%ctor
-{
+%ctor {
 	center = [%c(CPDistributedMessagingCenter) centerNamed:@"com.efrederickson.reachapp.messaging.server"];
 
 	void* handle = dlopen("/usr/lib/librocketbootstrap.dylib", RTLD_LAZY);
-	if(handle)
-	{
+	if (handle) {
 		void (*rocketbootstrap_distributedmessagingcenter_apply)(CPDistributedMessagingCenter*) = (void(*)(CPDistributedMessagingCenter*))dlsym(handle, "rocketbootstrap_distributedmessagingcenter_apply");
 		rocketbootstrap_distributedmessagingcenter_apply(center);
 		dlclose(handle);

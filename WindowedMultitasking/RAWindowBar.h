@@ -9,30 +9,30 @@
 
 @property (nonatomic, weak) RADesktopWindow *desktop;
 
--(void) close;
--(void) maximize;
--(void) minimize;
--(void) sizingLockButtonTap:(id)arg1;
--(BOOL) isLocked;
+- (void)close;
+- (void)maximize;
+- (void)minimize;
+- (void)sizingLockButtonTap:(id)arg1;
+- (BOOL)isLocked;
 
--(void) showOverlay;
--(void) hideOverlay;
--(BOOL) isOverlayShowing;
+- (void)showOverlay;
+- (void)hideOverlay;
+- (BOOL)isOverlayShowing;
 
--(RAHostedAppView*) attachedView;
--(void) attachView:(RAHostedAppView*)view;
+- (RAHostedAppView*)attachedView;
+- (void)attachView:(RAHostedAppView*)view;
 
--(void) updateClientRotation;
--(void) updateClientRotation:(UIInterfaceOrientation)orientation;
+- (void)updateClientRotation;
+- (void)updateClientRotation:(UIInterfaceOrientation)orientation;
 
--(void) scaleTo:(CGFloat)scale animated:(BOOL)animate;
--(void) scaleTo:(CGFloat)scale animated:(BOOL)animate derotate:(BOOL)derotate;
+- (void)scaleTo:(CGFloat)scale animated:(BOOL)animate;
+- (void)scaleTo:(CGFloat)scale animated:(BOOL)animate derotate:(BOOL)derotate;
 
--(void) saveWindowInfo;
+- (void)saveWindowInfo;
 
--(void) disableLongPress;
--(void) enableLongPress;
+- (void)disableLongPress;
+- (void)enableLongPress;
 
--(void) resignForemostApp;
--(void) becomeForemostApp;
+- (void)resignForemostApp;
+- (void)becomeForemostApp;
 @end

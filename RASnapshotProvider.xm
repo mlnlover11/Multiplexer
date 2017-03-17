@@ -3,13 +3,11 @@
 #import "RAWindowBar.h"
 
 @implementation RASnapshotProvider
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(RASnapshotProvider, sharedInstance->imageCache = [NSCache new]);
 }
 
--(UIImage*) snapshotForIdentifier:(NSString*)identifier orientation:(UIInterfaceOrientation)orientation
-{
+- (UIImage*)snapshotForIdentifier:(NSString*)identifier orientation:(UIInterfaceOrientation)orientation {
 	/*if (![NSThread isMainThread])
 	{
 		__block id result = nil;
@@ -20,10 +18,10 @@
 		[targetQueue waitUntilAllOperationsAreFinished];
 		return result;
 	}*/
-
 	@autoreleasepool {
-
-		if ([imageCache objectForKey:identifier]) return [imageCache objectForKey:identifier];
+		if ([imageCache objectForKey:identifier]) {
+			return [imageCache objectForKey:identifier];
+		}
 
 		UIImage *image = nil;
 
@@ -31,20 +29,16 @@
 		__block SBAppSwitcherSnapshotView *view = nil;
 
 		ON_MAIN_THREAD(^{
-			if ([%c(SBUIController) respondsToSelector:@selector(switcherController)])
-			{
+			if ([%c(SBUIController) respondsToSelector:@selector(switcherController)]) {
 				view = [[[%c(SBUIController) sharedInstance] switcherController] performSelector:@selector(_snapshotViewForDisplayItem:) withObject:item];
 				[view setOrientation:orientation orientationBehavior:0];
-			}
-			else
-			{
+			} else {
 				SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
 				view = [[%c(SBAppSwitcherSnapshotView) alloc] initWithDisplayItem:item application:app orientation:orientation preferringDownscaledSnapshot:NO async:NO withQueue:nil];
 			}
 		});
 
-		if (view)
-		{
+		if (view) {
 			if ([view respondsToSelector:@selector(_loadSnapshotSync)]) {
 				[view performSelectorOnMainThread:@selector(_loadSnapshotSync) withObject:nil waitUntilDone:YES];
 				image = MSHookIvar<UIImageView*>(view, "_snapshotImageView").image;
@@ -53,22 +47,17 @@
 				SBSwitcherSnapshotImageView *snapshotImageView = snapshotContext.snapshotImageView;
 				image = snapshotImageView.image;
 			}
-
 		}
 
-		if (!image)
-		{
+		if (!image) {
 			SBApplication *app = [[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier];
 
-			if (app && app.mainSceneID)
-			{
-				@try
-				{
+			if (app && app.mainSceneID) {
+				@try {
 					CGRect frame = CGRectMake(0, 0, 0, 0);
 					UIView *view = [%c(SBUIController) _zoomViewWithSplashboardLaunchImageForApplication:app sceneID:app.mainSceneID screen:UIScreen.mainScreen interfaceOrientation:0 includeStatusBar:YES snapshotFrame:&frame];
 
-					if (view)
-					{
+					if (view) {
 						UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, 0);
 
 						ON_MAIN_THREAD(^{
@@ -79,18 +68,17 @@
 						UIGraphicsEndImageContext();
 					}
 				}
-				@catch (NSException *ex)
-				{
+				@catch (NSException *ex) {
 					LogError(@"[ReachApp] error generating snapshot: %@", ex);
 				}
 			}
 
-			if (!image) // we can only hope it does not reach this point of desperation
+			if (!image) { // we can only hope it does not reach this point of desperation
 				image = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/Default.png", app.path]];
+			}
 		}
 
-		if (image)
-		{
+		if (image) {
 			[imageCache setObject:image forKey:identifier];
 		}
 
@@ -98,23 +86,19 @@
 	}
 }
 
--(UIImage*) snapshotForIdentifier:(NSString*)identifier
-{
+- (UIImage*)snapshotForIdentifier:(NSString*)identifier {
 	return [self snapshotForIdentifier:identifier orientation:UIApplication.sharedApplication.statusBarOrientation];
 }
 
--(void) forceReloadOfSnapshotForIdentifier:(NSString*)identifier
-{
+- (void)forceReloadOfSnapshotForIdentifier:(NSString*)identifier {
 	[imageCache removeObjectForKey:identifier];
 }
 
--(UIImage*) storedSnapshotOfMissionControl
-{
+- (UIImage*)storedSnapshotOfMissionControl {
 	return [imageCache objectForKey:@"missioncontrol"];
 }
 
--(void) storeSnapshotOfMissionControl:(UIWindow*)window
-{
+- (void)storeSnapshotOfMissionControl:(UIWindow*)window {
 	UIGraphicsBeginImageContextWithOptions(window.bounds.size, YES, 0);
 
 	[window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
@@ -122,40 +106,41 @@
 	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
 
-	if (image)
+	if (image) {
 		[imageCache setObject:image forKey:@"missioncontrol"];
+	}
 }
 
--(NSString*) createKeyForDesktop:(RADesktopWindow*)desktop
-{
+- (NSString*)createKeyForDesktop:(RADesktopWindow*)desktop {
 	return [NSString stringWithFormat:@"desktop-%lu", (unsigned long)desktop.hash];
 }
 
--(UIImage*) snapshotForDesktop:(RADesktopWindow*)desktop
-{
+- (UIImage*)snapshotForDesktop:(RADesktopWindow*)desktop {
 	NSString *key = [self createKeyForDesktop:desktop];
-	if ([imageCache objectForKey:key]) return [imageCache objectForKey:key];
+	if ([imageCache objectForKey:key]) {
+		return [imageCache objectForKey:key];
+	}
 
 	UIImage *img = [self renderPreviewForDesktop:desktop];
-	if (img)
+	if (img) {
 		[imageCache setObject:img forKey:key];
+	}
 	return img;
 }
 
--(void) forceReloadSnapshotOfDesktop:(RADesktopWindow*)desktop
-{
+- (void)forceReloadSnapshotOfDesktop:(RADesktopWindow*)desktop {
 	[imageCache removeObjectForKey:[self createKeyForDesktop:desktop]];
 }
 
-- (UIImage*)rotateImageToMatchOrientation:(UIImage*)oldImage
-{
+- (UIImage*)rotateImageToMatchOrientation:(UIImage*)oldImage {
 	CGFloat degrees = 0;
-	if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
+	if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
 		degrees = 270;
-	else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft)
+	} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
 		degrees = 90;
-	else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)
+	} else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown) {
 		degrees = 180;
+	}
 
 	// https://stackoverflow.com/questions/20764623/rotate-newly-created-ios-image-90-degrees-prior-to-saving-as-png
 
@@ -192,16 +177,15 @@
 	return newImage;
 }
 
--(UIImage*) renderPreviewForDesktop:(RADesktopWindow*)desktop
-{
+- (UIImage*)renderPreviewForDesktop:(RADesktopWindow*)desktop {
 	@autoreleasepool {
 		UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, 0);
 		CGContextRef c = UIGraphicsGetCurrentContext();
 
-	    [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
+	   [[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
 
 		ON_MAIN_THREAD(^{
-		    [[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
+			[[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
 		//});
 
 			[MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow").layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Wallpaper
@@ -215,17 +199,15 @@
 		});
 		//[desktop.layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Desktop windows
 
-		for (UIView *view in desktop.subviews) // Application views
-		{
-			if ([view isKindOfClass:[RAWindowBar class]])
-			{
+		for (UIView *view in desktop.subviews) { // Application views
+			if ([view isKindOfClass:[RAWindowBar class]]) {
 				RAHostedAppView *hostedView = [((RAWindowBar*)view) attachedView];
 
 				UIImage *image = [self snapshotForIdentifier:hostedView.bundleIdentifier orientation:hostedView.orientation];
 				CIImage *coreImage = image.CIImage;
-				if (!coreImage)
-				    coreImage = [CIImage imageWithCGImage:image.CGImage];
-
+				if (!coreImage) {
+					coreImage = [CIImage imageWithCGImage:image.CGImage];
+				}
 				//coreImage = [coreImage imageByApplyingTransform:view.transform];
 				CGFloat rotation = atan2(hostedView.transform.b, hostedView.transform.a);
 
@@ -248,34 +230,31 @@
 	}
 }
 
--(UIImage*) wallpaperImage
-{
+- (UIImage*)wallpaperImage {
 	return [self wallpaperImage:YES];
 }
 
--(UIImage*) wallpaperImage:(BOOL)blurred
-{
+- (UIImage*)wallpaperImage:(BOOL)blurred {
 	NSString *key = blurred ? @"wallpaperImageBlurred" : @"wallpaperImage";
-	if ([imageCache objectForKey:key])
+	if ([imageCache objectForKey:key]) {
 		return [imageCache objectForKey:key];
-
+	}
 	UIGraphicsBeginImageContextWithOptions(UIScreen.mainScreen.bounds.size, YES, 0);
-	CGContextRef c = UIGraphicsGetCurrentContext();
-
 	[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"RAWallpaperSnapshot"];
 
-	[MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow").layer performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Wallpaper
+	ON_MAIN_THREAD(^{
+		UIWindow *window = MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow");
+		[window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
+	});
 
 	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
-	MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow").layer.contents = nil;
 	[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"RAWallpaperSnapshot"];
 
 	//UIImageView *imgView = [[UIImageView alloc] initWithImage:image];//Frame:(CGRect){CGPointZero,image.size}];
 	//imgView.image = image;
 
-	if (blurred)
-	{
+	if (blurred) {
 		CIFilter *gaussianBlurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
 		[gaussianBlurFilter setDefaults];
 		CIImage *inputImage = [CIImage imageWithCGImage:[image CGImage]];
@@ -295,8 +274,7 @@
 	return image;
 }
 
--(void) forceReloadEverything
-{
+- (void)forceReloadEverything {
 	[imageCache removeAllObjects];
 }
 @end

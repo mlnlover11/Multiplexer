@@ -9,35 +9,29 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 @end
 
 @implementation RAAppKiller : NSObject
-+(instancetype) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(RAAppKiller,
 		[sharedInstance initialize];
 	);
 }
 
-+(void) killAppWithIdentifier:(NSString*)identifier
-{
++ (void)killAppWithIdentifier:(NSString*)identifier {
 	return [RAAppKiller killAppWithIdentifier:identifier completion:nil];
 }
 
-+(void) killAppWithIdentifier:(NSString*)identifier completion:(void(^)())handler
-{
++ (void)killAppWithIdentifier:(NSString*)identifier completion:(void(^)())handler {
 	return [RAAppKiller killAppWithSBApplication:[[%c(SBApplicationController) sharedInstance] RA_applicationWithBundleIdentifier:identifier] completion:handler];
 }
 
-+(void) killAppWithSBApplication:(SBApplication*)app
-{
++ (void)killAppWithSBApplication:(SBApplication*)app {
 	return [RAAppKiller killAppWithSBApplication:app completion:nil];
 }
 
-+(void) killAppWithSBApplication:(SBApplication*)app completion:(void(^)())handler
-{
++ (void)killAppWithSBApplication:(SBApplication*)app completion:(void(^)())handler {
 	return [RAAppKiller checkAppDead:app withTries:0 andCompletion:handler];
 }
 
-+(void) checkAppDead:(SBApplication*)app withTries:(int)tries andCompletion:(void(^)())handler
-{
++ (void)checkAppDead:(SBApplication*)app withTries:(int)tries andCompletion:(void(^)())handler {
 	/*
 	BOOL isDeadOrMaxed = (app.pid == 0 || app.isRunning == NO) && tries < 5;
 	if (isDeadOrMaxed)
@@ -78,16 +72,13 @@ extern "C" void BKSTerminateApplicationForReasonAndReportWithDescription(NSStrin
 	BKSTerminateApplicationForReasonAndReportWithDescription(app.bundleIdentifier, 5, 1, @"Multiplexer requested this process to be slayed.");
 }
 
--(void) initialize
-{
+- (void)initialize {
 	completionDictionary = [NSMutableDictionary dictionary];
 	[RARunningAppsProvider.sharedInstance addTarget:self];
 }
 
--(void) appDidDie:(__unsafe_unretained SBApplication*)app
-{
-	if (completionDictionary && [completionDictionary objectForKey:app.bundleIdentifier])
-	{
+- (void)appDidDie:(__unsafe_unretained SBApplication*)app {
+	if (completionDictionary && [completionDictionary objectForKey:app.bundleIdentifier]) {
 		dispatch_block_t block = completionDictionary[app.bundleIdentifier];
 		block();
 		[completionDictionary removeObjectForKey:app.bundleIdentifier];

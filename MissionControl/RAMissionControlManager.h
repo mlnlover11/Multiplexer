@@ -5,15 +5,15 @@
 @interface RAMissionControlManager : NSObject<RAGestureCallbackProtocol> {
 	RAMissionControlWindow *window;
 }
-+(instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
 @property (nonatomic, readonly) BOOL isShowingMissionControl;
 @property (nonatomic) BOOL inhibitDismissalGesture;
 
--(void) createWindow;
--(void) showMissionControl:(BOOL)animated;
--(void) hideMissionControl:(BOOL)animated;
--(void) toggleMissionControl:(BOOL)animated;
+- (void)createWindow;
+- (void)showMissionControl:(BOOL)animated;
+- (void)hideMissionControl:(BOOL)animated;
+- (void)toggleMissionControl:(BOOL)animated;
 
--(RAMissionControlWindow*) missionControlWindow;
+- (RAMissionControlWindow*)missionControlWindow;
 @end

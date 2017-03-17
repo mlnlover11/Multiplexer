@@ -10,20 +10,33 @@
 @end
 
 @implementation RAFavoriteAppsWidget
--(BOOL) enabled { return [RASettings.sharedInstance showFavorites]; }
+- (BOOL)enabled {
+	return [RASettings.sharedInstance showFavorites];
+}
 
--(NSInteger) sortOrder { return 2; }
--(NSString*) displayName { return LOCALIZE(@"FAVORITES"); }
--(NSString*) identifier { return @"com.efrederickson.reachapp.widgets.sections.favoriteapps"; }
--(CGFloat) titleOffset { return savedX; }
+- (NSInteger)sortOrder {
+	return 2;
+}
 
--(UIView*) viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size_ iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing
-{
+- (NSString*)displayName {
+	return LOCALIZE(@"FAVORITES");
+}
+
+- (NSString*)identifier {
+	return @"com.efrederickson.reachapp.widgets.sections.favoriteapps";
+}
+
+- (CGFloat)titleOffset {
+	return savedX;
+}
+
+- (UIView*)viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size_ iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing {
 	CGSize size = [%c(SBIconView) defaultIconSize];
 	spacing = (frame.size.width - (iconsPerLine * size.width)) / iconsPerLine;
 	NSString *currentBundleIdentifier = [[UIApplication sharedApplication] _accessibilityFrontMostApplication].bundleIdentifier;
-	if (!currentBundleIdentifier)
+	if (!currentBundleIdentifier) {
 		return nil;
+	}
 	CGSize contentSize = CGSizeMake((spacing / 2.0), 10);
 	CGFloat interval = (size.width + spacing) * iconsPerLine;
 	NSInteger intervalCount = 1;
@@ -35,14 +48,14 @@
 
 	NSMutableArray *favorites = [RASettings.sharedInstance favoriteApps];
 	[favorites removeObject:currentBundleIdentifier];
-	if (favorites.count == 0)
+	if (favorites.count == 0) {
 		return nil;
+	}
 
 	UIScrollView *favoritesView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 200)];
 	favoritesView.backgroundColor = [UIColor clearColor];
 	favoritesView.pagingEnabled = [RASettings.sharedInstance pagingEnabled];
-	for (NSString *str in favorites)
-	{
+	for (NSString *str in favorites) {
 		app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:str];
 		SBApplicationIcon *icon = nil;
 		SBIconView *iconView = nil;
@@ -53,18 +66,15 @@
 			icon = [[[[%c(SBIconController) sharedInstance] homescreenIconViewMap] iconModel] applicationIconForBundleIdentifier:app.bundleIdentifier];
 			iconView = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] _iconViewForIcon:icon];
 		}
-		if (!iconView)
+		if (!iconView) {
 			continue;
+		}
 
-		if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount)
-		{
-			if (isTop)
-			{
+		if (interval != 0 && contentSize.width + iconView.frame.size.width > interval * intervalCount) {
+			if (isTop) {
 				contentSize.height += size.height + 10;
 				contentSize.width -= interval;
-			}
-			else
-			{
+			} else {
 				intervalCount++;
 				contentSize.height -= (size.height + 10);
 				width += interval;
@@ -93,15 +103,13 @@
 	return favoritesView;
 }
 
--(void) appViewItemTap:(UIGestureRecognizer*)gesture
-{
+- (void)appViewItemTap:(UIGestureRecognizer*)gesture {
 	[GET_SBWORKSPACE appViewItemTap:gesture];
 	//[[RAReachabilityManager sharedInstance] launchTopAppWithIdentifier:gesture.view.restorationIdentifier];
 }
 @end
 
-%ctor
-{
+%ctor {
 	static id _widget = [[RAFavoriteAppsWidget alloc] init];
 	[RAWidgetSectionManager.sharedInstance registerSection:_widget];
 }

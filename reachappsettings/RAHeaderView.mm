@@ -1,16 +1,16 @@
 #import "RAHeaderView.h"
 
 @implementation UIImage (ext)
-- (UIImage *)tintedImageWithColor:(UIColor *)tintColor blendingMode:(CGBlendMode)blendMode
-{
+- (UIImage *)tintedImageWithColor:(UIColor *)tintColor blendingMode:(CGBlendMode)blendMode {
   UIGraphicsBeginImageContextWithOptions(self.size, NO, 0.0f);
   [tintColor setFill];
   CGRect bounds = CGRectMake(0, 0, self.size.width, self.size.height);
   UIRectFill(bounds);
   [self drawInRect:bounds blendMode:blendMode alpha:1.0f];
 
-  if (blendMode != kCGBlendModeDestinationIn)
+  if (blendMode != kCGBlendModeDestinationIn) {
     [self drawInRect:bounds blendMode:kCGBlendModeDestinationIn alpha:1.0];
+  }
 
   UIImage *tintedImage = UIGraphicsGetImageFromCurrentImageContext();
   UIGraphicsEndImageContext();
@@ -20,15 +20,13 @@
 @end
 
 @implementation RAHeaderView
-+ (Class)layerClass
-{
++ (Class)layerClass {
   return [CAGradientLayer class];
 }
 
--(instancetype) initWithFrame:(CGRect)frame
-{
-  if (self = [super initWithFrame:frame])
-  {
+- (instancetype)initWithFrame:(CGRect)frame {
+  self = [super initWithFrame:frame];
+  if (self) {
     CAGradientLayer *gradient = (CAGradientLayer*)self.layer;
     gradient.colors = @[ (id)[UIColor colorWithRed:255/255.0f green:124/255.0f blue:111/255.0f alpha:1.0f].CGColor, (id)[UIColor colorWithRed:231/255.0f green:76/255.0f blue:60/255.0f alpha:1.0f].CGColor ];
     gradient.locations = @[ @0, @1 ];
@@ -50,30 +48,26 @@
   return self;
 }
 
--(void) setFrame:(CGRect)frame
-{
+- (void)setFrame:(CGRect)frame {
   [super setFrame:frame];
   ((CAGradientLayer*)self.layer).frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
 }
 
--(void) setColors:(NSArray*)c
-{
+- (void)setColors:(NSArray*)c {
   ((CAGradientLayer*)self.layer).colors = c;
 }
 
--(void) setTitle:(NSString*)title
-{
+- (void)setTitle:(NSString*)title {
   label.text = title;
 }
 
--(void) setImage:(UIImage*)image
-{
-  if (label.text.length > 0)
-  	imageView.frame = (CGRect) { { self.frame.size.width - image.size.width - 20, (self.frame.size.height - image.size.height) / 2.0 }, image.size };
-  else
-  	imageView.frame = (CGRect) { { (self.frame.size.width - image.size.width) / 2.0, (self.frame.size.height - image.size.height) / 2.0 }, image.size };
-  if (self.shouldBlend)
-  {
+- (void)setImage:(UIImage*)image {
+  if (label.text.length > 0) {
+    imageView.frame = (CGRect) { { self.frame.size.width - image.size.width - 20, (self.frame.size.height - image.size.height) / 2.0 }, image.size };
+  } else {
+    imageView.frame = (CGRect) { { (self.frame.size.width - image.size.width) / 2.0, (self.frame.size.height - image.size.height) / 2.0 }, image.size };
+  }
+  if (self.shouldBlend) {
   	UIColor *color = [UIColor colorWithCGColor:(CGColorRef)((CAGradientLayer*)self.layer).colors[0]];
   	image = [image tintedImageWithColor:color blendingMode:self.blendMode];
   }

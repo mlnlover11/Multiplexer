@@ -6,16 +6,14 @@
 //#define COLOR(name) [UIColor RA_colorWithHexString:dict[name]]
 
 @implementation RAThemeLoader
-+(RATheme*)loadFromFile:(NSString*)baseName
-{
++ (RATheme*)loadFromFile:(NSString*)baseName {
 	NSString *fullPath = [NSString stringWithFormat:@"%@/Themes/%@.plist",RA_BASE_PATH,[[baseName lastPathComponent] stringByDeletingPathExtension]];
 
 	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:fullPath];
 	return [RAThemeLoader themeFromDictionary:dict];
 }
 
-+(RATheme*) themeFromDictionary:(NSDictionary*)dict
-{
++ (RATheme*)themeFromDictionary:(NSDictionary*)dict {
 	RATheme *ret = [[RATheme alloc] init];
 
 	ret.themeIdentifier = dict[@"identifier"];
@@ -69,47 +67,50 @@
 	return ret;
 }
 
-+(NSTextAlignment) getTextAlignment:(NSObject*)value
-{
-	if ([value isKindOfClass:[NSString class]])
-	{
-		if ([value isEqual:@"NSTextAlignmentLeft"] || [value isEqual:@"0"] || [value isEqual:@"Left"])
++ (NSTextAlignment)getTextAlignment:(NSObject*)value {
+	if ([value isKindOfClass:[NSString class]]) {
+		if ([value isEqual:@"NSTextAlignmentLeft"] || [value isEqual:@"0"] || [value isEqual:@"Left"]) {
 			return NSTextAlignmentLeft;
-		if ([value isEqual:@"NSTextAlignmentCenter"] || [value isEqual:@"1"] || [value isEqual:@"Center"])
+		}
+		if ([value isEqual:@"NSTextAlignmentCenter"] || [value isEqual:@"1"] || [value isEqual:@"Center"]) {
 			return NSTextAlignmentCenter;
-		if ([value isEqual:@"NSTextAlignmentRight"] || [value isEqual:@"2"] || [value isEqual:@"Right"])
+		}
+		if ([value isEqual:@"NSTextAlignmentRight"] || [value isEqual:@"2"] || [value isEqual:@"Right"]) {
 			return NSTextAlignmentRight;
-		if ([value isEqual:@"NSTextAlignmentJustified"] || [value isEqual:@"3"] || [value isEqual:@"Justified"])
+		}
+		if ([value isEqual:@"NSTextAlignmentJustified"] || [value isEqual:@"3"] || [value isEqual:@"Justified"]) {
 			return NSTextAlignmentJustified;
-		if ([value isEqual:@"NSTextAlignmentNatural"] || [value isEqual:@"4"] || [value isEqual:@"Natural"])
+		}
+		if ([value isEqual:@"NSTextAlignmentNatural"] || [value isEqual:@"4"] || [value isEqual:@"Natural"]) {
 			return NSTextAlignmentNatural;
-	}
-	else if ([value isKindOfClass:[NSNumber class]])
-	{
+		}
+	} else if ([value isKindOfClass:[NSNumber class]]) {
 		int actualValue = [((NSNumber*)value) intValue];
-		if (actualValue == 0)
+		if (actualValue == 0) {
 			return NSTextAlignmentLeft;
-		else if (actualValue == 1)
+		} else if (actualValue == 1) {
 			return NSTextAlignmentCenter;
-		else if (actualValue == 2)
+		} else if (actualValue == 2) {
 			return NSTextAlignmentRight;
-		else if (actualValue == 3)
+		} else if (actualValue == 3) {
 			return NSTextAlignmentJustified;
-		else if (actualValue == 4)
+		} else if (actualValue == 4) {
 			return NSTextAlignmentNatural;
+		}
 	}
 	return NSTextAlignmentCenter;
 }
 
-+(UIColor*) tryGetColorFromThemeImageName:(NSString*)name
-{
++ (UIColor*)tryGetColorFromThemeImageName:(NSString*)name {
 	NSString *expandedPath = [NSString stringWithFormat:@"%@/ThemingImages/%@.png",RA_BASE_PATH,[[name lastPathComponent] stringByDeletingPathExtension]];
 	BOOL exists = [NSFileManager.defaultManager fileExistsAtPath:expandedPath];
-	if (!exists)
+	if (!exists) {
 		return nil;
+	}
 	UIImage *image = [UIImage imageWithContentsOfFile:expandedPath];
-	if (image)
+	if (image) {
 		return [UIColor colorWithPatternImage:image];
+	}
 	return nil;
 }
 @end
