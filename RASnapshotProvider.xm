@@ -1,6 +1,7 @@
 #import "headers.h"
 #import "RASnapshotProvider.h"
 #import "RAWindowBar.h"
+#import "RAResourceImageProvider.h"
 
 @implementation RASnapshotProvider
 + (instancetype)sharedInstance {
@@ -180,16 +181,22 @@
 - (UIImage*)renderPreviewForDesktop:(RADesktopWindow*)desktop {
 	@autoreleasepool {
 		UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, 0);
-		//CGContextRef context = UIGraphicsGetCurrentContext();
-
-		[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
+		CGContextRef context = UIGraphicsGetCurrentContext();
 
 		ON_MAIN_THREAD(^{
 			[[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
 		//});
 
-			UIImage *image = [[%c(SBWallpaperController) sharedInstance] sharedWallpaperView].wallpaperImage;
-			[image drawInRect:[UIScreen mainScreen].bounds]; // Wallpaper
+			UIImage *image = [self wallpaperImage:NO];
+			CGRect imageRect = CGRectMake(0, 0, image.size.width, image.size.height);
+			//since drawInRect doesnt work
+			CGContextTranslateCTM(context, 0, image.size.height);
+			CGContextScaleCTM(context, 1.0, -1.0);
+
+			CGContextDrawImage(context, imageRect, image.CGImage); // Wallpaper
+
+			CGContextScaleCTM(context, 1.0, -1.0);
+			CGContextTranslateCTM(context, 0, -imageRect.size.height);
 		//[[[[%c(SBUIController) sharedInstance] window] layer] performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Icons
 		//ON_MAIN_THREAD(^{
 			//[MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow") drawViewHierarchyInRect:UIScreen.mainScreen.bounds afterScreenUpdates:YES];
@@ -224,7 +231,6 @@
 		UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 		UIGraphicsEndImageContext();
 		image = [self rotateImageToMatchOrientation:image];
-		[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];
 		return image;
 	}
 }
@@ -238,8 +244,9 @@
 	if ([imageCache objectForKey:key]) {
 		return [imageCache objectForKey:key];
 	}
-	//its really that easy elijah
-	UIImage *image = [[%c(SBWallpaperController) sharedInstance] sharedWallpaperView].wallpaperImage;
+	//its really that easy elijah (ok maybe i need to resize the image);
+	UIImage *oldImage = [[%c(SBWallpaperController) sharedInstance] sharedWallpaperView].displayedImage;
+	UIImage *image = [RAResourceImageProvider imageWithImage:oldImage scaledToSize:[UIScreen mainScreen].bounds.size];
 
 	if (blurred) {
 		CIFilter *gaussianBlurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];

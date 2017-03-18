@@ -240,6 +240,10 @@ return sharedInstance;
 - (void)prepareToAppear;
 @end
 
+@interface SBFStaticWallpaperView : SBFWallpaperView
+@property (setter=_setDisplayedImage:,getter=_displayedImage,nonatomic,retain) UIImage *displayedImage;
+@end
+
 @interface SBControlCenterController : UIViewController
 + (id)sharedInstance;
 @property(nonatomic, getter=isPresented) _Bool presented; // @synthesize presented=_presented;
@@ -486,7 +490,7 @@ typedef struct {
 @end
 
 @interface SBWallpaperController
-@property (nonatomic,retain) SBFWallpaperView * sharedWallpaperView;
+@property (nonatomic,retain) SBFStaticWallpaperView *sharedWallpaperView;
 +(id) sharedInstance;
 -(void) beginRequiringWithReason:(NSString*)reason;
 -(void) endRequiringWithReason:(NSString*)reason;
