@@ -39,11 +39,9 @@
 	}
 	isHidingUnderlyingApp = YES;
 
-	// TODO: use UIBlurEffect?
 	UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
 	darkenerView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
 	darkenerView.frame = self.frame;
-	darkenerView.alpha = 0.85;
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(darkenerViewTap:)];
 	[darkenerView addGestureRecognizer:tap];
 	[self addSubview:darkenerView];

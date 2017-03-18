@@ -88,8 +88,13 @@
 	for (RADesktopWindow *desktop in [[%c(RADesktopManager) sharedInstance] availableDesktops]) {
 		RAMissionControlPreviewView *preview = [[RAMissionControlPreviewView alloc] initWithFrame:CGRectMake(x, (desktopScrollView.frame.size.height - height) / 2.0, width, height)];
 		x += panePadding + preview.frame.size.width;
+		preview.alpha = 0;
 
-		[desktopScrollView addSubview:preview];
+		[UIView animateWithDuration:1 animations:^{
+			preview.alpha = 1;
+		} completion:^(BOOL finished) {
+			[desktopScrollView addSubview:preview];
+		}];
 		//preview.image = [[%c(RASnapshotProvider) sharedInstance] snapshotForDesktop:desktop];
 		[preview generateDesktopPreviewAsync:desktop completion:desktop == [[%c(RADesktopManager) sharedInstance] currentDesktop] ? ^{ [[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO]; } : (dispatch_block_t)nil];
 

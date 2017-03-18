@@ -20,19 +20,19 @@
 	NSArray *langs = [NSLocale preferredLanguages];
 
 	for (NSString *lang in langs) {
-		//NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:lang];
-		//NSString *languageDesignator = components[NSLocaleLanguageCode];
-		if ([self attemptLoadForLanguageCode:lang]) {
+		NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:lang];
+		NSString *languageDesignator = components[NSLocaleLanguageCode];
+
+		if ([self attemptLoadForLanguageCode:languageDesignator]) {
 			break;
 		}
 	}
 	if (!translation) {
-		LogWarn(@"Failed Translation loading English");
 		[self attemptLoadForLanguageCode:@"en"];
 	}
 }
 
 - (NSString*)localizedStringForKey:(NSString*)key {
-	return [translation objectForKey:key] ? translation[key] : key;
+	return ![translation objectForKey:key] ? key : translation[key];
 }
 @end

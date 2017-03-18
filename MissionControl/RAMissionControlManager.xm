@@ -102,7 +102,6 @@ CGRect swappedForOrientation2(CGRect in) {
 
 			if (originalAppView) {
 				originalAppView.frame = swappedForOrientation2(CGRectMake(originalAppFrame.origin.x, originalAppView.frame.size.height, originalAppFrame.size.width, originalAppFrame.size.height));
-
 			}
 		} completion:nil];
 	} else if (originalAppView) {  // dismiss even if not animating open
@@ -141,8 +140,7 @@ CGRect swappedForOrientation2(CGRect in) {
 	[window _rotateWindowToOrientation:UIApplication.sharedApplication.statusBarOrientation updateStatusBar:YES duration:1 skipCallbacks:NO];
 
 	//_UIBackdropView *blurView = [[%c(_UIBackdropView) alloc] initWithStyle:1];
-	_UIBackdropViewSettings *blurSettings = [_UIBackdropViewSettings settingsForStyle:THEMED(missionControlBlurStyle)];
-	[blurSettings setBlurQuality:@"low"]; // speed++ hopefully
+	_UIBackdropViewSettings *blurSettings = [_UIBackdropViewSettings settingsForStyle:THEMED(missionControlBlurStyle) graphicsQuality:10]; // speed++ hopefully
 	_UIBackdropView *blurView = [[%c(_UIBackdropView) alloc] initWithSettings:blurSettings];
 	blurView.frame = window.frame;
 	[window addSubview:blurView];
@@ -155,10 +153,10 @@ CGRect swappedForOrientation2(CGRect in) {
 	[window addSubview:statusBar];
 	[statusBar setOrientation:UIApplication.sharedApplication.statusBarOrientation];
 
-	// DESKTOPS
+	// DESKTOPS TODO: causes lag
 	[self reloadDesktopSection];
 
-	// APPS WITH PANES
+	// APPS WITH PANES TODO: also causes minor lag
 	[self reloadWindowedAppsSection];
 
 	// APPS WITHOUT PANES
