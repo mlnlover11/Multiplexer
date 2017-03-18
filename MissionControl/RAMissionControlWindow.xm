@@ -33,13 +33,9 @@
 - (instancetype)initWithFrame:(CGRect)frame {
 	if (self = [super initWithFrame:frame]) {
 		trashIcon = [%c(RAResourceImageProvider) imageForFilename:@"Trash.png"];
+		self.windowLevel = 1000;
 	}
 	return self;
-}
-
-- (UIWindowLevel)windowLevel {
-	//return UIWindowLevelStatusBar + 1;
-	return 1000;
 }
 
 - (BOOL)_shouldAutorotateToInterfaceOrientation:(int)arg1 checkForDismissal:(BOOL)arg2 isRotationDisabled:(BOOL*)arg3 {
@@ -47,19 +43,19 @@
 }
 
 - (void)reloadDesktopSection {
-	width = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 4.5714;
-	height = UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height / 4.36;
+	width = [UIScreen mainScreen].RA_interfaceOrientedBounds.size.width / 4.5714;
+	height = [UIScreen mainScreen].RA_interfaceOrientedBounds.size.height / 4.36;
 	panePadding = width;
 	int count = 1;
-	while (panePadding + width < UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width) {
+	while (panePadding + width < [UIScreen mainScreen].RA_interfaceOrientedBounds.size.width) {
 		count += 1;
 		panePadding += width;
 	}
-	panePadding = (UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width - panePadding) / 5;
+	panePadding = ([UIScreen mainScreen].RA_interfaceOrientedBounds.size.width - panePadding) / 5;
 	/*if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 	{
-		width = (UIScreen.mainScreen.bounds.size.width / 3) * 0.9;
-	    height = (UIScreen.mainScreen.bounds.size.height / 4) * 0.9;
+		width = ([UIScreen mainScreen].bounds.size.width / 3) * 0.9;
+	    height = ([UIScreen mainScreen].bounds.size.height / 4) * 0.9;
 	}*/
 
 	// DESKTOP
@@ -96,6 +92,7 @@
 			[desktopScrollView addSubview:preview];
 		}];
 		//preview.image = [[%c(RASnapshotProvider) sharedInstance] snapshotForDesktop:desktop];
+		//fixed lag but need to fix wallpaper;
 		[preview generateDesktopPreviewAsync:desktop completion:desktop == [[%c(RADesktopManager) sharedInstance] currentDesktop] ? ^{ [[%c(RADesktopManager) sharedInstance] performSelectorOnMainThread:@selector(hideDesktop) withObject:nil waitUntilDone:NO]; } : (dispatch_block_t)nil];
 
 		if (desktop == [[%c(RADesktopManager) sharedInstance] currentDesktop] && [[%c(RASettings) sharedInstance] missionControlDesktopStyle] == 0) {
@@ -142,8 +139,8 @@
 	//[RADesktopManager.sharedInstance hideDesktop];
 	// ^^ see the generateDesktopPreviewAsync:completion: call about 40 lines up
 
-	//width = UIScreen.mainScreen.bounds.size.width / 4.5714;
-	//height = UIScreen.mainScreen.bounds.size.height / 4.36;
+	//width = [UIScreen mainScreen].bounds.size.width / 4.5714;
+	//height = [UIScreen mainScreen].bounds.size.height / 4.36;
 }
 
 - (void)reloadWindowedAppsSection {
@@ -352,7 +349,7 @@
 		}
 	}
 
-	if (parentView.contentSize.width - 1 <= UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width) {
+	if (parentView.contentSize.width - 1 <= [UIScreen mainScreen].RA_interfaceOrientedBounds.size.width) {
 		; // don't make it too small to scroll
 	} else if (targetView) {
 		parentView.contentSize = CGSizeMake(parentView.contentSize.width - targetView.frame.size.width - panePadding + 1, parentView.contentSize.height);
@@ -368,11 +365,11 @@
 
 	if (gesture.state == UIGestureRecognizerStateBegan) {
 		if (!trashImageView || !trashImageView.superview /* new window perhaps */) {
-			trashImageView = [[UIImageView alloc] initWithFrame:CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height + 75, 75, 75)];
+			trashImageView = [[UIImageView alloc] initWithFrame:CGRectMake(([UIScreen mainScreen].RA_interfaceOrientedBounds.size.width / 2) - (75/2), [UIScreen mainScreen].RA_interfaceOrientedBounds.size.height + 75, 75, 75)];
 			trashImageView.image = trashIcon;
 			[self addSubview:trashImageView];
 
-			shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height, UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width, 75)];
+			shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].RA_interfaceOrientedBounds.size.height, [UIScreen mainScreen].RA_interfaceOrientedBounds.size.width, 75)];
 			shadowView.backgroundColor = [UIColor blackColor];
 			shadowView.layer.shadowColor = [UIColor blackColor].CGColor;
 			shadowView.layer.shadowRadius = 75/2;
@@ -384,7 +381,7 @@
 		[UIView animateWithDuration:0.4 animations:^{
 			shadowView.alpha = 1;
 			trashImageView.alpha = 1;
-			trashImageView.frame = CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height - (75+45), 75, 75);
+			trashImageView.frame = CGRectMake(([UIScreen mainScreen].RA_interfaceOrientedBounds.size.width / 2) - (75/2), [UIScreen mainScreen].RA_interfaceOrientedBounds.size.height - (75+45), 75, 75);
 		}];
 
 		if (!draggedView) {
@@ -445,7 +442,7 @@
 		[UIView animateWithDuration:0.4 animations:^{
 			shadowView.alpha = 0;
 			trashImageView.alpha = 0;
-			trashImageView.frame = CGRectMake((UIScreen.mainScreen.RA_interfaceOrientedBounds.size.width / 2) - (75/2), UIScreen.mainScreen.RA_interfaceOrientedBounds.size.height + 75, 75, 75);
+			trashImageView.frame = CGRectMake(([UIScreen mainScreen].RA_interfaceOrientedBounds.size.width / 2) - (75/2), [UIScreen mainScreen].RA_interfaceOrientedBounds.size.height + 75, 75, 75);
 		} completion:nil];
 
 		if (!didKill) {

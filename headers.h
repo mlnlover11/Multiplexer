@@ -234,6 +234,7 @@ return sharedInstance;
 @end
 
 @interface SBFWallpaperView : UIView
+@property (nonatomic,readonly) UIImage *wallpaperImage;
 - (void)setGeneratesBlurredImages:(BOOL)arg1;
 - (void)_startGeneratingBlurredImages;
 - (void)prepareToAppear;
@@ -485,6 +486,7 @@ typedef struct {
 @end
 
 @interface SBWallpaperController
+@property (nonatomic,retain) SBFWallpaperView * sharedWallpaperView;
 +(id) sharedInstance;
 -(void) beginRequiringWithReason:(NSString*)reason;
 -(void) endRequiringWithReason:(NSString*)reason;

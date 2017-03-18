@@ -28,7 +28,7 @@ Bugs:
 
 Minor Things/Bugs to note:
 - (some of these are leftover from the original release lol: eg MC lag)
-- MC works but causes jittery animations (not as much as before)
+- Wallpaper doesnt render in Desktops in MC
 - Some say it causes serious lag (probably because logs werent disabled/due to MC)?
 - Startup bug still isnt fixed (apparently caused by gesture support?)
 - Check iPad support/lower iOS versions

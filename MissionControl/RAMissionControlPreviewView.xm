@@ -48,14 +48,14 @@
 }
 
 - (void)generatePreviewAsync {
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     [self generatePreview];
   });
 }
 
 - (void)generateDesktopPreviewAsync:(id)desktop_ completion:(dispatch_block_t)completionBlock {
   RADesktopWindow *desktop = (RADesktopWindow*)desktop_;
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     UIImage *image = [[%c(RASnapshotProvider) sharedInstance] snapshotForDesktop:desktop];
     [self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
     if (completionBlock) {
