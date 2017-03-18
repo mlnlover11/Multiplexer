@@ -23,19 +23,17 @@ Bugs:
 - Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
 - Invoking keyboard in reachapp closes view (I think reachability dismisses when using KB)
 - Showing NC with reachapp doesnt properly resize (not even sure if possible)
-- Foregrounding through activator broken (override gets removed when launching another app)
 - CC inhibitor not reliable on 9.x+?
 
 Minor Things/Bugs to note:
 - (some of these are leftover from the original release lol: eg MC lag)
-- Wallpaper doesnt render in Desktops in MC
 - Some say it causes serious lag (probably because logs werent disabled/due to MC)?
 - Startup bug still isnt fixed (apparently caused by gesture support?)
 - Check iPad support/lower iOS versions
 
 Things to do/Features to add:
 - 3D Touch actions?
-- (Real distant future) split all 6 features into seperate tweaks
+- (Soon) split all 6 features into seperate tweaks
 - General Code Cleanup/conform to standards, feels to messy RN (at least indents are fine)
 
 notes:

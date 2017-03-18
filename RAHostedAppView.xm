@@ -90,11 +90,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
     return;
   }
 
-  if (!app) {
-    return;
-  }
-
-  if (_isCurrentlyHosting) {
+  if (!app || _isCurrentlyHosting) {
     return;
   }
 
@@ -147,11 +143,7 @@ NSMutableDictionary *appsBeingHosted = [NSMutableDictionary dictionary];
   startTries = 0;
   disablePreload = NO;
   [self preloadApp];
-  if (!app) {
-    return;
-  }
-
-  if (_isCurrentlyHosting) {
+  if (!app || _isCurrentlyHosting) {
     return;
   }
 

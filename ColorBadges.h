@@ -14,6 +14,10 @@
 + (BOOL)areBordersEnabled;
 + (BOOL)isEnabled;
 
+// Added in ColorBadges v1.1.1.
++ (BOOL)isDarkColorOrIsAlwaysWhiteEnabled:(int)color;
++ (BOOL)isAlwaysWhiteEnabled;
+
 // Return RGB ints. i.e. 0xRRGGBB.
 - (int)colorForImage:(UIImage *)image;
 - (int)colorForIcon:(id)icon; // Must be an SBIcon *

@@ -110,6 +110,11 @@ NSString *stringFromIndicatorInfo(RAIconIndicatorViewInfo info) {
 						badge.textColor = [UIColor blackColor];
 					}
 				}
+
+				if ([%c(ColorBadges) areBordersEnabled]) {
+					badge.layer.borderColor = badge.textColor.CGColor;
+					badge.layer.borderWidth = 1.0;
+				}
 			} else {
 				badge.textColor = THEMED(backgroundingIndicatorTextColor);
 			}

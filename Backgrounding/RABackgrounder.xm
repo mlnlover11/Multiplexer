@@ -48,13 +48,10 @@ NSMutableDictionary *temporaryShouldPop = [NSMutableDictionary dictionary];
 }
 
 - (NSInteger)popTemporaryOverrideForApplication:(NSString*)identifier {
-	if (!identifier) {
+	if (!identifier || ![temporaryOverrides objectForKey:identifier]) {
 		return -1;
 	}
 
-	if (![temporaryOverrides objectForKey:identifier]) {
-		return -1;
-	}
 	RABackgroundMode override = (RABackgroundMode)[temporaryOverrides[identifier] intValue];
 	return override;
 }
