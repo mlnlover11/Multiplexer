@@ -2,12 +2,12 @@
 #import "RARunningAppsProvider.h"
 
 @interface RASpringBoardKeyboardActivation : NSObject<RARunningAppsProviderDelegate>
-+(instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
-@property (nonatomic, readonly, retain) NSString *currentIdentifier;
+@property (nonatomic, readonly, copy) NSString *currentIdentifier;
 
--(void) showKeyboardForAppWithIdentifier:(NSString*)identifier;
--(void) hideKeyboard;
+- (void)showKeyboardForAppWithIdentifier:(NSString*)identifier;
+- (void)hideKeyboard;
 
--(UIWindow*) keyboardWindow;
+- (UIWindow*)keyboardWindow;
 @end

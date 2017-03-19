@@ -1,7 +1,7 @@
 #import "RATheme.h"
 
 @interface RAThemeLoader : NSObject
-+(RATheme*)loadFromFile:(NSString*)baseName;
++ (RATheme*)loadFromFile:(NSString*)baseName;
 
-+(RATheme*) themeFromDictionary:(NSDictionary*)dict;
++ (RATheme*)themeFromDictionary:(NSDictionary*)dict;
 @end

@@ -11,21 +11,17 @@
 static RAActivatorSortWindowsListener *sharedInstance$RAActivatorSortWindowsListener;
 
 @implementation RAActivatorSortWindowsListener
-- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
-{
-    RADesktopWindow *desktop = RADesktopManager.sharedInstance.currentDesktop;
+- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event {
+  RADesktopWindow *desktop = RADesktopManager.sharedInstance.currentDesktop;
 
-    [RAWindowSorter sortWindowsOnDesktop:desktop resizeIfNecessary:YES];
+  [RAWindowSorter sortWindowsOnDesktop:desktop resizeIfNecessary:YES];
 }
 @end
 
-%ctor
-{
-    if([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
-    {
-        sharedInstance$RAActivatorSortWindowsListener = [[RAActivatorSortWindowsListener alloc] init];
-        [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorSortWindowsListener forName:@"com.efrederickson.reachapp.windowedmultitasking.sortWindows"];
-    }
+%ctor {
+  IF_NOT_SPRINGBOARD {
+    return;
+  }
+  sharedInstance$RAActivatorSortWindowsListener = [[RAActivatorSortWindowsListener alloc] init];
+  [[%c(LAActivator) sharedInstance] registerListener:sharedInstance$RAActivatorSortWindowsListener forName:@"com.efrederickson.reachapp.windowedmultitasking.sortWindows"];
 }
-
-

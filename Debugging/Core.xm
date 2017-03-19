@@ -7,28 +7,16 @@
 #import "headers.h"
 
 %hook NSObject
--(void)doesNotRecognizeSelector:(SEL)selector
-{
-	NSLog(@"[ReachApp] doesNotRecognizeSelector: selector '%@' on class '%s' (image: %s)", NSStringFromSelector(selector), class_getName(self.class), class_getImageName(self.class));
+- (void)doesNotRecognizeSelector:(SEL)selector {
+	LogDebug(@"[ReachApp] doesNotRecognizeSelector: selector '%@' on class '%s' (image: %s)", NSStringFromSelector(selector), class_getName(self.class), class_getImageName(self.class));
 
-	void *array[10];
-	size_t size;
-	char **strings;
-	size_t i;
-
-	size = backtrace (array, 10);
-	strings = backtrace_symbols (array, size);
-
-	NSLog(@"[ReachApp] Obtained %zd stack frames:\n", size);
-
-	for (i = 0; i < size; i++)
-	{
-		NSLog(@"[ReachApp] %s\n", strings[i]);
+	NSArray *symbols = [NSThread callStackSymbols];
+	LogDebug(@"[ReachApp] Obtained %zd stack frames:\n", symbols.count);
+	for (NSString *symbol in symbols) {
+		LogDebug(@"[ReachApp] %@\n", symbol);
 	}
 
-	free(strings);
-
-	%orig; 
+	%orig;
 }
 %end
 
@@ -38,7 +26,7 @@ Class hook$objc_getClass(const char *name)
 	Class cls = orig$objc_getClass(name);
 	if (!cls)
 	{
-		NSLog(@"[ReachApp] something attempted to access nil class '%s'", name);
+		LogDebug(@"[ReachApp] something attempted to access nil class '%s'", name);
 	}
 	return cls;
 }*/
@@ -46,11 +34,11 @@ Class hook$objc_getClass(const char *name)
 %ctor
 {
 	IF_SPRINGBOARD {
-		
+
 		// Causes cycript to not function
 		//MSHookFunction((void*)objc_getClass, (void*)hook$objc_getClass, (void**)&orig$objc_getClass);
-		
+
 		%init;
 	}
-	//NSLog(@"[ReachApp] %s", class_getImageName(orig$objc_getClass("RAMissionControlManager")));
+	//LogDebug(@"[ReachApp] %s", class_getImageName(orig$objc_getClass("RAMissionControlManager")));
 }

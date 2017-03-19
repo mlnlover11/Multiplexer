@@ -2,5 +2,5 @@
 #import "RAWidget.h"
 
 @interface RADefaultWidgetSection : RAWidgetSection
-+(id) sharedDefaultWidgetSection;
++ (instancetype)sharedDefaultWidgetSection;
 @end

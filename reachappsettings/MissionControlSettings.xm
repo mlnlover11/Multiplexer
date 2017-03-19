@@ -1,4 +1,7 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
+#import <Preferences/PSListItemsController.h>
+#import <Preferences/PSViewController.h>
+#import <Preferences/PSSpecifier.h>
 #import <SettingsKit/SKListControllerProtocol.h>
 #import <SettingsKit/SKTintedListController.h>
 #import <Preferences/PSSwitchTableCell.h>
@@ -12,15 +15,15 @@
 #define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.reachapp.settings.plist"
 
 @interface PSViewController (Protean)
--(void) viewDidLoad;
--(void) viewWillDisappear:(BOOL)animated;
+- (void)viewDidLoad;
+- (void)viewWillDisappear:(BOOL)animated;
 - (void)viewDidAppear:(BOOL)animated;
 @end
 
 @interface PSViewController (SettingsKit2)
--(UINavigationController*)navigationController;
--(void)viewWillAppear:(BOOL)animated;
--(void)viewWillDisappear:(BOOL)animated;
+- (UINavigationController*)navigationController;
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewWillDisappear:(BOOL)animated;
 @end
 
 @interface ALApplicationTableDataSource (Private)
@@ -31,34 +34,43 @@
 @end
 
 @implementation ReachAppMCSettingsListController
--(UIView*) headerView
-{
-    RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
-    header.colors = @[ 
-        (id) [UIColor colorWithRed:255/255.0f green:205/255.0f blue:2/255.0f alpha:1.0f].CGColor,
-        (id) [UIColor colorWithRed:255/255.0f green:227/255.0f blue:113/255.0f alpha:1.0f].CGColor, 
-    ];
-    header.shouldBlend = NO;
-    header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/MissionControlHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(32, 32)]];
+- (UIView*)headerView {
+  RAHeaderView *header = [[RAHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
+  header.colors = @[
+    (id) [UIColor colorWithRed:255/255.0f green:205/255.0f blue:2/255.0f alpha:1.0f].CGColor,
+    (id) [UIColor colorWithRed:255/255.0f green:227/255.0f blue:113/255.0f alpha:1.0f].CGColor,
+  ];
+  header.shouldBlend = NO;
+  header.image = [[RAPDFImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ReachAppSettings.bundle/MissionControlHeader.pdf"] imageWithOptions:[RAPDFImageOptions optionsWithSize:CGSizeMake(32, 32)]];
 
-    UIView *notHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 70)];
-    [notHeader addSubview:header];
+  UIView *notHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 70)];
+  [notHeader addSubview:header];
 
-    return notHeader;
-}
--(UIColor*) tintColor { return [UIColor colorWithRed:255/255.0f green:205/255.0f blue:2/255.0f alpha:1.0f]; }
--(UIColor*) switchTintColor { return [[UISwitch alloc] init].tintColor; }
--(NSString*) customTitle { return @"Mission Control"; }
--(BOOL) showHeartImage { return NO; }
-
--(void) viewDidAppear:(BOOL)arg1
-{
-    [super viewDidAppear:arg1];
-    [super performSelector:@selector(setupHeader)];
+  return notHeader;
 }
 
--(NSArray*) customSpecifiers
-{
+- (UIColor*)tintColor {
+  return [UIColor colorWithRed:255/255.0f green:205/255.0f blue:2/255.0f alpha:1.0f];
+}
+
+- (UIColor*)switchTintColor {
+  return [[UISwitch alloc] init].tintColor;
+}
+
+- (NSString*)customTitle {
+  return @"Mission Control";
+}
+
+- (BOOL)showHeartImage {
+  return NO;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  [super performSelector:@selector(setupHeader)];
+}
+
+- (NSArray*)customSpecifiers {
     return @[
              @{ @"footerText": @"Quickly enable or disable Mission Control." },
              @{
@@ -70,7 +82,7 @@
                  @"PostNotification": @"com.efrederickson.reachapp.settings/reloadSettings",
                  },
 
-                 @{ @"footerText": @"If enabled the App Switcher will be replaced with the Mission Control view."},
+             @{ @"footerText": @"If enabled the App Switcher will be replaced with the Mission Control view."},
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
@@ -117,19 +129,18 @@
                  },
              ];
 }
--(void) showActivatorAction
-{
-    id activator = objc_getClass("LAListenerSettingsViewController");
-    if (!activator)
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
-    }
-    else
-    {
-        LAListenerSettingsViewController *vc = [[objc_getClass("LAListenerSettingsViewController") alloc] init];
-        vc.listenerName = @"com.efrederickson.reachapp.missioncontrol.activatorlistener";
-        [self.rootController pushViewController:vc animated:YES];
-    }
+
+- (void)showActivatorAction {
+  id activator = %c(LAListenerSettingsViewController);
+  if (!activator) {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"Multiplexer") message:@"Activator must be installed to use this feature." preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
+  } else {
+    LAListenerSettingsViewController *vc = [[%c(LAListenerSettingsViewController) alloc] init];
+    vc.listenerName = @"com.efrederickson.reachapp.missioncontrol.activatorlistener";
+    [self.rootController pushController:vc animate:YES];
+  }
 }
 @end

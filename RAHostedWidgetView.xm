@@ -8,31 +8,32 @@
 @end
 
 @implementation RAHostedWidgetView
--(SBApplication*) app { return nil; }
--(NSString*) displayName { return [self loadWidget].displayName; }
+- (SBApplication*)app {
+	return nil;
+}
+
+- (NSString*)displayName {
+	return [self loadWidget].displayName;
+}
 
 //-(void) rotateToOrientation:(UIInterfaceOrientation)o;
 
--(RAWidgetBase*) loadWidget
-{
+- (RAWidgetBase*)loadWidget {
 	widget = [RAWidgetHostManager.sharedInstance widgetForIdentifier:self.bundleIdentifier];
 	return widget;
 }
 
--(void) preloadApp
-{
+- (void)preloadApp {
 	[self loadWidget];
 }
 
--(void) loadApp
-{
+- (void)loadApp {
 	widget.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
 	[self addSubview:widget];
 	[widget didAppear];
 }
 
--(void) unloadApp
-{
+- (void)unloadApp {
 	[widget didDisappear];
 	[widget removeFromSuperview];
 }

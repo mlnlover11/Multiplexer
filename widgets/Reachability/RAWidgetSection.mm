@@ -3,43 +3,43 @@
 
 @implementation RAWidgetSection
 
--(id) init
-{
-	if (self = [super init])
-	{
+- (instancetype)init {
+	if (self = [super init]) {
 		_widgets = [NSMutableArray array];
 	}
 	return self;
 }
 
--(BOOL) enabled { return _widgets.count > 0; }
--(BOOL) showTitle { return YES; }
-
--(NSInteger) sortOrder { return 10; }
-
--(NSString*) displayName 
-{
-	@throw @"This is an abstract method and should be overriden."; 
+- (BOOL)enabled {
+	return _widgets.count > 0;
 }
 
--(NSString*) identifier 
-{ 
+- (BOOL)showTitle {
+	return YES;
+}
+
+- (NSInteger)sortOrder {
+	return 10;
+}
+
+- (NSString*)displayName {
 	@throw @"This is an abstract method and should be overriden.";
 }
 
--(void) addWidget:(RAWidget*)widget
-{
+- (NSString*)identifier {
+	@throw @"This is an abstract method and should be overriden.";
+}
+
+- (void)addWidget:(RAWidget*)widget {
 	[_widgets addObject:widget];
 }
 
--(UIView*) viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing
-{ 
+- (UIView*)viewForFrame:(CGRect)frame preferredIconSize:(CGSize)size iconsThatFitPerLine:(NSInteger)iconsPerLine spacing:(CGFloat)spacing {
 	UIView *view = [[UIView alloc] initWithFrame:frame];
 	view.userInteractionEnabled = YES;
 	CGPoint origin = CGPointMake(10, 10);
 
-	for (NSInteger index = 0; index < _widgets.count; index++)
-	{
+	for (NSInteger index = 0; index < _widgets.count; index++) {
 		RAWidget *widget = _widgets[index];
 
 		UIView *subView = [widget iconForSize:size];
@@ -61,14 +61,12 @@
 	return view;
 }
 
--(void) widgetIconTap:(UITapGestureRecognizer*)gesture
-{
+- (void)widgetIconTap:(UITapGestureRecognizer*)gesture {
 	NSInteger widgetIndex = gesture.view.tag;
 	[[RAReachabilityManager sharedInstance] launchWidget:_widgets[widgetIndex]];
 }
 
--(CGFloat) titleOffset
-{
+- (CGFloat)titleOffset {
 	return 10;
 }
 @end

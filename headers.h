@@ -3,7 +3,6 @@
 #import <SpringBoard/SBIcon.h>
 #import <SpringBoard/SBIconController.h>
 #import <SpringBoard/SBApplicationIcon.h>
-#import <SpringBoard/SBIconImageView.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIImageView.h>
 #import <SpringBoard/SBIconLabel.h>
@@ -19,6 +18,15 @@
 #include <sys/sysctl.h>
 #import <notify.h>
 #import <IOKit/hid/IOHIDEvent.h>
+#import <AssertionServices/BKSProcessAssertion.h>
+#import <GraphicsServices/GraphicsServices.h>
+#import <SpringBoardServices/SBSRestartRenderServerAction.h>
+#import <FrontBoard/FBProcess.h>
+#import <FrontBoard/FBProcessManager.h>
+#import <FrontBoard/FBScene.h>
+#import <FrontBoard/FBSceneManager.h>
+#import <FrontBoardServices/FBSSystemService.h>
+#import <version.h>
 
 #define RA_BASE_PATH @"/Library/Multiplexer"
 
@@ -32,28 +40,35 @@
 #import "RASBWorkspaceFetcher.h"
 #define GET_SBWORKSPACE [RASBWorkspaceFetcher getCurrentSBWorkspaceImplementationInstanceForThisOS]
 
-#define GET_STATUSBAR_ORIENTATION (UIApplication.sharedApplication._accessibilityFrontMostApplication == nil ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
+#define GET_STATUSBAR_ORIENTATION (![UIApplication sharedApplication]._accessibilityFrontMostApplication ? UIApplication.sharedApplication.statusBarOrientation : UIApplication.sharedApplication._accessibilityFrontMostApplication.statusBarOrientation)
 
 #if DEBUG
-#define NSLog NSLog
+#define LogDebug HBLogDebug
+#define LogInfo HBLogInfo
+#define LogWarn HBLogWarn
+#define LogError HBLogError
 #else
-#define NSLog(...)
+#define LogDebug(...)
+#define LogInfo(...)
+#define LogWarn(...)
+#define LogError(...)
 #endif
 
 #if MULTIPLEXER_CORE
 extern BOOL $__IS_SPRINGBOARD;
 #define IS_SPRINGBOARD $__IS_SPRINGBOARD
 #else
-#define IS_SPRINGBOARD [NSBundle.mainBundle.bundleIdentifier isEqual:@"com.apple.springboard"]
+#define IS_SPRINGBOARD IN_SPRINGBOARD
 #endif
 
 #define ON_MAIN_THREAD(block) \
     { \
-        dispatch_block_t _blk = block; \
-        if (NSThread.isMainThread) \
-            _blk(); \
-        else \
-            dispatch_sync(dispatch_get_main_queue(), _blk); \
+      dispatch_block_t _blk = block; \
+      if (NSThread.isMainThread) { \
+        _blk(); \
+      } else { \
+        dispatch_sync(dispatch_get_main_queue(), _blk); \
+      } \
     }
 
 #define IF_SPRINGBOARD if (IS_SPRINGBOARD)
@@ -63,19 +78,16 @@ extern BOOL $__IS_SPRINGBOARD;
 // ugh, i got so tired of typing this in by hand, plus it expands method declarations by a LOT.
 #define unsafe_id __unsafe_unretained id
 
-#define kBGModeUnboundedTaskCompletion @"unboundedTaskCompletion"
-#define kBGModeContinuous              @"continuous"
-#define kBGModeFetch                   @"fetch"
-#define kBGModeRemoteNotification      @"remote-notification"
-#define kBGModeExternalAccessory       @"external-accessory"
-#define kBGModeVoIP                    @"voip"
-#define kBGModeLocation                @"location"
-#define kBGModeAudio                   @"audio"
-#define kBGModeBluetoothCentral        @"bluetooth-central"
-#define kBGModeBluetoothPeripheral     @"bluetooth-peripheral"
-// newsstand-content
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern "C" CFNotificationCenterRef CFNotificationCenterGetDistributedCenter(void);
+CFNotificationCenterRef CFNotificationCenterGetDistributedCenter(void);
+void BKSHIDServicesCancelTouchesOnMainDisplay();
+
+#ifdef __cplusplus
+}
+#endif
 
 #define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
 #define DEGREES_TO_RADIANS(radians) ((radians) * (M_PI / 180))
@@ -84,7 +96,7 @@ void SET_BACKGROUNDED(id settings, BOOL val);
 
 #define SHARED_INSTANCE2(cls, extracode) \
 static cls *sharedInstance = nil; \
-static dispatch_once_t onceToken = 0; \
+static dispatch_once_t onceToken; \
 dispatch_once(&onceToken, ^{ \
     sharedInstance = [[cls alloc] init]; \
     extracode; \
@@ -92,14 +104,6 @@ dispatch_once(&onceToken, ^{ \
 return sharedInstance;
 
 #define SHARED_INSTANCE(cls) SHARED_INSTANCE2(cls, );
-
-#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
-#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
-
-extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -111,6 +115,52 @@ extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 + (id)sharedInstance;
 - (void)_releaseOrientationLock;
 - (void)_lockOrientation;
+@end
+
+@interface SBIconImageView : UIView {
+    UIImageView *_overlayView;
+    //SBIconProgressView *_progressView;
+    _Bool _isPaused;
+    UIImage *_cachedSquareContentsImage;
+    _Bool _showsSquareCorners;
+    SBIcon *_icon;
+    double _brightness;
+    double _overlayAlpha;
+}
+
++ (id)dequeueRecycledIconImageViewOfClass:(Class)arg1;
++ (void)recycleIconImageView:(id)arg1;
++ (double)cornerRadius;
+@property(nonatomic) _Bool showsSquareCorners; // @synthesize showsSquareCorners=_showsSquareCorners;
+@property(nonatomic) double overlayAlpha; // @synthesize overlayAlpha=_overlayAlpha;
+@property(nonatomic) double brightness; // @synthesize brightness=_brightness;
+@property(retain, nonatomic) SBIcon *icon; // @synthesize icon=_icon;
+- (_Bool)_shouldAnimatePropertyWithKey:(id)arg1;
+- (void)iconImageDidUpdate:(id)arg1;
+- (struct CGRect)visibleBounds;
+- (struct CGSize)sizeThatFits:(struct CGSize)arg1;
+- (id)squareDarkeningOverlayImage;
+- (id)darkeningOverlayImage;
+- (id)squareContentsImage;
+- (UIImage*)contentsImage;
+- (void)_clearCachedImages;
+- (id)_generateSquareContentsImage;
+- (void)_updateProgressMask;
+- (void)_updateOverlayImage;
+- (id)_currentOverlayImage;
+- (void)updateImageAnimated:(_Bool)arg1;
+- (id)snapshot;
+- (void)prepareForReuse;
+- (void)layoutSubviews;
+- (void)setPaused:(_Bool)arg1;
+- (void)setProgressAlpha:(double)arg1;
+- (void)_clearProgressView;
+- (void)progressViewCanBeRemoved:(id)arg1;
+- (void)setProgressState:(long long)arg1 paused:(_Bool)arg2 percent:(double)arg3 animated:(_Bool)arg4;
+- (void)_updateOverlayAlpha;
+- (void)setIcon:(id)arg1 animated:(_Bool)arg2;
+- (void)dealloc;
+- (id)initWithFrame:(struct CGRect)arg1;
 @end
 
 @interface SBOrientationLockManager : NSObject
@@ -184,9 +234,14 @@ extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 @end
 
 @interface SBFWallpaperView : UIView
+@property (nonatomic,readonly) UIImage *wallpaperImage;
 - (void)setGeneratesBlurredImages:(BOOL)arg1;
 - (void)_startGeneratingBlurredImages;
 - (void)prepareToAppear;
+@end
+
+@interface SBFStaticWallpaperView : SBFWallpaperView
+@property (setter=_setDisplayedImage:,getter=_displayedImage,nonatomic,retain) UIImage *displayedImage;
 @end
 
 @interface SBControlCenterController : UIViewController
@@ -219,7 +274,6 @@ extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 @interface BKSProcess : NSObject { //BSBaseXPCClient  {
     int _pid;
     NSString *_bundlePath;
-    NSObject<OS_dispatch_queue> *_clientQueue;
     bool _workspaceLocked;
     bool _connectedToExternalAccessories;
     bool _nowPlayingWithAudio;
@@ -325,7 +379,7 @@ extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 @end
 
 typedef struct {
-    BOOL itemIsEnabled[25];
+    BOOL itemIsEnabled[29];
     char timeString[64];
     int gsmSignalStrengthRaw;
     int gsmSignalStrengthBars;
@@ -352,6 +406,11 @@ typedef struct {
     unsigned locationIconType : 1;
     unsigned quietModeInactive : 1;
     unsigned tetheringConnectionCount;
+    unsigned batterySaverModeActive : 1;
+    unsigned deviceIsRTL : 1;
+    char breadcrumbTitle[256];
+    char breadcrumbSecondaryTitle[256];
+    char personName[100];
 } StatusBarData;
 
 @interface UIStatusBar : UIView
@@ -365,9 +424,36 @@ typedef struct {
 +(StatusBarData*) getStatusBarData;
 @end
 
+@interface SBNotificationCenterViewController : UIViewController
+@property (nonatomic,readonly) CGRect contentFrame;
+-(CGRect)_containerFrame;
+-(void)_setContainerFrame:(CGRect)arg1 ;
+-(void)prepareLayoutForDefaultPresentation;
+-(void)_loadContainerView;
+-(void)_loadContentView;
+@end
+
+@interface SBSearchEtceteraLayoutContentView : UIView
+@end
+
+@interface SBSearchEtceteraLayoutView : UIView
+@property (getter=_visibleView,nonatomic,retain,readonly) SBSearchEtceteraLayoutContentView * visibleView;
+-(id)_visibleView;
+@end
+
 @interface SBNotificationCenterController : NSObject
 +(id) sharedInstance;
+-(SBNotificationCenterViewController *)viewController;
 -(BOOL) isVisible;
+-(double)percentComplete;
+-(BOOL)isTransitioning;
+-(BOOL)isPresentingControllerTransitioning;
+@end
+
+@interface SBSearchEtceteraIsolatedViewController : UIViewController
+@property (nonatomic,retain,readonly) SBSearchEtceteraLayoutView * contentView;
+-(SBSearchEtceteraLayoutView *)contentView;
++(id)sharedInstance;
 @end
 
 @interface UIStatusBarItem : NSObject
@@ -375,6 +461,7 @@ typedef struct {
 @end
 
 @interface UIScreen (ohBoy)
+- (CGRect)_gkBounds;
 -(CGRect) _referenceBounds;
 - (CGPoint)convertPoint:(CGPoint)arg1 toCoordinateSpace:(id)arg2;
 + (CGPoint)convertPoint:(CGPoint)arg1 toView:(id)arg2;
@@ -403,6 +490,7 @@ typedef struct {
 @end
 
 @interface SBWallpaperController
+@property (nonatomic,retain) SBFStaticWallpaperView *sharedWallpaperView;
 +(id) sharedInstance;
 -(void) beginRequiringWithReason:(NSString*)reason;
 -(void) endRequiringWithReason:(NSString*)reason;
@@ -517,6 +605,13 @@ typedef enum
 @property(readonly, nonatomic) NSString *type; // @synthesize type=_type;
 @end
 
+@interface SBHomeScreenViewController : UIViewController
+@end
+
+@interface SBHomeScreenWindow : UIWindow
+@property (nonatomic, weak,readonly) SBHomeScreenViewController *homeScreenViewController;
+@end
+
 @interface SBLockScreenManager
 +(id) sharedInstance;
 -(BOOL) isUILocked;
@@ -587,12 +682,15 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @interface _UIBackdropView : UIView
 @property (retain, nonatomic) _UIBackdropViewSettings *outputSettings;
 @property (retain, nonatomic) _UIBackdropViewSettings *inputSettings;
+@property (assign,nonatomic) double _blurRadius;
 @property (nonatomic) int blurHardEdges;
+- (void)_applyCornerRadiusToSubviews;
+- (void)_setCornerRadius:(double)arg1 ;
 - (void) setBlursWithHardEdges:(BOOL)arg1;
 - (void)setBlurQuality:(id)arg1;
--(void) setBlurRadius:(CGFloat)radius;
--(void) setBlurRadiusSetOnce:(BOOL)v;
--(id) initWithStyle:(NSInteger)style;
+- (void)setBlurRadius:(CGFloat)radius;
+- (void)setBlurRadiusSetOnce:(BOOL)v;
+- (id)initWithStyle:(NSInteger)style;
 @property (nonatomic) BOOL autosizesToFitSuperview;
 @property (nonatomic) BOOL blursBackground;
 - (void)_setBlursBackground:(BOOL)arg1;
@@ -655,7 +753,9 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 + (instancetype)eventWithName:(NSString *)label handler:(id)handler;
 @end
 
-@interface FBSceneManager : NSObject
+@interface FBDisplayManager : NSObject
++(id)sharedInstance;
++(id)mainDisplay;
 @end
 
 @interface SBWorkspaceApplicationTransitionContext : NSObject
@@ -673,6 +773,7 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 
 @interface SBMainWorkspaceTransitionRequest : NSObject
 - (id)initWithDisplay:(id)arg1;
+- (void)setApplicationContext:(SBWorkspaceApplicationTransitionContext *)arg1 ;
 @end
 
 @interface SBAppToAppWorkspaceTransaction
@@ -713,9 +814,9 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface SBDisplayLayout : NSObject {
-	int _layoutSize;
-	NSMutableArray* _displayItems;
-	NSString* _uniqueStringRepresentation;
+  int _layoutSize;
+  NSMutableArray* _displayItems;
+  NSString* _uniqueStringRepresentation;
 }
 @property(readonly, assign, nonatomic) NSArray* displayItems;
 @property(readonly, assign, nonatomic) int layoutSize;
@@ -739,8 +840,7 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 -(id)initWithLayoutSize:(int)layoutSize displayItems:(id)items;
 @end
 
-@interface FBProcessManager : NSObject
-+ (id)sharedInstance;
+@interface FBProcessManager ()
 - (void)_updateWorkspaceLockedState;
 - (void)applicationProcessWillLaunch:(id)arg1;
 - (void)noteProcess:(id)arg1 didUpdateState:(id)arg2;
@@ -752,7 +852,6 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 - (id)createApplicationProcessForBundleID:(id)arg1 withExecutionContext:(id)arg2;
 - (id)createApplicationProcessForBundleID:(id)arg1;
 - (id)applicationProcessForPID:(int)arg1;
-- (id)processForPID:(int)arg1;
 - (id)applicationProcessesForBundleIdentifier:(id)arg1;
 - (id)processesForBundleIdentifier:(id)arg1;
 - (id)allApplicationProcesses;
@@ -760,54 +859,9 @@ typedef NS_ENUM(NSInteger, UIScreenEdgePanRecognizerType) {
 @end
 
 @interface UIGestureRecognizerTarget : NSObject {
-	id _target;
+  id _target;
 }
 @end
-
-typedef NS_ENUM(NSUInteger, BKSProcessAssertionReason)
-{
-    kProcessAssertionReasonNone = 0,
-    kProcessAssertionReasonAudio = 1,
-    kProcessAssertionReasonLocation = 2,
-    kProcessAssertionReasonExternalAccessory = 3,
-    kProcessAssertionReasonFinishTask = 4,
-    kProcessAssertionReasonBluetooth = 5,
-    kProcessAssertionReasonNetworkAuthentication = 6,
-    kProcessAssertionReasonBackgroundUI = 7,
-    kProcessAssertionReasonInterAppAudioStreaming = 8,
-    kProcessAssertionReasonViewServices = 9,
-    kProcessAssertionReasonNewsstandDownload = 10,
-    kProcessAssertionReasonBackgroundDownload = 11,
-    kProcessAssertionReasonVOiP = 12,
-    kProcessAssertionReasonExtension = 13,
-    kProcessAssertionReasonContinuityStreams = 14,
-    // 15-9999 unknown
-    kProcessAssertionReasonActivation = 10000,
-    kProcessAssertionReasonSuspend = 10001,
-    kProcessAssertionReasonTransientWakeup = 10002,
-    kProcessAssertionReasonVOiP_PreiOS8 = 10003,
-    kProcessAssertionReasonPeriodicTask_iOS8 = kProcessAssertionReasonVOiP_PreiOS8,
-    kProcessAssertionReasonFinishTaskUnbounded = 10004,
-    kProcessAssertionReasonContinuous = 10005,
-    kProcessAssertionReasonBackgroundContentFetching = 10006,
-    kProcessAssertionReasonNotificationAction = 10007,
-    // 10008-49999 unknown
-    kProcessAssertionReasonFinishTaskAfterBackgroundContentFetching = 50000,
-    kProcessAssertionReasonFinishTaskAfterBackgroundDownload = 50001,
-    kProcessAssertionReasonFinishTaskAfterPeriodicTask = 50002,
-    kProcessAssertionReasonAFterNoficationAction = 50003,
-    // 50004+ unknown
-};
-
-typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
-{
-    ProcessAssertionFlagNone = 0,
-    ProcessAssertionFlagPreventSuspend         = 1 << 0,
-    ProcessAssertionFlagPreventThrottleDownCPU = 1 << 1,
-    ProcessAssertionFlagAllowIdleSleep         = 1 << 2,
-    ProcessAssertionFlagWantsForegroundResourcePriority  = 1 << 3
-};
-
 
 @interface FBWindowContextHostManager
 - (id)hostViewForRequester:(id)arg1 enableAndOrderFront:(BOOL)arg2;
@@ -888,17 +942,9 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @interface UIMutableApplicationSceneSettings : FBSMutableSceneSettings
 @end
 
-
-@interface FBProcess : NSObject
-@end
-
-@interface FBScene
+@interface FBScene ()
 -(FBWindowContextHostManager*) contextHostManager;
-@property(readonly, retain, nonatomic) FBSMutableSceneSettings *mutableSettings; // @synthesize mutableSettings=_mutableSettings;
 - (void)updateSettings:(id)arg1 withTransitionContext:(id)arg2;
-- (void)_applyMutableSettings:(id)arg1 withTransitionContext:(id)arg2 completion:(id)arg3;
-@property (nonatomic, readonly) NSString *identifier;
-@property (nonatomic, readonly, retain) FBProcess *clientProcess;
 @end
 
 @interface SBApplication ()
@@ -916,7 +962,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (void)_sendDidLaunchNotification:(_Bool)arg1;
 - (void)notifyResumeActiveForReason:(long long)arg1;
 
-@property(readonly, nonatomic) int pid;
+@property(readwrite, nonatomic) int pid;
 @end
 
 @interface SBApplicationController : NSObject
@@ -956,8 +1002,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (void)minimize;
 @end
 
-@interface BKSProcessAssertion
-- (id)initWithPID:(int)arg1 flags:(unsigned int)arg2 reason:(unsigned int)arg3 name:(id)arg4 withHandler:(id)arg5;
+@interface BKSProcessAssertion ()
 - (id)initWithBundleIdentifier:(id)arg1 flags:(unsigned int)arg2 reason:(unsigned int)arg3 name:(id)arg4 withHandler:(id)arg5;
 - (void)invalidate;
 @property(readonly, nonatomic) BOOL valid;
@@ -1017,7 +1062,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (unsigned int)contextID;
 @end
 
-@interface UIWindow () 
+@interface UIWindow ()
 +(instancetype) keyWindow;
 -(id) firstResponder;
 + (void)setAllWindowsKeepContextInBackground:(BOOL)arg1;
@@ -1029,6 +1074,7 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @end
 
 @interface UIApplication ()
+@property (nonatomic) BOOL RA_networkActivity;
 - (void)_handleKeyUIEvent:(id)arg1;
 -(UIStatusBar*) statusBar;
 - (id)_mainScene;
@@ -1147,49 +1193,49 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 @end
 
 @interface SBIconView : UIView {
-	SBIcon *_icon;
-	id<SBIconViewDelegate> _delegate;
-	id<SBIconViewLocker> _locker;
-	SBIconImageContainerView *_iconImageContainer;
-	SBIconImageView *_iconImageView;
-	UIImageView *_iconDarkeningOverlay;
-	UIImageView *_ghostlyImageView;
-	UIImageView *_reflection;
-	UIImageView *_shadow;
-	SBIconBadgeImage *_badgeImage;
-	UIImageView *_badgeView;
-	SBIconLabel *_label;
-	BOOL _labelHidden;
-	BOOL _labelOnWallpaper;
-	UIView *_closeBox;
-	int _closeBoxType;
-	UIImageView *_dropGlow;
-	unsigned _drawsLabel : 1;
-	unsigned _isHidden : 1;
-	unsigned _isGrabbed : 1;
-	unsigned _isOverlapping : 1;
-	unsigned _refusesRecipientStatus : 1;
-	unsigned _highlighted : 1;
-	unsigned _launchDisabled : 1;
-	unsigned _isJittering : 1;
-	unsigned _allowJitter : 1;
-	unsigned _touchDownInIcon : 1;
-	unsigned _hideShadow : 1;
-	NSTimer *_delayedUnhighlightTimer;
-	unsigned _onWallpaper : 1;
-	unsigned _ghostlyRequesters;
-	int _iconLocation;
-	float _iconImageAlpha;
-	float _iconImageBrightness;
-	float _iconLabelAlpha;
-	float _accessoryAlpha;
-	CGPoint _unjitterPoint;
-	CGPoint _grabPoint;
-	NSTimer *_longPressTimer;
-	unsigned _ghostlyTag;
-	UIImage *_ghostlyImage;
-	BOOL _ghostlyPending;
-}
+  SBIcon *_icon;
+  id<SBIconViewDelegate> _delegate;
+  id<SBIconViewLocker> _locker;
+  SBIconImageContainerView *_iconImageContainer;
+  SBIconImageView *_iconImageView;
+  UIImageView *_iconDarkeningOverlay;
+  UIImageView *_ghostlyImageView;
+  UIImageView *_reflection;
+  UIImageView *_shadow;
+  SBIconBadgeImage *_badgeImage;
+  UIImageView *_badgeView;
+  SBIconLabel *_label;
+  BOOL _labelHidden;
+  BOOL _labelOnWallpaper;
+  UIView *_closeBox;
+  int _closeBoxType;
+  UIImageView *_dropGlow;
+  unsigned _drawsLabel : 1;
+  unsigned _isHidden : 1;
+  unsigned _isGrabbed : 1;
+  unsigned _isOverlapping : 1;
+  unsigned _refusesRecipientStatus : 1;
+  unsigned _highlighted : 1;
+  unsigned _launchDisabled : 1;
+  unsigned _isJittering : 1;
+  unsigned _allowJitter : 1;
+  unsigned _touchDownInIcon : 1;
+  unsigned _hideShadow : 1;
+  NSTimer *_delayedUnhighlightTimer;
+  unsigned _onWallpaper : 1;
+  unsigned _ghostlyRequesters;
+  int _iconLocation;
+  float _iconImageAlpha;
+  float _iconImageBrightness;
+  float _iconLabelAlpha;
+  float _accessoryAlpha;
+  CGPoint _unjitterPoint;
+  CGPoint _grabPoint;
+  NSTimer *_longPressTimer;
+  unsigned _ghostlyTag;
+  UIImage *_ghostlyImage;
+  BOOL _ghostlyPending;
+  }
 
 
 -(void) RA_updateIndicatorView:(NSInteger)info;
@@ -1319,23 +1365,27 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 
 @end
 
+@interface SBIconView ()
+@property (nonatomic, assign) BOOL RA_isIconIndicatorInhibited;
+@end
+
 @class NSMapTable;
 
 @interface SBIconViewMap : NSObject {
-	NSMapTable* _iconViewsForIcons;
-	id<SBIconViewDelegate> _iconViewdelegate;
-	NSMapTable* _recycledIconViewsByType;
-	NSMapTable* _labels;
-	NSMapTable* _badges;
+  NSMapTable* _iconViewsForIcons;
+  id<SBIconViewDelegate> _iconViewdelegate;
+  NSMapTable* _recycledIconViewsByType;
+  NSMapTable* _labels;
+  NSMapTable* _badges;
 }
 + (SBIconViewMap *)switcherMap;
 +(SBIconViewMap *)homescreenMap;
 +(Class)iconViewClassForIcon:(SBIcon *)icon location:(int)location;
 -(id)init;
 -(void)dealloc;
--(SBIconView *)mappedIconViewForIcon:(SBIcon *)icon;
--(SBIconView *)_iconViewForIcon:(SBIcon *)icon;
--(SBIconView *)iconViewForIcon:(SBIcon *)icon;
+-(SBIconView *)mappedIconViewForIcon:(SBApplicationIcon *)icon;
+-(SBIconView *)_iconViewForIcon:(SBApplicationIcon *)icon;
+-(SBIconView *)iconViewForIcon:(SBApplicationIcon *)icon;
 -(void)_addIconView:(SBIconView *)iconView forIcon:(SBIcon *)icon;
 -(void)purgeIconFromMap:(SBIcon *)icon;
 -(void)_recycleIconView:(SBIconView *)iconView;
@@ -1353,6 +1403,11 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 
 @interface SBIconViewMap (iOS6)
 @property (nonatomic, readonly) SBIconModel *iconModel;
+@end
+
+@interface SBIconController (iOS90)
+@property (nonatomic,readonly) SBIconViewMap *homescreenIconViewMap;
++ (id)sharedInstance;
 @end
 
 @interface SBApplication (iOS6)
@@ -1389,53 +1444,6 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (id)initWithDefaultSize;
 @end
 
-@interface SBIconImageView ()
-{
-    UIImageView *_overlayView;
-    //SBIconProgressView *_progressView;
-    _Bool _isPaused;
-    UIImage *_cachedSquareContentsImage;
-    _Bool _showsSquareCorners;
-    SBIcon *_icon;
-    double _brightness;
-    double _overlayAlpha;
-}
-
-+ (id)dequeueRecycledIconImageViewOfClass:(Class)arg1;
-+ (void)recycleIconImageView:(id)arg1;
-+ (double)cornerRadius;
-@property(nonatomic) _Bool showsSquareCorners; // @synthesize showsSquareCorners=_showsSquareCorners;
-@property(nonatomic) double overlayAlpha; // @synthesize overlayAlpha=_overlayAlpha;
-@property(nonatomic) double brightness; // @synthesize brightness=_brightness;
-@property(retain, nonatomic) SBIcon *icon; // @synthesize icon=_icon;
-- (_Bool)_shouldAnimatePropertyWithKey:(id)arg1;
-- (void)iconImageDidUpdate:(id)arg1;
-- (struct CGRect)visibleBounds;
-- (struct CGSize)sizeThatFits:(struct CGSize)arg1;
-- (id)squareDarkeningOverlayImage;
-- (id)darkeningOverlayImage;
-- (id)squareContentsImage;
-- (UIImage*)contentsImage;
-- (void)_clearCachedImages;
-- (id)_generateSquareContentsImage;
-- (void)_updateProgressMask;
-- (void)_updateOverlayImage;
-- (id)_currentOverlayImage;
-- (void)updateImageAnimated:(_Bool)arg1;
-- (id)snapshot;
-- (void)prepareForReuse;
-- (void)layoutSubviews;
-- (void)setPaused:(_Bool)arg1;
-- (void)setProgressAlpha:(double)arg1;
-- (void)_clearProgressView;
-- (void)progressViewCanBeRemoved:(id)arg1;
-- (void)setProgressState:(long long)arg1 paused:(_Bool)arg2 percent:(double)arg3 animated:(_Bool)arg4;
-- (void)_updateOverlayAlpha;
-- (void)setIcon:(id)arg1 animated:(_Bool)arg2;
-- (void)dealloc;
-- (id)initWithFrame:(struct CGRect)arg1;
-@end
-
 @interface BBBulletin
 @property(copy, nonatomic) NSString *bulletinID; // @synthesize bulletinID=_bulletinID;
 @property(copy, nonatomic) NSString *sectionID; // @synthesize sectionID=_sectionID;
@@ -1455,3 +1463,51 @@ typedef NS_ENUM(NSUInteger, ProcessAssertionFlags)
 - (id)bulletinIDsForSectionID:(id)arg1 inFeed:(unsigned long long)arg2;
 @end
 
+@interface FBSystemService : NSObject
+- (id)sharedInstance;
+- (void)exitAndRelaunch:(bool)arg1;
+@end
+
+@interface SBSwitcherSnapshotImageView : UIView
+@property (nonatomic,readonly) UIImage * image;
+- (UIImage *)image;
+@end
+
+@interface _SBAppSwitcherSnapshotContext : NSObject {
+  SBSwitcherSnapshotImageView* _snapshotImageView;
+}
+@property (nonatomic,retain) SBSwitcherSnapshotImageView * snapshotImageView;              //@synthesize snapshotImageView=_snapshotImageView - In the implementation block
+- (SBSwitcherSnapshotImageView *)snapshotImageView;
+- (void)setSnapshotImageView:(SBSwitcherSnapshotImageView *)arg1 ;
+- (CGRect)snapshotReferenceFrame;
+- (void)setSnapshotReferenceFrame:(CGRect)arg1 ;
+@end
+
+@interface SBMainSwitcherViewController : UIViewController
++ (id)sharedInstance;
+- (BOOL)dismissSwitcherNoninteractively;
+- (BOOL)isVisible;
+- (BOOL)activateSwitcherNoninteractively;
+- (void)RA_dismissSwitcherUnanimated;
+@end
+
+@interface SBSwitcherContainerView : UIView
+@property (nonatomic,retain) UIView * contentView;
+- (void)layoutSubviews;
+- (UIView *)contentView;
+@end
+
+@interface SBUIChevronView : UIView
+@property (assign,nonatomic) long long state;
+@property (nonatomic,retain) UIColor * color;
+-(id)initWithFrame:(CGRect)arg1;
+-(id)initWithColor:(id)arg1 ;
+-(void)setColor:(UIColor *)arg1 ;
+-(void)setState:(long long)arg1 animated:(BOOL)arg2;
+-(void)setBackgroundView:(id)arg1;
+@end
+
+@interface SBPagedScrollView : UIScrollView
+- (NSArray *)pageViews;
+- (void)setPageViews:(NSArray *)arg1;
+@end

@@ -16,47 +16,45 @@ typedef void* (*clientCreatePointer)(const CFAllocatorRef);
 extern "C" void BKSHIDServicesCancelTouchesOnMainDisplay();
 
 @interface _UIScreenEdgePanRecognizer (Velocity)
--(CGPoint) RA_velocity;
+- (CGPoint)RA_velocity;
 @end
 
 static BOOL isTracking = NO;
 static NSMutableSet *gestureRecognizers;
 UIRectEdge currentEdge9;
 
-struct VelocityData {
+typedef struct {
     CGPoint velocity;
     double timestamp;
     CGPoint location;
-};
+} VelocityData;
 
 %hook _UIScreenEdgePanRecognizer
-- (void)incorporateTouchSampleAtLocation:(CGPoint)location timestamp:(double)timestamp modifier:(NSInteger)modifier interfaceOrientation:(UIInterfaceOrientation)orientation forceState:(int)arg5
-{
-    %orig;
+- (void)incorporateTouchSampleAtLocation:(CGPoint)location timestamp:(double)timestamp modifier:(NSInteger)modifier interfaceOrientation:(UIInterfaceOrientation)orientation forceState:(int)arg5 {
+  %orig;
 
-    VelocityData newData;
-    VelocityData oldData;
+  VelocityData newData;
+  VelocityData oldData;
 
-    [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&oldData];
-    
-    // this is really quite simple, it calculates a velocity based off of
-    // (current location - last location) / (time taken to move from last location to current location)
-    // which effectively gives you a CGPoint of where it would end if the user continued the gesture.
-    CGPoint velocity = CGPointMake((location.x - oldData.location.x) / (timestamp - oldData.timestamp), (location.y - oldData.location.y) / (timestamp - oldData.timestamp));
-    newData.velocity = velocity;
-    newData.location = location;
-    newData.timestamp = timestamp;
+  [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&oldData];
 
-    objc_setAssociatedObject(self, @selector(RA_velocityData), [NSValue valueWithBytes:&newData objCType:@encode(VelocityData)], OBJC_ASSOCIATION_RETAIN);
+  // this is really quite simple, it calculates a velocity based off of
+  // (current location - last location) / (time taken to move from last location to current location)
+  // which effectively gives you a CGPoint of where it would end if the user continued the gesture.
+  CGPoint velocity = CGPointMake((location.x - oldData.location.x) / (timestamp - oldData.timestamp), (location.y - oldData.location.y) / (timestamp - oldData.timestamp));
+  newData.velocity = velocity;
+  newData.location = location;
+  newData.timestamp = timestamp;
+
+  objc_setAssociatedObject(self, @selector(RA_velocityData), [NSValue valueWithBytes:&newData objCType:@encode(VelocityData)], OBJC_ASSOCIATION_RETAIN);
 }
 
 %new
-- (CGPoint)RA_velocity 
-{
-    VelocityData data;
-    [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&data];
+- (CGPoint)RA_velocity {
+  VelocityData data;
+  [objc_getAssociatedObject(self, @selector(RA_velocityData)) getValue:&data];
 
-    return data.velocity;
+  return data.velocity;
 }
 %end
 
@@ -65,153 +63,138 @@ struct VelocityData {
 @end
 
 @implementation Hooks9$SBHandMotionExtractorReplacementByMultiplexer
--(id) init 
-{
-    if (self = [super init])
-    {
-        for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers)
-            [recognizer setDelegate:(id<_UIScreenEdgePanRecognizerDelegate>)self];
+- (instancetype)init {
+  if (self = [super init]) {
+    for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers) {
+      [recognizer setDelegate:(id<_UIScreenEdgePanRecognizerDelegate>)self];
     }
-    return self;
+  }
+  return self;
 }
 
--(void) screenEdgePanRecognizerStateDidChange:(_UIScreenEdgePanRecognizer*) screenEdgePanRecognizer 
-{
-    if (screenEdgePanRecognizer.state == UIGestureRecognizerStateBegan)
-    {
-        CGPoint location = MSHookIvar<CGPoint>(screenEdgePanRecognizer, "_lastTouchLocation");
+- (void)screenEdgePanRecognizerStateDidChange:(_UIScreenEdgePanRecognizer*)screenEdgePanRecognizer {
+  if (screenEdgePanRecognizer.state == UIGestureRecognizerStateBegan) {
+    CGPoint location = MSHookIvar<CGPoint>(screenEdgePanRecognizer, "_lastTouchLocation");
 
-        if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft && (location.x != 0 && location.y != 0))
-        {
-            location.x = UIScreen.mainScreen.bounds.size.width - location.x;
-        }
-        else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown && (location.x != 0 && location.y != 0))
-        {
-            location.x = UIScreen.mainScreen.bounds.size.width - location.x;
-        }
-        else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight)
-        {
-            CGFloat t = location.y;
-            location.y = location.x;
-            location.x = t;
-        }
-        NSLog(@"[ReachApp] _UIScreenEdgePanRecognizer location: %@", NSStringFromCGPoint(location));
-        if ([RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateBegan withPoint:location velocity:screenEdgePanRecognizer.RA_velocity forEdge:screenEdgePanRecognizer.targetEdges])
-        {
-            currentEdge9 = screenEdgePanRecognizer.targetEdges;
-            BKSHIDServicesCancelTouchesOnMainDisplay(); // This is needed or open apps, etc will still get touch events. For example open settings app + swipeover without this line and you can still scroll up/down through the settings
-        }
+    if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeLeft && (location.x != 0 && location.y != 0)) {
+      location.x = UIScreen.mainScreen.bounds.size.width - location.x;
+    } else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown && (location.x != 0 && location.y != 0)) {
+        location.x = UIScreen.mainScreen.bounds.size.width - location.x;
+    } else if (UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
+      CGFloat t = location.y;
+      location.y = location.x;
+      location.x = t;
     }
+    LogDebug(@"[ReachApp] _UIScreenEdgePanRecognizer location: %@", NSStringFromCGPoint(location));
+    if ([RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateBegan withPoint:location velocity:screenEdgePanRecognizer.RA_velocity forEdge:screenEdgePanRecognizer.targetEdges]) {
+      currentEdge9 = screenEdgePanRecognizer.targetEdges;
+      BKSHIDServicesCancelTouchesOnMainDisplay(); // This is needed or open apps, etc will still get touch events. For example open settings app + swipeover without this line and you can still scroll up/down through the settings
+    }
+  }
 }
 @end
 
-void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event) 
-{
-    if (IOHIDEventGetType(event) == kIOHIDEventTypeDigitizer)
-    {
-        NSArray *children = (__bridge NSArray *)IOHIDEventGetChildren(event);
-        if ([children count] == 1)
-        {
-            float density = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerDensity);
+void touch_event(void *target, void *refcon, IOHIDServiceRef service, IOHIDEventRef event) {
+  if (IOHIDEventGetType(event) == kIOHIDEventTypeDigitizer) {
+    NSArray *children = (__bridge NSArray *)IOHIDEventGetChildren(event);
+    if ([children count] == 1) {
+      float density = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerDensity);
 
-            float x = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerX) * UIScreen.mainScreen._referenceBounds.size.width;
-            float y = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerY) * UIScreen.mainScreen._referenceBounds.size.height; 
-            CGPoint location = (CGPoint) { x, y };
+      float x = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerX) * UIScreen.mainScreen._referenceBounds.size.width;
+      float y = IOHIDEventGetFloatValue((__bridge __IOHIDEvent *)children[0], (IOHIDEventField)kIOHIDEventFieldDigitizerY) * UIScreen.mainScreen._referenceBounds.size.height;
+      CGPoint location = (CGPoint) { x, y };
 
-            UIInterfaceOrientation interfaceOrientation = GET_STATUSBAR_ORIENTATION;
+      UIInterfaceOrientation interfaceOrientation = GET_STATUSBAR_ORIENTATION;
 
-            float rotatedX = x;
-            float rotatedY = y;
-            
-            if (interfaceOrientation == UIInterfaceOrientationLandscapeRight)
-            {
-                rotatedX = y;
-                rotatedY = UIScreen.mainScreen.bounds.size.height - x;
-            }
-            else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft)
-            {
-                rotatedX = UIScreen.mainScreen._referenceBounds.size.height - y;
-                rotatedY = x;
-            }
+      float rotatedX = x;
+      float rotatedY = y;
 
-            CGPoint rotatedLocation = (CGPoint) { rotatedX, rotatedY };
+      if (interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        rotatedX = y;
+        rotatedY = UIScreen.mainScreen.bounds.size.height - x;
+      } else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
+          rotatedX = UIScreen.mainScreen._referenceBounds.size.height - y;
+          rotatedY = x;
+      }
 
-            NSLog(@"[ReachApp] (%f, %d) %@ -> %@", density, isTracking, NSStringFromCGPoint(location), NSStringFromCGPoint(rotatedLocation));
+      CGPoint rotatedLocation = (CGPoint) { rotatedX, rotatedY };
 
-            if (isTracking == NO)
-            {
-                for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers)
-                    [recognizer incorporateTouchSampleAtLocation:location timestamp:CACurrentMediaTime() modifier:1 interfaceOrientation:interfaceOrientation forceState:0];
-                isTracking = YES;
-            }
-            else if (density == 0 && isTracking)
-            {
-                _UIScreenEdgePanRecognizer *targetRecognizer = nil;
-                for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers)
-                {
-                    if (recognizer.targetEdges & currentEdge9)
-                        targetRecognizer = recognizer;
-                }
+      LogInfo(@"[ReachApp] (%f, %d) %@ -> %@", density, isTracking, NSStringFromCGPoint(location), NSStringFromCGPoint(rotatedLocation));
 
-                [RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateEnded withPoint:CGPointZero velocity:targetRecognizer.RA_velocity forEdge:currentEdge9];
-                for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers)
-                    [recognizer reset]; // remove current touches it's "incorporated"
-                currentEdge9 = UIRectEdgeNone;
-                isTracking = NO;
-
-                NSLog(@"[ReachApp] touch ended.");
-            }
-            else
-            {
-                _UIScreenEdgePanRecognizer *targetRecognizer = nil;
-
-                for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers)
-                {
-                    [recognizer incorporateTouchSampleAtLocation:location timestamp:CACurrentMediaTime() modifier:1 interfaceOrientation:interfaceOrientation forceState:0];
-
-                    if (recognizer.targetEdges & currentEdge9)
-                        targetRecognizer = recognizer;
-                }
-                [RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateChanged withPoint:rotatedLocation velocity:targetRecognizer.RA_velocity forEdge:currentEdge9];
-            }
-
+      if (!isTracking) {
+        for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers) {
+          [recognizer incorporateTouchSampleAtLocation:location timestamp:CACurrentMediaTime() modifier:1 interfaceOrientation:interfaceOrientation forceState:0];
         }
+        isTracking = YES;
+      } else if (density == 0 && isTracking) {
+        _UIScreenEdgePanRecognizer *targetRecognizer = nil;
+        for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers) {
+          if (recognizer.targetEdges & currentEdge9) {
+            targetRecognizer = recognizer;
+          }
+        }
+
+        [RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateEnded withPoint:CGPointZero velocity:targetRecognizer.RA_velocity forEdge:currentEdge9];
+        for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers) {
+          [recognizer reset]; // remove current touches it's "incorporated"
+        }
+        currentEdge9 = UIRectEdgeNone;
+        isTracking = NO;
+
+        LogInfo(@"[ReachApp] touch ended.");
+      } else {
+        _UIScreenEdgePanRecognizer *targetRecognizer = nil;
+
+        for (_UIScreenEdgePanRecognizer *recognizer in gestureRecognizers) {
+          [recognizer incorporateTouchSampleAtLocation:location timestamp:CACurrentMediaTime() modifier:1 interfaceOrientation:interfaceOrientation forceState:0];
+
+          if (recognizer.targetEdges & currentEdge9) {
+            targetRecognizer = recognizer;
+          }
+        }
+        [RAGestureManager.sharedInstance handleMovementOrStateUpdate:UIGestureRecognizerStateChanged withPoint:rotatedLocation velocity:targetRecognizer.RA_velocity forEdge:currentEdge9];
+      }
     }
+  }
 }
 
 __strong id __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer;
 
-%ctor
-{
+%ctor {
+  if (IS_IOS_OR_OLDER(iOS_8_4) || !IS_SPRINGBOARD) {
+    return;
+  }
 
-    IF_SPRINGBOARD
-    {
-        if (SYSTEM_VERSION_LESS_THAN(@"9.0"))
-            return;
+  LogDebug(@"start of ctor");
 
-        clientCreatePointer clientCreate;
-        void *handle = dlopen(0, 9);
-        *(void**)(&clientCreate) = dlsym(handle,"IOHIDEventSystemClientCreate");
-        IOHIDEventSystemClientRef hidEventSystem = (__IOHIDEventSystemClient *)clientCreate(kCFAllocatorDefault);
-        IOHIDEventSystemClientScheduleWithRunLoop(hidEventSystem, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-        IOHIDEventSystemClientRegisterEventCallback(hidEventSystem, (IOHIDEventSystemClientEventCallback)touch_event, NULL, NULL);
+  clientCreatePointer clientCreate;
+  void *handle = dlopen(0, 9);
+  *(void**)(&clientCreate) = dlsym(handle,"IOHIDEventSystemClientCreate");
+  IOHIDEventSystemClientRef hidEventSystem = (__IOHIDEventSystemClient *)clientCreate(kCFAllocatorDefault);
+  IOHIDEventSystemClientScheduleWithRunLoop(hidEventSystem, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+  IOHIDEventSystemClientRegisterEventCallback(hidEventSystem, (IOHIDEventSystemClientEventCallback)touch_event, NULL, NULL);
 
-        class_addProtocol(objc_getClass("Hooks9$SBHandMotionExtractorReplacementByMultiplexer"), @protocol(_UIScreenEdgePanRecognizerDelegate));
-        
-        UIRectEdge edgesToWatch[] = { UIRectEdgeBottom, UIRectEdgeLeft, UIRectEdgeRight, UIRectEdgeTop };
-        int edgeCount = sizeof(edgesToWatch) / sizeof(UIRectEdge);
-        gestureRecognizers = [[NSMutableSet alloc] initWithCapacity:edgeCount];
-        for (int i = 0; i < edgeCount; i++)
-        {
-            _UIScreenEdgePanRecognizer *recognizer = [[_UIScreenEdgePanRecognizer alloc] initWithType:2];
-            recognizer.targetEdges = edgesToWatch[i];
-            recognizer.screenBounds = UIScreen.mainScreen.bounds;
-            [gestureRecognizers addObject:recognizer];
-        }
+  LogDebug(@"did iokit stuff")
 
-        %init;
+  class_addProtocol(%c(Hooks9$SBHandMotionExtractorReplacementByMultiplexer), @protocol(_UIScreenEdgePanRecognizerDelegate));
 
-        __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer = [[Hooks9$SBHandMotionExtractorReplacementByMultiplexer alloc] init];
-    }
-    
+  LogDebug(@"added protocol");
+
+  UIRectEdge edgesToWatch[] = { UIRectEdgeBottom, UIRectEdgeLeft, UIRectEdgeRight, UIRectEdgeTop };
+  int edgeCount = sizeof(edgesToWatch) / sizeof(UIRectEdge);
+  gestureRecognizers = [[NSMutableSet alloc] initWithCapacity:edgeCount];
+  for (int i = 0; i < edgeCount; i++) {
+    _UIScreenEdgePanRecognizer *recognizer = [[_UIScreenEdgePanRecognizer alloc] initWithType:2];
+    recognizer.targetEdges = edgesToWatch[i];
+    recognizer.screenBounds = UIScreen.mainScreen._referenceBounds;
+    [gestureRecognizers addObject:recognizer];
+  }
+
+  LogDebug(@"added gestureRecognizers")
+
+  %init;
+
+  LogDebug(@"inited ctor");
+
+  __static$Hooks9$SBHandMotionExtractorReplacementByMultiplexer = [[Hooks9$SBHandMotionExtractorReplacementByMultiplexer alloc] init];
 }

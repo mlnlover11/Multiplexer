@@ -14,6 +14,10 @@
 + (BOOL)areBordersEnabled;
 + (BOOL)isEnabled;
 
+// Added in ColorBadges v1.1.1.
++ (BOOL)isDarkColorOrIsAlwaysWhiteEnabled:(int)color;
++ (BOOL)isAlwaysWhiteEnabled;
+
 // Return RGB ints. i.e. 0xRRGGBB.
 - (int)colorForImage:(UIImage *)image;
 - (int)colorForIcon:(id)icon; // Must be an SBIcon *
@@ -41,19 +45,17 @@
 @end
 */
 
-static inline int RGBFromUIColor(UIColor *self)
-{
-    CGFloat red, green, blue;
-    if ([self getRed:&red green:&green blue:&blue alpha:NULL])
-    {
-        NSUInteger redInt = (NSUInteger)(red * 255 + 0.5);
-        NSUInteger greenInt = (NSUInteger)(green * 255 + 0.5);
-        NSUInteger blueInt = (NSUInteger)(blue * 255 + 0.5);
+static inline int RGBFromUIColor(UIColor *self) {
+  CGFloat red, green, blue;
+  if ([self getRed:&red green:&green blue:&blue alpha:NULL]) {
+    NSUInteger redInt = (NSUInteger)(red * 255 + 0.5);
+    NSUInteger greenInt = (NSUInteger)(green * 255 + 0.5);
+    NSUInteger blueInt = (NSUInteger)(blue * 255 + 0.5);
 
-        return (redInt << 16) | (greenInt << 8) | blueInt;
-    }
+    return (redInt << 16) | (greenInt << 8) | blueInt;
+  }
 
-    return 0;
+  return 0;
 }
 
 #define HAS_COLORBADGES (objc_getClass("ColorBadges") != nil)

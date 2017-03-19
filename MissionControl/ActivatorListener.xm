@@ -8,24 +8,25 @@
 static RAActivatorListener *sharedInstance;
 
 @implementation RAActivatorListener
-- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
-{
-	if ([[%c(SBLockScreenManager) sharedInstance] isUILocked])
+- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event {
+	if ([[%c(SBLockScreenManager) sharedInstance] isUILocked]) {
 		return;
-	else if ([[%c(RASettings) sharedInstance] missionControlEnabled])
-	{
-	    [RAMissionControlManager.sharedInstance toggleMissionControl:YES];
-		[[[%c(SBUIController) sharedInstance] _appSwitcherController] forceDismissAnimated:NO];
+	} else if ([[%c(RASettings) sharedInstance] missionControlEnabled]) {
+	  [RAMissionControlManager.sharedInstance toggleMissionControl:YES];
+		if ([%c(SBUIController) respondsToSelector:@selector(_appSwitcherController)]) {
+			[[[%c(SBUIController) sharedInstance] _appSwitcherController] forceDismissAnimated:NO];
+		} else {
+			[[%c(SBMainSwitcherViewController) sharedInstance] RA_dismissSwitcherUnanimated];
+		}
 	}
-    [event setHandled:YES];
+	[event setHandled:YES];
 }
 @end
 
-%ctor
-{
-    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
-    {
-        sharedInstance = [[RAActivatorListener alloc] init];
-        [[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];
-    }
+%ctor {
+	IF_NOT_SPRINGBOARD {
+		return;
+	}
+	sharedInstance = [[RAActivatorListener alloc] init];
+	[[%c(LAActivator) sharedInstance] registerListener:sharedInstance forName:@"com.efrederickson.reachapp.missioncontrol.activatorlistener"];
 }

@@ -2,23 +2,19 @@
 
 @implementation RAWidget
 
--(NSString*)identifier
-{
+- (NSString*)identifier {
 	@throw @"This is an abstract method and must be overriden";
 }
 
--(UIView*) view
-{
+- (UIView*)view {
 	@throw @"This is an abstract method and must be overriden";
 }
 
--(UIView*) iconForSize:(CGSize)size
-{
+- (UIView*)iconForSize:(CGSize)size {
 	@throw @"This is an abstract method and must be overriden";
 }
 
--(CGFloat) preferredHeight
-{
+- (CGFloat)preferredHeight {
 	return self.view.frame.size.height;
 }
 @end

@@ -4,20 +4,17 @@
 BOOL allowClosingReachabilityNatively = NO;
 
 %hook UIApplication
-- (void)_deactivateReachability
-{
-    if (allowClosingReachabilityNatively == NO)
-    {
-        NSLog(@"[ReachApp] attempting to close reachability but not allowed to.");
-        return;
-    }
-        
-    if ([RAMessagingClient.sharedInstance isBeingHosted])
-    {
-        NSLog(@"[ReachApp] stopping reachability from closing because hosted");
-        return;
-    }
-    %orig;
+- (void)_deactivateReachability {
+  if (!allowClosingReachabilityNatively) {
+    LogDebug(@"[ReachApp] attempting to close reachability but not allowed to.");
+    return;
+  }
+
+  if ([RAMessagingClient.sharedInstance isBeingHosted]) {
+    LogDebug(@"[ReachApp] stopping reachability from closing because hosted");
+    return;
+  }
+  %orig;
 }
 %end
 
@@ -71,7 +68,7 @@ BOOL allowClosingReachabilityNatively = NO;
 }
 %end
 
-%hook UIInputWindowController 
+%hook UIInputWindowController
 - (void)moveFromPlacement:(unsafe_id)arg1 toPlacement:(unsafe_id)arg2 starting:(unsafe_id)arg3 completion:(unsafe_id)arg4
 {
     overrideViewControllerDismissal = YES;

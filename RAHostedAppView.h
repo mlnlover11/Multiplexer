@@ -8,14 +8,14 @@
 	FBWindowContextHostWrapperView *view;
 }
 
-+(void) iPad_iOS83_fixHosting;
++ (void)iPad_iOS83_fixHosting;
 
--(id) initWithBundleIdentifier:(NSString*)bundleIdentifier;
+- (instancetype)initWithBundleIdentifier:(NSString*)bundleIdentifier;
 
 @property (nonatomic) BOOL showSplashscreenInsteadOfSpinner;
 @property (nonatomic) BOOL renderWallpaper;
 
-@property (nonatomic, retain) NSString *bundleIdentifier;
+@property (nonatomic, copy) NSString *bundleIdentifier;
 @property (nonatomic) BOOL autosizesApp;
 
 @property (nonatomic) BOOL allowHidingStatusBar;
@@ -25,15 +25,15 @@
 
 @property (nonatomic) BOOL isCurrentlyHosting;
 
--(SBApplication*) app;
--(NSString*) displayName;
+- (SBApplication*)app;
+- (NSString*)displayName;
 
 @property (nonatomic, readonly) UIInterfaceOrientation orientation;
--(void) rotateToOrientation:(UIInterfaceOrientation)o;
+- (void)rotateToOrientation:(UIInterfaceOrientation)o;
 
--(void) preloadApp;
--(void) loadApp;
--(void) unloadApp;
--(void) unloadApp:(BOOL)forceImmediate;
+- (void)preloadApp;
+- (void)loadApp;
+- (void)unloadApp;
+- (void)unloadApp:(BOOL)forceImmediate;
 
 @end

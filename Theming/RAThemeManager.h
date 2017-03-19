@@ -5,10 +5,10 @@
 	RATheme *currentTheme;
 }
 
-+(instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
--(RATheme*) currentTheme;
--(NSArray*) allThemes;
+- (RATheme*)currentTheme;
+- (NSArray*)allThemes;
 
--(void) invalidateCurrentThemeAndReload:(NSString*)currentIdentifier;
+- (void)invalidateCurrentThemeAndReload:(NSString*)currentIdentifier;
 @end

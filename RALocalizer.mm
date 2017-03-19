@@ -2,38 +2,37 @@
 #import "headers.h"
 
 @implementation RALocalizer
-+(id) sharedInstance
-{
++ (instancetype)sharedInstance {
 	SHARED_INSTANCE2(RALocalizer, [sharedInstance loadTranslation]);
 }
 
--(BOOL) attemptLoadForLanguageCode:(NSString*)code
-{
+- (BOOL)attemptLoadForLanguageCode:(NSString*)code {
 	NSString *expandedPath = [NSString stringWithFormat:@"%@/Localizations/%@.strings",RA_BASE_PATH,code];
 	NSDictionary *plist = [NSDictionary dictionaryWithContentsOfFile:expandedPath];
-	if (plist)
-	{
+	if (plist) {
 		translation = plist;
 		return YES;
 	}
 	return NO;
 }
 
--(void) loadTranslation
-{
+- (void)loadTranslation {
 	NSArray *langs = [NSLocale preferredLanguages];
 
-	for (NSString *lang in langs)
-	{
-		if ([self attemptLoadForLanguageCode:lang])
+	for (NSString *lang in langs) {
+		NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:lang];
+		NSString *languageDesignator = components[NSLocaleLanguageCode];
+
+		if ([self attemptLoadForLanguageCode:languageDesignator]) {
 			break;
+		}
 	}
-	if (!translation)
+	if (!translation) {
 		[self attemptLoadForLanguageCode:@"en"];
+	}
 }
 
--(NSString*) localizedStringForKey:(NSString*)key
-{
-	return [translation objectForKey:key] ? translation[key] : key;
+- (NSString*)localizedStringForKey:(NSString*)key {
+	return ![translation objectForKey:key] ? key : translation[key];
 }
 @end

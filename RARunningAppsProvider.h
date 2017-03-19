@@ -1,23 +1,24 @@
 #import "headers.h"
+#import <pthread.h>
 
 @protocol RARunningAppsProviderDelegate
 @optional
--(void) appDidStart:(__unsafe_unretained SBApplication*)app;
--(void) appDidDie:(__unsafe_unretained SBApplication*)app;
+- (void)appDidStart:(__unsafe_unretained SBApplication*)app;
+- (void)appDidDie:(__unsafe_unretained SBApplication*)app;
 @end
 
 @interface RARunningAppsProvider : NSObject {
 	NSMutableArray *apps;
 	NSMutableArray *targets;
-	NSLock *lock;
+	pthread_mutex_t mutex;
 }
-+(instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
--(void) addRunningApp:(__unsafe_unretained SBApplication*)app;
--(void) removeRunningApp:(__unsafe_unretained SBApplication*)app;
+- (void)addRunningApp:(__unsafe_unretained SBApplication*)app;
+- (void)removeRunningApp:(__unsafe_unretained SBApplication*)app;
 
--(void) addTarget:(__weak NSObject<RARunningAppsProviderDelegate>*)target;
--(void) removeTarget:(__weak NSObject<RARunningAppsProviderDelegate>*)target;
+- (void)addTarget:(__weak NSObject<RARunningAppsProviderDelegate>*)target;
+- (void)removeTarget:(__weak NSObject<RARunningAppsProviderDelegate>*)target;
 
--(NSArray*) runningApplications;
+- (NSArray*)runningApplications;
 @end
