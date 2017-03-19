@@ -183,6 +183,8 @@
 		UIGraphicsBeginImageContextWithOptions([UIScreen mainScreen].bounds.size, YES, 0);
 		CGContextRef context = UIGraphicsGetCurrentContext();
 
+		[[%c(SBWallpaperController) sharedInstance] beginRequiringWithReason:@"BeautifulAnimation"];
+
 		ON_MAIN_THREAD(^{
 			[[%c(SBUIController) sharedInstance] restoreContentAndUnscatterIconsAnimated:NO];
 		//});
@@ -200,8 +202,12 @@
 		//[[[[%c(SBUIController) sharedInstance] window] layer] performSelectorOnMainThread:@selector(renderInContext:) withObject:(__bridge id)c waitUntilDone:YES]; // Icons
 		//ON_MAIN_THREAD(^{
 			//[MSHookIvar<UIWindow*>([%c(SBWallpaperController) sharedInstance], "_wallpaperWindow") drawViewHierarchyInRect:UIScreen.mainScreen.bounds afterScreenUpdates:YES];
-
-			[[[%c(SBUIController) sharedInstance] window] drawViewHierarchyInRect:[UIScreen mainScreen].bounds afterScreenUpdates:NO];
+			if (IS_IOS_OR_NEWER(iOS_9_0)) { //not sure why broken
+				UIView *view = [[%c(SBIconController) sharedInstance] view];
+				[view drawViewHierarchyInRect:view.bounds afterScreenUpdates:NO];
+			} else {
+				[[[%c(SBUIController) sharedInstance] window] drawViewHierarchyInRect:[UIScreen mainScreen].bounds afterScreenUpdates:NO];
+			}
 
 			[desktop drawViewHierarchyInRect:desktop.bounds afterScreenUpdates:NO];
 		});
@@ -231,6 +237,7 @@
 		UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 		UIGraphicsEndImageContext();
 		image = [self rotateImageToMatchOrientation:image];
+		[[%c(SBWallpaperController) sharedInstance] endRequiringWithReason:@"BeautifulAnimation"];
 		return image;
 	}
 }

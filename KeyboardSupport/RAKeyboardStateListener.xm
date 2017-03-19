@@ -46,7 +46,8 @@ BOOL isShowing = NO;
 }
 
 - (instancetype)init {
-  if ((self = [super init])) {
+  self = [super init];
+  if (self) {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didShow:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(didHide) name:UIKeyboardWillHideNotification object:nil];
@@ -102,6 +103,11 @@ void externalKeyboardDidHide(CFNotificationCenterRef center, void *observer, CFS
   } else {
     block();
   }
+}
+
++ (void)initImplementationNow {
+  %orig;
+  LogDebug(@"initImplementationNow");
 }
 %end
 

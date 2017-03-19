@@ -147,7 +147,7 @@
 	[self reloadWindowedAppsSection:runningApplications];
 }
 
--(void) reloadWindowedAppsSection:(NSArray*)runningApplicationsArg {
+- (void)reloadWindowedAppsSection:(NSArray*)runningApplicationsArg {
 	runningApplications = [runningApplicationsArg mutableCopy];
 
 	NSArray *switcherOrder = [[%c(RAAppSwitcherModelWrapper) appSwitcherAppIdentiferList] copy];
@@ -164,9 +164,10 @@
 	}
 
 	for (SBApplication *app in runningApplications) {
-		if (![visibleIcons containsObject:app.bundleIdentifier]) {
-			[appsWithoutWindows removeObject:app];
+		if ([visibleIcons containsObject:app.bundleIdentifier]) {
+			continue;
 		}// || [RAMissionControlManager.sharedInstance.inhibitedApplications containsObject:app.bundleIdentifier])
+		[appsWithoutWindows removeObject:app];
 	}
 
 	CGFloat x = panePadding;
@@ -197,7 +198,11 @@
 		x += panePadding + preview.frame.size.width;
 
 		preview.application = sbapp;
-		[windowedAppScrollView addSubview:preview];
+		[UIView animateWithDuration:1 animations:^{
+			preview.alpha = 1;
+		} completion:^(BOOL finished) {
+			[windowedAppScrollView addSubview:preview];
+		}];
 		[preview generatePreviewAsync];
 
 		UITapGestureRecognizer *g = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(topIconViewTap:)];
@@ -267,7 +272,11 @@
 		x += panePadding + preview.frame.size.width;
 
 		preview.application = app;
-		[otherRunningAppsScrollView addSubview:preview];
+		[UIView animateWithDuration:1 animations:^{
+			preview.alpha = 1;
+		} completion:^(BOOL finished) {
+			[otherRunningAppsScrollView addSubview:preview];
+		}];
 		[preview generatePreviewAsync];
 
 		UITapGestureRecognizer *g = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(topIconViewTap:)];
@@ -447,22 +456,23 @@
 
 		if (!didKill) {
 			for (UIView *subview in desktopScrollView.subviews) {
-				if ([subview isKindOfClass:[RAMissionControlPreviewView class]]) {
-					if (CGRectContainsPoint((CGRect){ [desktopScrollView convertPoint:subview.frame.origin toView:self], subview.frame.size }, center) || (CGRectContainsPoint((CGRect){ [windowedAppScrollView convertPoint:subview.frame.origin toView:self], windowedAppScrollView.frame.size }, center) && gesture.view.superview != windowedAppScrollView)) {
-						RADesktopWindow *desktop = [[%c(RADesktopManager) sharedInstance] desktopAtIndex:subview.tag];
-						SBApplication *app = ((RAMissionControlPreviewView*)gesture.view).application;
+				if (![subview isKindOfClass:[RAMissionControlPreviewView class]]) {
+					continue;
+				}
+				if (CGRectContainsPoint((CGRect){ [desktopScrollView convertPoint:subview.frame.origin toView:self], subview.frame.size }, center) || (CGRectContainsPoint((CGRect){ [windowedAppScrollView convertPoint:subview.frame.origin toView:self], windowedAppScrollView.frame.size }, center) && gesture.view.superview != windowedAppScrollView)) {
+					RADesktopWindow *desktop = [[%c(RADesktopManager) sharedInstance] desktopAtIndex:subview.tag];
+					SBApplication *app = ((RAMissionControlPreviewView*)gesture.view).application;
 
-						[[[%c(RADesktopManager) sharedInstance] currentDesktop] removeAppWithIdentifier:app.bundleIdentifier animated:NO];
+					[[[%c(RADesktopManager) sharedInstance] currentDesktop] removeAppWithIdentifier:app.bundleIdentifier animated:NO];
 
-						[desktop createAppWindowForSBApplication:app animated:NO];
+					[desktop createAppWindowForSBApplication:app animated:NO];
 
-						[[%c(RASnapshotProvider) sharedInstance] forceReloadSnapshotOfDesktop:[[%c(RADesktopManager) sharedInstance] currentDesktop]];
-						[[%c(RASnapshotProvider) sharedInstance] forceReloadSnapshotOfDesktop:desktop];
+					[[%c(RASnapshotProvider) sharedInstance] forceReloadSnapshotOfDesktop:[[%c(RADesktopManager) sharedInstance] currentDesktop]];
+					[[%c(RASnapshotProvider) sharedInstance] forceReloadSnapshotOfDesktop:desktop];
 
-						[self reloadDesktopSection];
-						[self reloadWindowedAppsSection];
-						[self reloadOtherAppsSection];
-					}
+					[self reloadDesktopSection];
+					[self reloadWindowedAppsSection];
+					[self reloadOtherAppsSection];
 				}
 			}
 		}
@@ -562,28 +572,30 @@
 
 - (void)killAllWindowed {
 	for (UIView *view in windowedAppScrollView.subviews) {
-		if ([view isKindOfClass:[RAMissionControlPreviewView class]]) {
-			RAMissionControlPreviewView *realView = (RAMissionControlPreviewView*)view;
-			SBApplication *app = realView.application;
-			[%c(RAAppKiller) killAppWithSBApplication:app completion:^{
-				[runningApplications removeObject:app];
-				[self performSelectorOnMainThread:@selector(reloadWindowedAppsSection:) withObject:[[%c(RARunningAppsProvider) sharedInstance] runningApplications] waitUntilDone:YES];
-				[self performSelectorOnMainThread:@selector(reloadOtherAppsSection) withObject:nil waitUntilDone:YES];
-			}];
+		if (![view isKindOfClass:[RAMissionControlPreviewView class]]) {
+			continue;
 		}
+		RAMissionControlPreviewView *realView = (RAMissionControlPreviewView*)view;
+		SBApplication *app = realView.application;
+		[%c(RAAppKiller) killAppWithSBApplication:app completion:^{
+			[runningApplications removeObject:app];
+			[self performSelectorOnMainThread:@selector(reloadWindowedAppsSection:) withObject:[[%c(RARunningAppsProvider) sharedInstance] runningApplications] waitUntilDone:YES];
+			[self performSelectorOnMainThread:@selector(reloadOtherAppsSection) withObject:nil waitUntilDone:YES];
+		}];
 	}
 }
 
 - (void)killAllOther {
 	for (UIView *view in otherRunningAppsScrollView.subviews) {
-		if ([view isKindOfClass:[RAMissionControlPreviewView class]]) {
-			RAMissionControlPreviewView *realView = (RAMissionControlPreviewView*)view;
-			SBApplication *app = realView.application;
-			[%c(RAAppKiller) killAppWithSBApplication:app completion:^{
-				[self performSelectorOnMainThread:@selector(reloadWindowedAppsSection:) withObject:[[%c(RARunningAppsProvider) sharedInstance] runningApplications] waitUntilDone:YES];
-				[self performSelectorOnMainThread:@selector(reloadOtherAppsSection) withObject:nil waitUntilDone:YES];
-			}];
+		if (![view isKindOfClass:[RAMissionControlPreviewView class]]) {
+			continue;
 		}
+		RAMissionControlPreviewView *realView = (RAMissionControlPreviewView*)view;
+		SBApplication *app = realView.application;
+		[%c(RAAppKiller) killAppWithSBApplication:app completion:^{
+			[self performSelectorOnMainThread:@selector(reloadWindowedAppsSection:) withObject:[[%c(RARunningAppsProvider) sharedInstance] runningApplications] waitUntilDone:YES];
+			[self performSelectorOnMainThread:@selector(reloadOtherAppsSection) withObject:nil waitUntilDone:YES];
+		}];
 	}
 }
 

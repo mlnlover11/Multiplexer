@@ -13,17 +13,15 @@ assertiond hooks: working
 backboardd hooks: unknown
 fake phone mode: working
 
-
-- adding items to SBAppSwitcherModel is broken
-- SwipeOver sliding off screen animation is broken (RASwipeOverManager.xm:L62)
-- icons and apps do not show up in RASnapshotProvider
-- GestureSupport: LandscapeLeft is, once again, broken
-
 Bugs:
 - Individual app force foregrounding is broken when used in conjunction with auto (re)launch;
 - Invoking keyboard in reachapp closes view (I think reachability dismisses when using KB)
 - Showing NC with reachapp doesnt properly resize (not even sure if possible)
 - CC inhibitor not reliable on 9.x+?
+- adding items to SBAppSwitcherModel is broken (fixed now?)
+- SwipeOver sliding off screen animation is broken (RASwipeOverManager.xm:L62)
+- icons and apps do not show up in RASnapshotProvider
+- GestureSupport: LandscapeLeft is, once again, broken
 
 Minor Things/Bugs to note:
 - (some of these are leftover from the original release lol: eg MC lag)

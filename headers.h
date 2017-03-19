@@ -605,6 +605,13 @@ typedef enum
 @property(readonly, nonatomic) NSString *type; // @synthesize type=_type;
 @end
 
+@interface SBHomeScreenViewController : UIViewController
+@end
+
+@interface SBHomeScreenWindow : UIWindow
+@property (nonatomic, weak,readonly) SBHomeScreenViewController *homeScreenViewController;
+@end
+
 @interface SBLockScreenManager
 +(id) sharedInstance;
 -(BOOL) isUILocked;

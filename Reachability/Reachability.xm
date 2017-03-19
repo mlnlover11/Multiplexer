@@ -80,7 +80,7 @@ BOOL wasEnabled = NO;
 
 - (void)deactivateReachabilityModeForObserver:(unsafe_id)arg1 {
   //Disable for keyboard here
-  if (overrideDisableForStatusBar) {
+  if (overrideDisableForStatusBar || [RAKeyboardStateListener sharedInstance].visible) {
     return;
   }
   %orig;
@@ -235,7 +235,7 @@ id SBWorkspace$sharedInstance;
 
 - (void)_disableReachabilityImmediately:(_Bool)arg1 {
   //Disable for keyboard here
-  if (overrideDisableForStatusBar || [UIKeyboard isOnScreen]) {
+  if (overrideDisableForStatusBar || [RAKeyboardStateListener sharedInstance].visible) {
     return;
   }
 

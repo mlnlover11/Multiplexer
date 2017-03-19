@@ -90,13 +90,13 @@ extern int rotationDegsForOrientation(int o);
 }
 
 - (void)createEdgeView {
-	overlayWindow = [[RASwipeOverOverlay alloc] initWithFrame:UIScreen.mainScreen.RA_interfaceOrientedBounds];
+	overlayWindow = [[RASwipeOverOverlay alloc] initWithFrame:[UIScreen mainScreen].RA_interfaceOrientedBounds];
 	if (IS_IOS_OR_OLDER(iOS_8_4)) {
-		[overlayWindow _rotateWindowToOrientation:UIApplication.sharedApplication.statusBarOrientation updateStatusBar:YES duration:0.001 skipCallbacks:NO];
+		[overlayWindow _rotateWindowToOrientation:[UIApplication sharedApplication].statusBarOrientation updateStatusBar:YES duration:0.001 skipCallbacks:NO];
 	}
 	[overlayWindow showEnoughToDarkenUnderlyingApp];
 	[overlayWindow makeKeyAndVisible];
-	[overlayWindow updateForOrientation:UIApplication.sharedApplication.statusBarOrientation];
+	[overlayWindow updateForOrientation:[UIApplication sharedApplication].statusBarOrientation];
 
 	[self showApp:nil];
 }
